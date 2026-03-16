@@ -16,11 +16,31 @@ const databaseUrlEnvKeys = [
   "POSTGRES_URL_NON_POOLING",
 ] as const;
 
+function getEnvironmentValue(key: (typeof databaseUrlEnvKeys)[number]) {
+  const directValue = process.env[key];
+
+  if (directValue && directValue.trim().length > 0) {
+    return directValue;
+  }
+
+  const prefixedEntry = Object.entries(process.env).find(
+    ([envKey, envValue]) => {
+      return (
+        envKey.endsWith(`_${key}`) &&
+        typeof envValue === "string" &&
+        envValue.trim().length > 0
+      );
+    },
+  );
+
+  return prefixedEntry?.[1] ?? null;
+}
+
 export function getDatabaseUrl() {
   for (const key of databaseUrlEnvKeys) {
-    const value = process.env[key];
+    const value = getEnvironmentValue(key);
 
-    if (value && value.trim().length > 0) {
+    if (value) {
       return value;
     }
   }
