@@ -15,7 +15,7 @@ import {
   useMapStore,
 } from "@/store/use-map-store";
 
-const roadColors: Record<NonNullable<GridTile["roadType"]>, string> = {
+const roadColors: Record<string, string> = {
   dirt: "#bf8a5b",
   stone: "#8792ab",
   wood: "#b77741",
@@ -23,11 +23,16 @@ const roadColors: Record<NonNullable<GridTile["roadType"]>, string> = {
   path: "#d0b583",
 };
 
+const defaultRoadOptions = ["stone", "path", "dirt", "wood", "bridge"];
+
 const decorationColors: Record<string, string> = {
   tree: "#3e9a67",
   lamp: "#f4d46a",
   flower: "#f08ba3",
+  "electric-pole": "#ffe15a",
 };
+
+const defaultDecorationOptions = ["tree", "flower", "lamp", "electric-pole"];
 
 const themeColors: Record<string, string> = {
   community: "#f59c74",
@@ -89,6 +94,74 @@ function tileKey(x: number, y: number) {
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
+}
+
+function getPoleConnections(poles: TilePoint[], maxDistance: number) {
+  const links: Array<{ from: TilePoint; to: TilePoint }> = [];
+
+  for (let index = 0; index < poles.length; index += 1) {
+    for (let candidate = index + 1; candidate < poles.length; candidate += 1) {
+      const from = poles[index];
+      const to = poles[candidate];
+
+      if (Math.hypot(to.x - from.x, to.y - from.y) <= maxDistance) {
+        links.push({ from, to });
+      }
+    }
+  }
+
+  return links;
+}
+
+function drawElectricPoleStamp(
+  context: CanvasRenderingContext2D,
+  px: number,
+  py: number,
+  tileSize: number,
+) {
+  const centerX = px + tileSize / 2;
+  const centerY = py + tileSize / 2;
+  const radius = Math.max(tileSize / 3.4, 1.6);
+
+  context.fillStyle = "#ffe15a";
+  context.beginPath();
+  context.arc(centerX, centerY, radius, 0, Math.PI * 2);
+  context.fill();
+
+  context.strokeStyle = "rgba(74, 58, 6, 0.9)";
+  context.lineWidth = Math.max(tileSize * 0.08, 1);
+  context.beginPath();
+  context.arc(centerX, centerY, radius, 0, Math.PI * 2);
+  context.stroke();
+
+  if (tileSize >= 10) {
+    const boltScale = Math.max(tileSize * 0.22, 2.2);
+    context.fillStyle = "#594400";
+    context.beginPath();
+    context.moveTo(centerX - boltScale * 0.2, centerY - boltScale * 1.15);
+    context.lineTo(centerX + boltScale * 0.35, centerY - boltScale * 0.2);
+    context.lineTo(centerX + boltScale * 0.03, centerY - boltScale * 0.2);
+    context.lineTo(centerX + boltScale * 0.24, centerY + boltScale * 1.12);
+    context.lineTo(centerX - boltScale * 0.36, centerY + boltScale * 0.1);
+    context.lineTo(centerX - boltScale * 0.03, centerY + boltScale * 0.1);
+    context.closePath();
+    context.fill();
+  }
+}
+
+function normalizeCustomSlug(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function formatOptionLabel(option: string) {
+  return option
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 function isTypingTarget(target: EventTarget | null) {
@@ -217,6 +290,16 @@ export function PlannerCanvas() {
   const [drawStart, setDrawStart] = useState<TilePoint | null>(null);
   const [mapZoom, setMapZoom] = useState(1);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [customRoadTypes, setCustomRoadTypes] = useState<string[]>([]);
+  const [customRoadColors, setCustomRoadColors] = useState<
+    Record<string, string>
+  >({});
+  const [customDecorationTypes, setCustomDecorationTypes] = useState<string[]>(
+    [],
+  );
+  const [customDecorationColors, setCustomDecorationColors] = useState<
+    Record<string, string>
+  >({});
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
   const width = useMapStore((state) => state.width);
   const height = useMapStore((state) => state.height);
@@ -235,6 +318,8 @@ export function PlannerCanvas() {
   const setSelectedBuildingId = useMapStore(
     (state) => state.setSelectedBuildingId,
   );
+  const addCustomBuilding = useMapStore((state) => state.addCustomBuilding);
+  const customBuildings = useMapStore((state) => state.customBuildings);
   const selectPlacement = useMapStore((state) => state.selectPlacement);
   const updateSelectedPlacementLabel = useMapStore(
     (state) => state.updateSelectedPlacementLabel,
@@ -258,6 +343,7 @@ export function PlannerCanvas() {
     (state) => state.deleteSelectedPlacement,
   );
   const deleteAt = useMapStore((state) => state.deleteAt);
+  const createNewMap = useMapStore((state) => state.createNewMap);
   const resetMap = useMapStore((state) => state.resetMap);
   const exportMap = useMapStore((state) => state.exportMap);
 
@@ -281,6 +367,129 @@ export function PlannerCanvas() {
     ? Math.max(viewportSize.height, canvasDisplaySize)
     : canvasDisplaySize;
   const zoomPercent = Math.round(mapZoom * 100);
+  const roadOptions = [...defaultRoadOptions, ...customRoadTypes];
+  const decorationOptions = [
+    ...defaultDecorationOptions,
+    ...customDecorationTypes,
+  ];
+  const buildingOptions = [
+    ...sampleBuildings,
+    ...Object.values(customBuildings),
+  ];
+
+  function clearPlannerUiState() {
+    setHoveredTile(null);
+    setSelectedTile(null);
+    setDrawStart(null);
+    setSaveMessage(null);
+  }
+
+  function handleCreateNewMap() {
+    createNewMap();
+    clearPlannerUiState();
+  }
+
+  function handleResetMapTown() {
+    const confirmed = window.confirm(
+      "Reset map and town back to the starter layout? This clears current town edits.",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    resetMap();
+    setCustomRoadTypes([]);
+    setCustomRoadColors({});
+    setCustomDecorationTypes([]);
+    setCustomDecorationColors({});
+    clearPlannerUiState();
+  }
+
+  function handleCreateCustomAsset() {
+    const assetTypeRaw = window.prompt(
+      "Create custom asset type: road, decoration, item, or building",
+      "road",
+    );
+
+    if (!assetTypeRaw) {
+      return;
+    }
+
+    const assetType = assetTypeRaw.trim().toLowerCase();
+
+    if (
+      assetType !== "road" &&
+      assetType !== "decoration" &&
+      assetType !== "item" &&
+      assetType !== "building"
+    ) {
+      window.alert("Use one of: road, decoration, item, building.");
+      return;
+    }
+
+    const nameInput = window.prompt("Custom asset name", "My Custom Asset");
+
+    if (!nameInput) {
+      return;
+    }
+
+    const slug = normalizeCustomSlug(nameInput);
+
+    if (!slug) {
+      window.alert("Please enter a valid name.");
+      return;
+    }
+
+    if (assetType === "road") {
+      const color =
+        window.prompt("Road color (hex)", "#9ca6bb")?.trim() || "#9ca6bb";
+      setCustomRoadTypes((current) =>
+        current.includes(slug) ? current : [...current, slug],
+      );
+      setCustomRoadColors((current) => ({ ...current, [slug]: color }));
+      setRoadType(slug);
+      setTool("road");
+      return;
+    }
+
+    if (assetType === "decoration" || assetType === "item") {
+      const key = assetType === "item" ? `item-${slug}` : slug;
+      const color =
+        window.prompt("Decoration color (hex)", "#74b48f")?.trim() || "#74b48f";
+      setCustomDecorationTypes((current) =>
+        current.includes(key) ? current : [...current, key],
+      );
+      setCustomDecorationColors((current) => ({ ...current, [key]: color }));
+      setDecorationType(key);
+      setTool("decoration");
+      return;
+    }
+
+    const widthInput = window.prompt("Building footprint width", "4");
+    const depthInput = window.prompt("Building footprint depth", "4");
+
+    if (!widthInput || !depthInput) {
+      return;
+    }
+
+    const widthValue = Number(widthInput);
+    const depthValue = Number(depthInput);
+
+    if (!Number.isFinite(widthValue) || !Number.isFinite(depthValue)) {
+      window.alert("Width and depth must be numbers.");
+      return;
+    }
+
+    const customId = addCustomBuilding({
+      name: nameInput,
+      width: widthValue,
+      depth: depthValue,
+      theme: "custom",
+    });
+    setSelectedBuildingId(customId);
+    setTool("building");
+  }
 
   function applyTileOperation(tile: TilePoint) {
     if (tool === "road") {
@@ -328,7 +537,12 @@ export function PlannerCanvas() {
   }
 
   function floodFillFrom(tile: TilePoint) {
-    const originPlacement = findPlacementAtTile(placements, tile.x, tile.y);
+    const originPlacement = findPlacementAtTile(
+      placements,
+      tile.x,
+      tile.y,
+      customBuildings,
+    );
 
     if (originPlacement) {
       if (tool === "delete") {
@@ -358,7 +572,9 @@ export function PlannerCanvas() {
 
       visited.add(key);
 
-      if (findPlacementAtTile(placements, current.x, current.y)) {
+      if (
+        findPlacementAtTile(placements, current.x, current.y, customBuildings)
+      ) {
         continue;
       }
 
@@ -386,7 +602,12 @@ export function PlannerCanvas() {
   }
 
   function applyEyedropper(tile: TilePoint) {
-    const placement = findPlacementAtTile(placements, tile.x, tile.y);
+    const placement = findPlacementAtTile(
+      placements,
+      tile.x,
+      tile.y,
+      customBuildings,
+    );
 
     if (placement) {
       selectPlacement(placement.id);
@@ -443,31 +664,65 @@ export function PlannerCanvas() {
     context.fillStyle = "#0d1728";
     context.fillRect(offsetX, offsetY, mapSize, mapSize);
 
+    const electricPoles: TilePoint[] = [];
+
     Object.values(tiles).forEach((tile) => {
       const px = offsetX + tile.x * tileSize;
       const py = offsetY + tile.y * tileSize;
 
       if (tile.tileType === "road" && tile.roadType) {
-        context.fillStyle = roadColors[tile.roadType];
+        context.fillStyle =
+          customRoadColors[tile.roadType] ??
+          roadColors[tile.roadType] ??
+          "#8f9ab1";
         context.fillRect(px, py, tileSize, tileSize);
       }
 
       if (tile.tileType === "decoration" && tile.decorationType) {
-        context.fillStyle = decorationColors[tile.decorationType] ?? "#74b48f";
-        context.beginPath();
-        context.arc(
-          px + tileSize / 2,
-          py + tileSize / 2,
-          Math.max(tileSize / 3, 1.5),
-          0,
-          Math.PI * 2,
-        );
-        context.fill();
+        if (tile.decorationType === "electric-pole") {
+          electricPoles.push({ x: tile.x, y: tile.y });
+          drawElectricPoleStamp(context, px, py, tileSize);
+        } else {
+          context.fillStyle =
+            customDecorationColors[tile.decorationType] ??
+            decorationColors[tile.decorationType] ??
+            "#74b48f";
+          context.beginPath();
+          context.arc(
+            px + tileSize / 2,
+            py + tileSize / 2,
+            Math.max(tileSize / 3, 1.5),
+            0,
+            Math.PI * 2,
+          );
+          context.fill();
+        }
       }
     });
 
+    if (electricPoles.length > 1) {
+      const links = getPoleConnections(electricPoles, 15);
+      context.strokeStyle = "rgba(255, 219, 71, 0.72)";
+      context.lineWidth = Math.max(tileSize * 0.12, 1.35);
+
+      links.forEach((link) => {
+        context.beginPath();
+        context.moveTo(
+          offsetX + (link.from.x + 0.5) * tileSize,
+          offsetY + (link.from.y + 0.5) * tileSize,
+        );
+        context.lineTo(
+          offsetX + (link.to.x + 0.5) * tileSize,
+          offsetY + (link.to.y + 0.5) * tileSize,
+        );
+        context.stroke();
+      });
+    }
+
     placements.forEach((placement) => {
-      const building = sampleBuildingLookup[placement.buildingId];
+      const building =
+        sampleBuildingLookup[placement.buildingId] ??
+        customBuildings[placement.buildingId];
 
       if (!building) {
         return;
@@ -714,7 +969,12 @@ export function PlannerCanvas() {
   }
 
   function handleHandTool(tile: TilePoint) {
-    const placement = findPlacementAtTile(placements, tile.x, tile.y);
+    const placement = findPlacementAtTile(
+      placements,
+      tile.x,
+      tile.y,
+      customBuildings,
+    );
 
     if (placement) {
       selectPlacement(placement.id);
@@ -1008,38 +1268,36 @@ export function PlannerCanvas() {
             ) : null}
             {tool === "road" ? (
               <div className="grid grid-cols-2 gap-3">
-                {(["stone", "path", "dirt", "wood", "bridge"] as const).map(
-                  (option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => setRoadType(option)}
-                      className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
-                        roadType === option
-                          ? "bg-[color:var(--accent)]/18 text-[color:var(--foreground)]"
-                          : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
-                      }`}
-                    >
-                      {option}
-                    </button>
-                  ),
-                )}
+                {roadOptions.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setRoadType(option)}
+                    className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold ${
+                      roadType === option
+                        ? "bg-[color:var(--accent)]/18 text-[color:var(--foreground)]"
+                        : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+                    }`}
+                  >
+                    {formatOptionLabel(option)}
+                  </button>
+                ))}
               </div>
             ) : null}
             {tool === "decoration" ? (
               <div className="grid grid-cols-3 gap-3">
-                {(["tree", "flower", "lamp"] as const).map((option) => (
+                {decorationOptions.map((option) => (
                   <button
                     key={option}
                     type="button"
                     onClick={() => setDecorationType(option)}
-                    className={`rounded-2xl px-4 py-3 text-center text-sm font-semibold capitalize ${
+                    className={`rounded-2xl px-4 py-3 text-center text-sm font-semibold ${
                       decorationType === option
                         ? "bg-[color:var(--accent-2)]/18 text-[color:var(--foreground)]"
                         : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
                     }`}
                   >
-                    {option}
+                    {formatOptionLabel(option)}
                   </button>
                 ))}
               </div>
@@ -1056,7 +1314,7 @@ export function PlannerCanvas() {
                   }
                   className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
                 >
-                  {sampleBuildings.map((building) => (
+                  {buildingOptions.map((building) => (
                     <option key={building.id} value={building.id}>
                       {building.name}
                     </option>
@@ -1067,24 +1325,31 @@ export function PlannerCanvas() {
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
-                onClick={resetMap}
+                onClick={handleCreateCustomAsset}
                 className="col-span-2 rounded-2xl border border-[color:var(--foreground)]/20 bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
               >
-                + New
+                + New Custom Asset
+              </button>
+              <button
+                type="button"
+                onClick={handleCreateNewMap}
+                className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
+              >
+                New Town
+              </button>
+              <button
+                type="button"
+                onClick={handleResetMapTown}
+                className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
+              >
+                Reset Map + Town
               </button>
               <button
                 type="button"
                 onClick={handleSaveMap}
-                className="rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
+                className="col-span-2 rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
               >
                 Save map
-              </button>
-              <button
-                type="button"
-                onClick={resetMap}
-                className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
-              >
-                Reset
               </button>
             </div>
             {saveMessage ? (
@@ -1095,7 +1360,7 @@ export function PlannerCanvas() {
           </div>
         </SectionCard>
         <SectionCard
-          title="Selection Inspector"
+          title="Selection Editor"
           description="Selected placements can be renamed, nudged, rotated, duplicated, and reused as the current stamp."
         >
           {selectedPlacement ? (
@@ -1203,34 +1468,32 @@ export function PlannerCanvas() {
               </div>
               {selectedTileRecord.tileType === "road" ? (
                 <div className="grid grid-cols-2 gap-3">
-                  {(["stone", "path", "dirt", "wood", "bridge"] as const).map(
-                    (option) => (
-                      <button
-                        key={option}
-                        type="button"
-                        onClick={() => {
-                          if (!selectedTile) {
-                            return;
-                          }
+                  {roadOptions.map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => {
+                        if (!selectedTile) {
+                          return;
+                        }
 
-                          setRoadType(option);
-                          paintRoad(selectedTile.x, selectedTile.y);
-                        }}
-                        className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
-                          selectedTileRecord.roadType === option
-                            ? "bg-[color:var(--accent)]/18"
-                            : "bg-[color:var(--surface-strong)]"
-                        }`}
-                      >
-                        {option}
-                      </button>
-                    ),
-                  )}
+                        setRoadType(option);
+                        paintRoad(selectedTile.x, selectedTile.y);
+                      }}
+                      className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold ${
+                        selectedTileRecord.roadType === option
+                          ? "bg-[color:var(--accent)]/18"
+                          : "bg-[color:var(--surface-strong)]"
+                      }`}
+                    >
+                      {formatOptionLabel(option)}
+                    </button>
+                  ))}
                 </div>
               ) : null}
               {selectedTileRecord.tileType === "decoration" ? (
                 <div className="grid grid-cols-3 gap-3">
-                  {(["tree", "flower", "lamp"] as const).map((option) => (
+                  {decorationOptions.map((option) => (
                     <button
                       key={option}
                       type="button"
@@ -1242,13 +1505,13 @@ export function PlannerCanvas() {
                         setDecorationType(option);
                         paintDecoration(selectedTile.x, selectedTile.y);
                       }}
-                      className={`rounded-2xl px-4 py-3 text-center text-sm font-semibold capitalize ${
+                      className={`rounded-2xl px-4 py-3 text-center text-sm font-semibold ${
                         selectedTileRecord.decorationType === option
                           ? "bg-[color:var(--accent-2)]/18"
                           : "bg-[color:var(--surface-strong)]"
                       }`}
                     >
-                      {option}
+                      {formatOptionLabel(option)}
                     </button>
                   ))}
                 </div>

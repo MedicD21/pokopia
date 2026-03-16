@@ -62,7 +62,13 @@ export type BlockMaterialId =
   // catalog block items (any slug from the item library)
   | (string & {});
 
-export type RoadType = "dirt" | "stone" | "wood" | "bridge" | "path";
+export type RoadType =
+  | "dirt"
+  | "stone"
+  | "wood"
+  | "bridge"
+  | "path"
+  | (string & {});
 export type Rotation = 0 | 90 | 180 | 270;
 export type MapTileType = "empty" | "road" | "decoration";
 

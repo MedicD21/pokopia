@@ -1,5 +1,15 @@
 [
   {
+    "id": "17bed145-b25b-4fa0-89e4-e9214e0484ef",
+    "name": "New Town",
+    "width": 100,
+    "height": 100,
+    "tiles": [],
+    "placements": [],
+    "createdAt": "2026-03-16T18:56:18.559Z",
+    "updatedAt": "2026-03-16T18:56:18.559Z"
+  },
+  {
     "id": "starter-map",
     "name": "Sunrise Borough",
     "width": 100,

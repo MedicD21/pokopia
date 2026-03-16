@@ -1,8 +1,16 @@
-import type { BlockMaterialDefinition, BlockMaterialId } from "@/lib/types";
+import type { BlockMaterialDefinition } from "@/lib/types";
 
 import { catalogBlockMaterials } from "@/data/catalog-blocks";
 
-export const blockMaterials: BlockMaterialDefinition[] = [
+function buildSerebiiItemImage(name: string) {
+  return `https://www.serebii.net/pokemonpokopia/items/${name
+    .toLowerCase()
+    .replaceAll("poké", "poke")
+    .replaceAll(" ", "")
+    .replaceAll("'", "")}.png`;
+}
+
+const baseBlockMaterials: BlockMaterialDefinition[] = [
   {
     id: "stone",
     displayName: "Stone",
@@ -132,8 +140,8 @@ export const blockMaterials: BlockMaterialDefinition[] = [
   },
   {
     id: "door-automatic",
-    displayName: "Automatic door",
-    catalogMatchName: "Automatic door",
+    displayName: "Automatic doors",
+    catalogMatchName: "Automatic doors",
     category: "metal",
     color: "#718096",
     obtainMethod: "Crafted with electric actuators and metal panels",
@@ -143,8 +151,8 @@ export const blockMaterials: BlockMaterialDefinition[] = [
   },
   {
     id: "door-swinging",
-    displayName: "Swinging door",
-    catalogMatchName: "Swinging door",
+    displayName: "Swinging doors",
+    catalogMatchName: "Swinging doors",
     category: "wood",
     color: "#9b6b45",
     obtainMethod: "Lightweight lumber with double-acting hinges",
@@ -222,7 +230,7 @@ export const blockMaterials: BlockMaterialDefinition[] = [
   {
     id: "window-skylight",
     displayName: "Skylight window",
-    catalogMatchName: "Skylight window",
+    catalogMatchName: "Glass window",
     category: "glass",
     color: "#caedf8",
     obtainMethod: "Large tempered glass panels with sealed metal frame",
@@ -232,8 +240,8 @@ export const blockMaterials: BlockMaterialDefinition[] = [
   },
   {
     id: "window-stained",
-    displayName: "Stained glass window",
-    catalogMatchName: "Stained glass window",
+    displayName: "Stained-glass window",
+    catalogMatchName: "Stained-glass window (lower)",
     category: "glass",
     color: "#d4a0c8",
     obtainMethod: "Colored glass fragments leaded together",
@@ -244,7 +252,7 @@ export const blockMaterials: BlockMaterialDefinition[] = [
   {
     id: "window-shutter",
     displayName: "Shuttered window",
-    catalogMatchName: "Shuttered window",
+    catalogMatchName: "Hatch window",
     category: "wood",
     color: "#7a6048",
     obtainMethod: "Louvered wooden shutters with glass backing",
@@ -367,8 +375,8 @@ export const blockMaterials: BlockMaterialDefinition[] = [
   },
   {
     id: "roof-brick-hipped",
-    displayName: "Hipped brick roof",
-    catalogMatchName: "Hipped brick roof",
+    displayName: "Brick hipped roof",
+    catalogMatchName: "Brick hipped roof",
     category: "roof",
     color: "#ba5a3c",
     obtainMethod: "Specialty-cut bricks for hip angles",
@@ -378,8 +386,8 @@ export const blockMaterials: BlockMaterialDefinition[] = [
   },
   {
     id: "roof-tent-hipped",
-    displayName: "Hipped tent roof",
-    catalogMatchName: "Hipped tent roof",
+    displayName: "Tent hipped roof",
+    catalogMatchName: "Tent hipped roof",
     category: "roof",
     color: "#c2a460",
     obtainMethod: "Canvas panels cut and assembled for hip geometry",
@@ -389,8 +397,8 @@ export const blockMaterials: BlockMaterialDefinition[] = [
   },
   {
     id: "roof-tiled-hipped",
-    displayName: "Hipped tiled roof",
-    catalogMatchName: "Hipped tiled roof",
+    displayName: "Tiled hipped roof",
+    catalogMatchName: "Tiled hipped roof",
     category: "roof",
     color: "#e85b56",
     obtainMethod: "Hip-angle ceramic tiles fired to spec",
@@ -400,8 +408,8 @@ export const blockMaterials: BlockMaterialDefinition[] = [
   },
   {
     id: "roof-dormered",
-    displayName: "Dormered roof",
-    catalogMatchName: "Dormered roof",
+    displayName: "Dormered brick roof",
+    catalogMatchName: "Dormered brick roof",
     category: "roof",
     color: "#d94f4b",
     obtainMethod: "Combined tiled roof with framed dormer window sections",
@@ -434,6 +442,15 @@ export const blockMaterials: BlockMaterialDefinition[] = [
     notes: "Signage, trims, and lighting details that finish a build.",
   },
 ];
+
+export const blockMaterials: BlockMaterialDefinition[] = baseBlockMaterials.map((material) =>
+  material.imageUrl || !material.catalogMatchName
+    ? material
+    : {
+        ...material,
+        imageUrl: buildSerebiiItemImage(material.catalogMatchName),
+      },
+);
 
 export const blockMaterialLookup = [...blockMaterials, ...catalogBlockMaterials].reduce<
   Record<string, BlockMaterialDefinition>

@@ -105,13 +105,13 @@ export function BlockMaterialDropdown({
               {selectedMaterial.displayName}
             </p>
             <div className="mt-1 flex items-center gap-2">
-              <span className="rounded-full bg-[color:var(--surface-strong)] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--muted)]">
-                {selectedMaterial.category}
-              </span>
               <span
                 className="h-2.5 w-2.5 rounded-full border border-black/10"
                 style={{ backgroundColor: selectedMaterial.color }}
               />
+              <span className="truncate text-xs leading-5 text-[color:var(--muted)]">
+                {selectedMaterial.location}
+              </span>
             </div>
           </div>
         </div>

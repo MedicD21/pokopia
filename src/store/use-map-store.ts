@@ -4,7 +4,12 @@ import { create } from "zustand";
 
 import { getRotatedFootprint, sampleBuildingLookup } from "@/data/buildings";
 import { starterTownMap } from "@/data/map-template";
-import type { BuildingPlacement, GridTile, TownMap } from "@/lib/types";
+import type {
+  BuildingData,
+  BuildingPlacement,
+  GridTile,
+  TownMap,
+} from "@/lib/types";
 
 export type MapTool =
   | "hand"
@@ -21,6 +26,7 @@ interface MapPlannerState {
   height: number;
   tiles: Record<string, GridTile>;
   placements: BuildingPlacement[];
+  customBuildings: Record<string, BuildingData>;
   tool: MapTool;
   roadType: NonNullable<GridTile["roadType"]>;
   decorationType: string;
@@ -31,6 +37,12 @@ interface MapPlannerState {
   setRoadType: (roadType: NonNullable<GridTile["roadType"]>) => void;
   setDecorationType: (decorationType: string) => void;
   setSelectedBuildingId: (buildingId: string) => void;
+  addCustomBuilding: (input: {
+    name: string;
+    width: number;
+    depth: number;
+    theme?: string;
+  }) => string;
   selectPlacement: (placementId: string | null) => void;
   updateSelectedPlacementLabel: (label: string) => void;
   duplicateSelectedPlacement: () => void;
@@ -42,6 +54,7 @@ interface MapPlannerState {
   rotateSelectedPlacement: () => void;
   deleteSelectedPlacement: () => void;
   deleteAt: (x: number, y: number) => void;
+  createNewMap: () => void;
   resetMap: () => void;
   exportMap: () => TownMap;
 }
@@ -58,7 +71,9 @@ function tilesToRecord(tiles: GridTile[]) {
 }
 
 function serializeTiles(tiles: Record<string, GridTile>) {
-  return Object.values(tiles).sort((left, right) => left.y - right.y || left.x - right.x);
+  return Object.values(tiles).sort(
+    (left, right) => left.y - right.y || left.x - right.x,
+  );
 }
 
 function clamp(value: number, min: number, max: number) {
@@ -69,11 +84,14 @@ export function findPlacementAtTile(
   placements: BuildingPlacement[],
   x: number,
   y: number,
+  customBuildingLookup: Record<string, BuildingData> = {},
 ) {
   const orderedPlacements = [...placements].reverse();
 
   for (const placement of orderedPlacements) {
-    const building = sampleBuildingLookup[placement.buildingId];
+    const building =
+      sampleBuildingLookup[placement.buildingId] ??
+      customBuildingLookup[placement.buildingId];
 
     if (!building) {
       continue;
@@ -98,12 +116,33 @@ function createStarterState() {
     width: starterTownMap.width,
     height: starterTownMap.height,
     tiles: tilesToRecord(starterTownMap.tiles),
-    placements: starterTownMap.placements,
+    placements: starterTownMap.placements.map((placement) => ({
+      ...placement,
+    })),
+    customBuildings: {},
     tool: "hand" as MapTool,
     roadType: "stone" as NonNullable<GridTile["roadType"]>,
     decorationType: "tree",
-    selectedBuildingId: starterTownMap.placements[0]?.buildingId ?? "pokecenter",
+    selectedBuildingId:
+      starterTownMap.placements[0]?.buildingId ?? "pokecenter",
     selectedPlacementId: starterTownMap.placements[0]?.id ?? null,
+  };
+}
+
+function createBlankState() {
+  return {
+    id: crypto.randomUUID(),
+    name: "New Town",
+    width: starterTownMap.width,
+    height: starterTownMap.height,
+    tiles: {},
+    placements: [] as BuildingPlacement[],
+    customBuildings: {},
+    tool: "hand" as MapTool,
+    roadType: "stone" as NonNullable<GridTile["roadType"]>,
+    decorationType: "tree",
+    selectedBuildingId: "pokecenter",
+    selectedPlacementId: null,
   };
 }
 
@@ -114,6 +153,38 @@ export const useMapStore = create<MapPlannerState>((set, get) => ({
   setRoadType: (roadType) => set({ roadType }),
   setDecorationType: (decorationType) => set({ decorationType }),
   setSelectedBuildingId: (selectedBuildingId) => set({ selectedBuildingId }),
+  addCustomBuilding: ({ depth, name, theme = "custom", width }) => {
+    const id = `custom-${crypto.randomUUID()}`;
+    const safeWidth = clamp(Math.round(width), 1, 20);
+    const safeDepth = clamp(Math.round(depth), 1, 20);
+    const safeName = name.trim() || "Custom Building";
+
+    const building: BuildingData = {
+      id,
+      name: safeName,
+      description: "Custom map planner building.",
+      theme,
+      footprint: {
+        width: safeWidth,
+        depth: safeDepth,
+        height: 1,
+      },
+      blocks: [],
+      tags: ["custom"],
+      suggestedSkills: [],
+    };
+
+    set((state) => ({
+      customBuildings: {
+        ...state.customBuildings,
+        [id]: building,
+      },
+      selectedBuildingId: id,
+      tool: "building",
+    }));
+
+    return id;
+  },
   selectPlacement: (selectedPlacementId) => set({ selectedPlacementId }),
   updateSelectedPlacementLabel: (label) => {
     const { placements, selectedPlacementId } = get();
@@ -134,19 +205,24 @@ export const useMapStore = create<MapPlannerState>((set, get) => ({
     });
   },
   duplicateSelectedPlacement: () => {
-    const { placements, selectedPlacementId, width, height } = get();
+    const { customBuildings, placements, selectedPlacementId, width, height } =
+      get();
 
     if (!selectedPlacementId) {
       return;
     }
 
-    const placement = placements.find((entry) => entry.id === selectedPlacementId);
+    const placement = placements.find(
+      (entry) => entry.id === selectedPlacementId,
+    );
 
     if (!placement) {
       return;
     }
 
-    const building = sampleBuildingLookup[placement.buildingId];
+    const building =
+      sampleBuildingLookup[placement.buildingId] ??
+      customBuildings[placement.buildingId];
 
     if (!building) {
       return;
@@ -168,19 +244,24 @@ export const useMapStore = create<MapPlannerState>((set, get) => ({
     });
   },
   nudgeSelectedPlacement: (dx, dy) => {
-    const { placements, selectedPlacementId, width, height } = get();
+    const { customBuildings, placements, selectedPlacementId, width, height } =
+      get();
 
     if (!selectedPlacementId) {
       return;
     }
 
-    const placement = placements.find((entry) => entry.id === selectedPlacementId);
+    const placement = placements.find(
+      (entry) => entry.id === selectedPlacementId,
+    );
 
     if (!placement) {
       return;
     }
 
-    const building = sampleBuildingLookup[placement.buildingId];
+    const building =
+      sampleBuildingLookup[placement.buildingId] ??
+      customBuildings[placement.buildingId];
 
     if (!building) {
       return;
@@ -233,8 +314,11 @@ export const useMapStore = create<MapPlannerState>((set, get) => ({
     });
   },
   placeBuilding: (x, y) => {
-    const { selectedBuildingId, placements, width, height } = get();
-    const building = sampleBuildingLookup[selectedBuildingId];
+    const { customBuildings, selectedBuildingId, placements, width, height } =
+      get();
+    const building =
+      sampleBuildingLookup[selectedBuildingId] ??
+      customBuildings[selectedBuildingId];
 
     if (!building) {
       return;
@@ -257,19 +341,24 @@ export const useMapStore = create<MapPlannerState>((set, get) => ({
     });
   },
   moveSelectedPlacement: (x, y) => {
-    const { placements, selectedPlacementId, width, height } = get();
+    const { customBuildings, placements, selectedPlacementId, width, height } =
+      get();
 
     if (!selectedPlacementId) {
       return;
     }
 
-    const placement = placements.find((entry) => entry.id === selectedPlacementId);
+    const placement = placements.find(
+      (entry) => entry.id === selectedPlacementId,
+    );
 
     if (!placement) {
       return;
     }
 
-    const building = sampleBuildingLookup[placement.buildingId];
+    const building =
+      sampleBuildingLookup[placement.buildingId] ??
+      customBuildings[placement.buildingId];
 
     if (!building) {
       return;
@@ -292,7 +381,8 @@ export const useMapStore = create<MapPlannerState>((set, get) => ({
     });
   },
   rotateSelectedPlacement: () => {
-    const { placements, selectedPlacementId, width, height } = get();
+    const { customBuildings, placements, selectedPlacementId, width, height } =
+      get();
 
     if (!selectedPlacementId) {
       return;
@@ -305,9 +395,12 @@ export const useMapStore = create<MapPlannerState>((set, get) => ({
         }
 
         const nextRotation =
-          entry.rotation === 270 ? 0 : ((entry.rotation + 90) as typeof entry.rotation);
-        const building = sampleBuildingLookup[entry.buildingId];
-
+          entry.rotation === 270
+            ? 0
+            : ((entry.rotation + 90) as typeof entry.rotation);
+        const building =
+          sampleBuildingLookup[entry.buildingId] ??
+          customBuildings[entry.buildingId];
         if (!building) {
           return entry;
         }
@@ -331,13 +424,15 @@ export const useMapStore = create<MapPlannerState>((set, get) => ({
     }
 
     set({
-      placements: placements.filter((entry) => entry.id !== selectedPlacementId),
+      placements: placements.filter(
+        (entry) => entry.id !== selectedPlacementId,
+      ),
       selectedPlacementId: null,
     });
   },
   deleteAt: (x, y) => {
-    const { placements, tiles } = get();
-    const placement = findPlacementAtTile(placements, x, y);
+    const { customBuildings, placements, tiles } = get();
+    const placement = findPlacementAtTile(placements, x, y, customBuildings);
 
     if (placement) {
       set({
@@ -351,6 +446,7 @@ export const useMapStore = create<MapPlannerState>((set, get) => ({
     delete nextTiles[tileKey(x, y)];
     set({ tiles: nextTiles });
   },
+  createNewMap: () => set(createBlankState()),
   resetMap: () => set(createStarterState()),
   exportMap: () => {
     const { height, id, name, placements, tiles, width } = get();

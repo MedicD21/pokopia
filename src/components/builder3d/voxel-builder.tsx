@@ -3,7 +3,14 @@
 import { Canvas, type ThreeEvent, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
-import { type InstancedMesh, Matrix4, Object3D, Plane, Vector3 } from "three";
+import {
+  type InstancedMesh,
+  MOUSE,
+  Matrix4,
+  Object3D,
+  Plane,
+  Vector3,
+} from "three";
 import type { RefObject } from "react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
@@ -23,11 +30,13 @@ import type {
 } from "@/lib/types";
 import { type BuilderMode, useBuilderStore } from "@/store/use-builder-store";
 
-const gridSize = 24;
-const maxBuildHeight = 13;
+const gridSize = 30;
+const maxBuildHeight = 20;
+const floorLevel = 0;
 
 type CameraPreset = "iso" | "front" | "back" | "left" | "right" | "top";
 type VoxelPoint = { x: number; y: number; z: number };
+type BuilderPointerEvent = ThreeEvent<PointerEvent | MouseEvent>;
 const cameraPresets: readonly CameraPreset[] = [
   "iso",
   "front",
@@ -113,7 +122,7 @@ const toolDefinitions: ReadonlyArray<{
     label: "Add",
     shortcut: "A",
     description:
-      "Place new blocks with the active material on the current layer.",
+      "Place new blocks on the floor or directly against the face you click.",
   },
   {
     mode: "paint",
@@ -125,7 +134,7 @@ const toolDefinitions: ReadonlyArray<{
   {
     mode: "remove",
     label: "Remove",
-    shortcut: "X",
+    shortcut: "R",
     description: "Delete existing blocks quickly from the current structure.",
   },
   {
@@ -161,7 +170,7 @@ const toolShortcutLookup: Partial<Record<string, BuilderMode>> = {
   h: "hand",
   a: "add",
   p: "paint",
-  x: "remove",
+  r: "remove",
   b: "box",
   f: "frame",
   w: "wall",
@@ -337,11 +346,8 @@ function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
 
-function snapPointerToLayer(
-  event: ThreeEvent<PointerEvent | MouseEvent>,
-  layer: number,
-) {
-  const interactionPlane = new Plane(new Vector3(0, 1, 0), -layer);
+function snapPointerToPlane(event: BuilderPointerEvent, y: number) {
+  const interactionPlane = new Plane(new Vector3(0, 1, 0), -y);
   const intersection = new Vector3();
   const point = event.ray.intersectPlane(interactionPlane, intersection);
 
@@ -351,8 +357,59 @@ function snapPointerToLayer(
 
   return {
     x: clamp(Math.floor(point.x), 0, gridSize - 1),
-    y: layer,
+    y: clamp(Math.round(y), floorLevel, maxBuildHeight - 1),
     z: clamp(Math.floor(point.z), 0, gridSize - 1),
+  };
+}
+
+function getPlacementPointFromBlock(
+  block: VoxelBlock,
+  event: BuilderPointerEvent,
+) {
+  const normal = event.face?.normal;
+
+  if (!normal) {
+    const centerX = block.x + 0.5;
+    const centerY = block.y + 0.5;
+    const centerZ = block.z + 0.5;
+    const deltaX = event.point.x - centerX;
+    const deltaY = event.point.y - centerY;
+    const deltaZ = event.point.z - centerZ;
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+    const absZ = Math.abs(deltaZ);
+
+    if (absX >= absY && absX >= absZ) {
+      return {
+        x: clamp(block.x + Math.sign(deltaX || 1), 0, gridSize - 1),
+        y: block.y,
+        z: block.z,
+      };
+    }
+
+    if (absZ >= absX && absZ >= absY) {
+      return {
+        x: block.x,
+        y: block.y,
+        z: clamp(block.z + Math.sign(deltaZ || 1), 0, gridSize - 1),
+      };
+    }
+
+    return {
+      x: block.x,
+      y: clamp(
+        block.y + Math.sign(deltaY || 1),
+        floorLevel,
+        maxBuildHeight - 1,
+      ),
+      z: block.z,
+    };
+  }
+
+  return {
+    x: clamp(block.x + Math.round(normal.x), 0, gridSize - 1),
+    y: clamp(block.y + Math.round(normal.y), floorLevel, maxBuildHeight - 1),
+    z: clamp(block.z + Math.round(normal.z), 0, gridSize - 1),
   };
 }
 
@@ -481,7 +538,7 @@ function ColorBlockInstances({
   mode: BuilderMode;
   onInteract: (
     block: VoxelBlock,
-    event: ThreeEvent<MouseEvent>,
+    event: BuilderPointerEvent,
     mode: BuilderMode,
   ) => void;
 }) {
@@ -514,8 +571,11 @@ function ColorBlockInstances({
       args={[undefined, undefined, blocks.length]}
       castShadow
       receiveShadow
-      onPointerDown={(event) => event.stopPropagation()}
-      onClick={(event) => {
+      onPointerDown={(event) => {
+        if (event.button !== 0) {
+          return;
+        }
+
         event.stopPropagation();
         const index = event.instanceId;
 
@@ -547,7 +607,7 @@ function BlockInstances({
   mode: BuilderMode;
   onInteract: (
     block: VoxelBlock,
-    event: ThreeEvent<MouseEvent>,
+    event: BuilderPointerEvent,
     mode: BuilderMode,
   ) => void;
 }) {
@@ -739,8 +799,8 @@ function CameraRig({
 }
 
 function BuildScene({
-  activeBlockColor,
   activeLayer,
+  activeBlockColor,
   blocks,
   boxStart,
   frameStart,
@@ -757,8 +817,8 @@ function BuildScene({
   wallPreviewEnd,
   wallPreviewStart,
 }: {
-  activeBlockColor: string;
   activeLayer: number;
+  activeBlockColor: string;
   blocks: VoxelBlock[];
   boxStart: VoxelPoint | null;
   frameStart: VoxelPoint | null;
@@ -766,7 +826,7 @@ function BuildScene({
   mode: BuilderMode;
   onBlockInteract: (
     block: VoxelBlock,
-    event: ThreeEvent<MouseEvent>,
+    event: BuilderPointerEvent,
     mode: BuilderMode,
   ) => void;
   onSelectBlock: (blockId: string | null) => void;
@@ -786,14 +846,32 @@ function BuildScene({
     wallPreviewEnd,
     wallHeight,
   );
+  const draftPlaneY = clamp(
+    wallPreviewStart?.y ?? frameStart?.y ?? boxStart?.y ?? activeLayer,
+    floorLevel,
+    maxBuildHeight - 1,
+  );
   const cameraUnlocked = mode === "hand";
+  const mouseButtons = cameraUnlocked
+    ? {
+        LEFT: MOUSE.ROTATE,
+        MIDDLE: MOUSE.DOLLY,
+        RIGHT: MOUSE.PAN,
+      }
+    : {
+        RIGHT: MOUSE.ROTATE,
+      };
 
   return (
     <Canvas
       camera={{ position: [14, 10, 14], fov: 40 }}
       shadows
       className="h-full w-full"
-      onPointerMissed={() => onSelectBlock(null)}
+      onPointerMissed={(event) => {
+        if (event.button === 0) {
+          onSelectBlock(null);
+        }
+      }}
     >
       <color attach="background" args={["#09111f"]} />
       <ambientLight intensity={1} />
@@ -815,7 +893,7 @@ function BuildScene({
       />
       <gridHelper
         args={[gridSize, gridSize, "#6d87ae", "#22334f"]}
-        position={[gridSize / 2, activeLayer, gridSize / 2]}
+        position={[gridSize / 2, floorLevel, gridSize / 2]}
       />
       <MajorGridGuides y={activeLayer + 0.03} />
       <mesh
@@ -823,8 +901,12 @@ function BuildScene({
         position={[gridSize / 2, activeLayer + 0.01, gridSize / 2]}
         receiveShadow
         onPointerDown={(event) => {
+          if (event.button !== 0) {
+            return;
+          }
+
           event.stopPropagation();
-          const snappedPoint = snapPointerToLayer(event, activeLayer);
+          const snappedPoint = snapPointerToPlane(event, activeLayer);
 
           if (!snappedPoint) {
             return;
@@ -847,10 +929,14 @@ function BuildScene({
       {mode === "wall" ? (
         <mesh
           rotation-x={-Math.PI / 2}
-          position={[gridSize / 2, maxBuildHeight + 0.35, gridSize / 2]}
+          position={[gridSize / 2, draftPlaneY + 0.02, gridSize / 2]}
           onPointerDown={(event) => {
+            if (event.button !== 0) {
+              return;
+            }
+
             event.stopPropagation();
-            const snappedPoint = snapPointerToLayer(event, activeLayer);
+            const snappedPoint = snapPointerToPlane(event, draftPlaneY);
 
             if (!snappedPoint) {
               return;
@@ -859,8 +945,12 @@ function BuildScene({
             onWallDragStart(snappedPoint.x, snappedPoint.y, snappedPoint.z);
           }}
           onPointerMove={(event) => {
+            if (event.buttons !== 1) {
+              return;
+            }
+
             event.stopPropagation();
-            const snappedPoint = snapPointerToLayer(event, activeLayer);
+            const snappedPoint = snapPointerToPlane(event, draftPlaneY);
 
             if (!snappedPoint) {
               return;
@@ -869,14 +959,64 @@ function BuildScene({
             onWallDragMove(snappedPoint.x, snappedPoint.y, snappedPoint.z);
           }}
           onPointerUp={(event) => {
+            if (event.button !== 0) {
+              return;
+            }
+
             event.stopPropagation();
-            const snappedPoint = snapPointerToLayer(event, activeLayer);
+            const snappedPoint = snapPointerToPlane(event, draftPlaneY);
 
             if (!snappedPoint) {
               return;
             }
 
             onWallDragEnd(snappedPoint.x, snappedPoint.y, snappedPoint.z);
+          }}
+        >
+          <planeGeometry args={[gridSize, gridSize]} />
+          <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+        </mesh>
+      ) : null}
+      {mode === "box" && boxStart ? (
+        <mesh
+          rotation-x={-Math.PI / 2}
+          position={[gridSize / 2, draftPlaneY + 0.02, gridSize / 2]}
+          onPointerDown={(event) => {
+            if (event.button !== 0) {
+              return;
+            }
+
+            event.stopPropagation();
+            const snappedPoint = snapPointerToPlane(event, draftPlaneY);
+
+            if (!snappedPoint) {
+              return;
+            }
+
+            onSurfaceInteract(snappedPoint.x, snappedPoint.y, snappedPoint.z);
+          }}
+        >
+          <planeGeometry args={[gridSize, gridSize]} />
+          <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+        </mesh>
+      ) : null}
+      {mode === "frame" && frameStart ? (
+        <mesh
+          rotation-x={-Math.PI / 2}
+          position={[gridSize / 2, draftPlaneY + 0.02, gridSize / 2]}
+          onPointerDown={(event) => {
+            if (event.button !== 0) {
+              return;
+            }
+
+            event.stopPropagation();
+            const snappedPoint = snapPointerToPlane(event, draftPlaneY);
+
+            if (!snappedPoint) {
+              return;
+            }
+
+            onSurfaceInteract(snappedPoint.x, snappedPoint.y, snappedPoint.z);
           }}
         >
           <planeGeometry args={[gridSize, gridSize]} />
@@ -895,13 +1035,14 @@ function BuildScene({
       <OrbitControls
         ref={controlsRef}
         makeDefault
-        enabled={cameraUnlocked}
+        enabled
         enableDamping
         enablePan={cameraUnlocked}
-        enableRotate={cameraUnlocked}
+        enableRotate
         enableZoom={cameraUnlocked}
+        mouseButtons={mouseButtons}
         maxDistance={72}
-        minDistance={4}
+        minDistance={20}
         maxPolarAngle={Math.PI / 2.05}
       />
     </Canvas>
@@ -912,6 +1053,7 @@ export function VoxelBuilder() {
   const wallDragActiveRef = useRef(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>("iso");
+  const [activeLayer, setActiveLayer] = useState(floorLevel);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [boxStart, setBoxStart] = useState<VoxelPoint | null>(null);
   const [frameStart, setFrameStart] = useState<VoxelPoint | null>(null);
@@ -937,12 +1079,10 @@ export function VoxelBuilder() {
   const blocks = useBuilderStore((state) => state.blocks);
   const activeMaterial = useBuilderStore((state) => state.activeMaterial);
   const activeColor = useBuilderStore((state) => state.activeColor);
-  const activeLayer = useBuilderStore((state) => state.activeLayer);
   const mode = useBuilderStore((state) => state.mode);
   const setName = useBuilderStore((state) => state.setName);
   const setActiveMaterial = useBuilderStore((state) => state.setActiveMaterial);
   const setActiveColor = useBuilderStore((state) => state.setActiveColor);
-  const setActiveLayer = useBuilderStore((state) => state.setActiveLayer);
   const setMode = useBuilderStore((state) => state.setMode);
   const loadTemplate = useBuilderStore((state) => state.loadTemplate);
   const addBlock = useBuilderStore((state) => state.addBlock);
@@ -951,7 +1091,6 @@ export function VoxelBuilder() {
   const fillBox = useBuilderStore((state) => state.fillBox);
   const fillFrame = useBuilderStore((state) => state.fillFrame);
   const buildWall = useBuilderStore((state) => state.buildWall);
-  const clearLayer = useBuilderStore((state) => state.clearLayer);
   const clear = useBuilderStore((state) => state.clear);
   const exportBuilding = useBuilderStore((state) => state.exportBuilding);
   const summary = summarizeMaterials(blocks);
@@ -959,8 +1098,10 @@ export function VoxelBuilder() {
   const previewBlueprint = buildPreviewBlueprint(blueprint);
   const selectedBlock =
     blocks.find((block) => block.id === selectedBlockId) ?? null;
-  const maxWallHeight = Math.max(1, maxBuildHeight - activeLayer);
-  const effectiveWallHeight = Math.min(wallHeight, maxWallHeight);
+  const availableWallHeight = wallPreviewStart
+    ? Math.max(1, maxBuildHeight - wallPreviewStart.y)
+    : maxBuildHeight;
+  const effectiveWallHeight = Math.min(wallHeight, availableWallHeight);
   const activeTool =
     toolDefinitions.find((tool) => tool.mode === mode) ?? toolDefinitions[0];
   const activePaletteMaterials = builderMaterialSlots.reduce<
@@ -1013,6 +1154,22 @@ export function VoxelBuilder() {
         return;
       }
 
+      if (event.key === "[" || event.key === "{") {
+        event.preventDefault();
+        setActiveLayer((current) =>
+          clamp(current - 1, floorLevel, maxBuildHeight - 1),
+        );
+        return;
+      }
+
+      if (event.key === "]" || event.key === "}") {
+        event.preventDefault();
+        setActiveLayer((current) =>
+          clamp(current + 1, floorLevel, maxBuildHeight - 1),
+        );
+        return;
+      }
+
       const nextMode = toolShortcutLookup[event.key.toLowerCase()];
 
       if (!nextMode) {
@@ -1044,7 +1201,6 @@ export function VoxelBuilder() {
   function commitBoxPoint(point: VoxelPoint) {
     if (!boxStart) {
       setBoxStart(point);
-      setActiveLayer(point.y);
       setSelectedBlockId(null);
       return;
     }
@@ -1057,7 +1213,6 @@ export function VoxelBuilder() {
   function commitFramePoint(point: VoxelPoint) {
     if (!frameStart) {
       setFrameStart(point);
-      setActiveLayer(point.y);
       setSelectedBlockId(null);
       return;
     }
@@ -1068,6 +1223,8 @@ export function VoxelBuilder() {
   }
 
   function handleSurfaceAction(x: number, y: number, z: number) {
+    const layerY = clamp(activeLayer, floorLevel, maxBuildHeight - 1);
+
     if (mode === "hand") {
       setSelectedBlockId(null);
       return;
@@ -1078,12 +1235,12 @@ export function VoxelBuilder() {
     }
 
     if (mode === "box") {
-      commitBoxPoint({ x, y, z });
+      commitBoxPoint({ x, y: layerY, z });
       return;
     }
 
     if (mode === "frame") {
-      commitFramePoint({ x, y, z });
+      commitFramePoint({ x, y: layerY, z });
       return;
     }
 
@@ -1092,23 +1249,26 @@ export function VoxelBuilder() {
     }
 
     if (mode === "remove") {
-      removeBlock(x, y, z);
+      removeBlock(x, layerY, z);
       return;
     }
 
     if (mode === "paint") {
-      paintBlock(x, y, z);
+      paintBlock(x, layerY, z);
       return;
     }
 
-    addBlock(x, y, z);
+    addBlock(x, layerY, z);
+    setSelectedBlockId(`${x}:${layerY}:${z}`);
   }
 
   function handleBlockInteraction(
     block: VoxelBlock,
-    event: ThreeEvent<MouseEvent>,
+    event: BuilderPointerEvent,
     interactionMode: BuilderMode,
   ) {
+    const layerY = clamp(activeLayer, floorLevel, maxBuildHeight - 1);
+
     if (interactionMode === "hand") {
       setSelectedBlockId(block.id);
       setActiveLayer(block.y);
@@ -1117,47 +1277,67 @@ export function VoxelBuilder() {
 
     if (interactionMode === "eyedropper") {
       setSelectedBlockId(block.id);
+      setActiveLayer(block.y);
       setActiveMaterial(block.material);
       setActiveColor(block.color);
-      setActiveLayer(block.y);
-      return;
-    }
-
-    if (interactionMode === "wall") {
       return;
     }
 
     if (interactionMode === "box") {
-      commitBoxPoint({ x: block.x, y: block.y, z: block.z });
+      const point = getPlacementPointFromBlock(block, event);
+      commitBoxPoint({ ...point, y: layerY });
       return;
     }
 
     if (interactionMode === "frame") {
-      commitFramePoint({ x: block.x, y: block.y, z: block.z });
+      const point = getPlacementPointFromBlock(block, event);
+      commitFramePoint({ ...point, y: layerY });
+      return;
+    }
+
+    if (interactionMode === "wall") {
+      const point = getPlacementPointFromBlock(block, event);
+      const snappedLayerPoint = { ...point, y: layerY };
+
+      if (!wallPreviewStart) {
+        handleWallDragStart(
+          snappedLayerPoint.x,
+          snappedLayerPoint.y,
+          snappedLayerPoint.z,
+        );
+      } else {
+        handleWallDragEnd(
+          snappedLayerPoint.x,
+          snappedLayerPoint.y,
+          snappedLayerPoint.z,
+        );
+      }
       return;
     }
 
     if (interactionMode === "remove") {
+      if (block.y !== layerY) {
+        return;
+      }
+
       removeBlock(block.x, block.y, block.z);
       return;
     }
 
     if (interactionMode === "paint") {
+      if (block.y !== layerY) {
+        return;
+      }
+
       paintBlock(block.x, block.y, block.z);
       return;
     }
 
-    const normal = event.face?.normal;
-
-    if (!normal) {
-      return;
-    }
-
-    const nextX = clamp(block.x + Math.round(normal.x), 0, gridSize - 1);
-    const nextY = clamp(block.y + Math.round(normal.y), 0, 12);
-    const nextZ = clamp(block.z + Math.round(normal.z), 0, gridSize - 1);
+    const sensedPoint = getPlacementPointFromBlock(block, event);
+    const nextX = sensedPoint.x;
+    const nextY = layerY;
+    const nextZ = sensedPoint.z;
     addBlock(nextX, nextY, nextZ);
-    setActiveLayer(nextY);
     setSelectedBlockId(`${nextX}:${nextY}:${nextZ}`);
   }
 
@@ -1195,7 +1375,11 @@ export function VoxelBuilder() {
   }
 
   function handleWallDragStart(x: number, y: number, z: number) {
-    const point = { x, y, z };
+    const point = {
+      x,
+      y: clamp(activeLayer, floorLevel, maxBuildHeight - 1),
+      z,
+    };
 
     wallDragActiveRef.current = true;
     setBoxStart(null);
@@ -1209,7 +1393,11 @@ export function VoxelBuilder() {
       return;
     }
 
-    setWallPreviewEnd({ x, y, z });
+    setWallPreviewEnd({
+      x,
+      y: clamp(activeLayer, floorLevel, maxBuildHeight - 1),
+      z,
+    });
   }
 
   function handleWallDragEnd(x: number, y: number, z: number) {
@@ -1217,7 +1405,7 @@ export function VoxelBuilder() {
       return;
     }
 
-    const end = { x, y, z };
+    const end = { x, y: clamp(activeLayer, floorLevel, maxBuildHeight - 1), z };
 
     buildWall(wallPreviewStart, end, effectiveWallHeight);
     wallDragActiveRef.current = false;
@@ -1267,6 +1455,38 @@ export function VoxelBuilder() {
                 </button>
               ))}
             </div>
+            <div className="flex items-center gap-2 rounded-xl bg-[color:var(--surface-strong)] px-2.5 py-1.5">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--muted)]">
+                Layer
+              </span>
+              <button
+                type="button"
+                onClick={() =>
+                  setActiveLayer((current) =>
+                    clamp(current - 1, floorLevel, maxBuildHeight - 1),
+                  )
+                }
+                className="h-6 w-6 rounded-lg border border-[color:var(--line)] bg-[color:var(--surface)] text-sm font-semibold text-[color:var(--foreground)]"
+                aria-label="Decrease active layer"
+              >
+                −
+              </button>
+              <span className="min-w-[2ch] text-center text-xs font-semibold text-[color:var(--foreground)]">
+                {activeLayer}
+              </span>
+              <button
+                type="button"
+                onClick={() =>
+                  setActiveLayer((current) =>
+                    clamp(current + 1, floorLevel, maxBuildHeight - 1),
+                  )
+                }
+                className="h-6 w-6 rounded-lg border border-[color:var(--line)] bg-[color:var(--surface)] text-sm font-semibold text-[color:var(--foreground)]"
+                aria-label="Increase active layer"
+              >
+                +
+              </button>
+            </div>
           </div>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {toolDefinitions.map((tool) => (
@@ -1291,7 +1511,7 @@ export function VoxelBuilder() {
                 <input
                   type="range"
                   min={1}
-                  max={maxWallHeight}
+                  max={availableWallHeight}
                   value={effectiveWallHeight}
                   onChange={(event) =>
                     setWallHeight(Number(event.target.value))
@@ -1313,8 +1533,8 @@ export function VoxelBuilder() {
           {/* 3D Canvas */}
           <div className="min-h-[600px] flex-1 overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-[#09111f]">
             <BuildScene
-              activeBlockColor={activeColor}
               activeLayer={activeLayer}
+              activeBlockColor={activeColor}
               blocks={blocks}
               boxStart={boxStart}
               frameStart={frameStart}
@@ -1347,32 +1567,12 @@ export function VoxelBuilder() {
               </div>
               <div className="rounded-2xl bg-[color:var(--surface-strong)] px-3 py-2.5">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--accent-2)]">
-                  Layer
+                  Materials
                 </p>
                 <p className="mt-0.5 font-display text-xl text-[color:var(--foreground)]">
-                  Y {activeLayer}
+                  {summary.materials.length}
                 </p>
               </div>
-            </div>
-
-            {/* Active layer slider */}
-            <div className="rounded-2xl bg-[color:var(--surface-strong)] px-3 py-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-[color:var(--muted)]">
-                  Active layer
-                </span>
-                <span className="rounded-full bg-[color:var(--accent)]/14 px-2.5 py-0.5 text-xs font-semibold text-[color:var(--foreground)]">
-                  Y {activeLayer}
-                </span>
-              </div>
-              <input
-                type="range"
-                min={0}
-                max={12}
-                value={activeLayer}
-                onChange={(event) => setActiveLayer(Number(event.target.value))}
-                className="mt-2 w-full accent-[color:var(--accent)]"
-              />
             </div>
 
             {/* Block color */}
@@ -1535,13 +1735,6 @@ export function VoxelBuilder() {
                 className="rounded-2xl bg-[color:var(--surface-strong)] px-3 py-2.5 text-xs font-semibold text-[color:var(--foreground)]"
               >
                 Clear scene
-              </button>
-              <button
-                type="button"
-                onClick={() => clearLayer(activeLayer)}
-                className="col-span-2 rounded-2xl bg-[color:var(--surface-strong)] px-3 py-2.5 text-xs font-semibold text-[color:var(--foreground)]"
-              >
-                Clear layer Y {activeLayer}
               </button>
             </div>
             {saveMessage ? (

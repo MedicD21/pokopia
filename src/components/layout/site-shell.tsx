@@ -3,13 +3,31 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 import { SiteNav } from "@/components/layout/site-nav";
 
 export function SiteShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const editorMode = pathname === "/map" || pathname === "/builder" || pathname === "/ai-builder";
+  const [coffeeCollapsed, setCoffeeCollapsed] = useState(false);
+  const editorMode =
+    pathname === "/map" ||
+    pathname === "/builder" ||
+    pathname === "/ai-builder";
+
+  useEffect(() => {
+    if (window.matchMedia("(min-width: 768px)").matches) {
+      setCoffeeCollapsed(false);
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setCoffeeCollapsed(true);
+    }, 5000);
+
+    return () => window.clearTimeout(timer);
+  }, []);
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -50,13 +68,60 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 </span>
               </Link>
               <p className="max-w-2xl text-sm leading-6 text-[color:var(--muted)]">
-                Town layout, voxel buildings, material planning, and helper recommendations for an original monster-building world.
+                Town layout, voxel buildings, material planning, and helper
+                recommendations for an original monster-building world.
               </p>
             </div>
             <SiteNav />
           </div>
         </header>
-        <main className={editorMode ? "pb-6 pt-4" : "pb-14 pt-8"}>{children}</main>
+        <main className={editorMode ? "pb-6 pt-4" : "pb-14 pt-8"}>
+          {children}
+        </main>
+      </div>
+      <div className="fixed bottom-4 left-4 z-30 flex items-end gap-2">
+        <a
+          href="https://www.buymeacoffee.com/Dushin"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Buy me a coffee"
+          className="hidden transition hover:scale-[1.02] md:block"
+        >
+          <img
+            src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=Dushin&button_colour=40DCA5&font_colour=ffffff&font_family=Poppins&outline_colour=000000&coffee_colour=FFDD00"
+            alt="Buy me a coffee"
+            className="h-auto w-[200px]"
+            loading="lazy"
+          />
+        </a>
+        {!coffeeCollapsed ? (
+          <a
+            href="https://www.buymeacoffee.com/Dushin"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Buy me a coffee"
+            className="transition hover:scale-[1.02] md:hidden"
+          >
+            <img
+              src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=Dushin&button_colour=40DCA5&font_colour=ffffff&font_family=Poppins&outline_colour=000000&coffee_colour=FFDD00"
+              alt="Buy me a coffee"
+              className="h-auto w-[200px] max-w-[60vw]"
+              loading="lazy"
+            />
+          </a>
+        ) : null}
+        <button
+          type="button"
+          onClick={() => setCoffeeCollapsed((current) => !current)}
+          aria-label={
+            coffeeCollapsed
+              ? "Expand Buy me a coffee button"
+              : "Collapse Buy me a coffee button"
+          }
+          className="flex h-8 w-8 items-center justify-center rounded-full border border-[color:var(--line)] bg-[color:var(--surface-strong)] text-sm font-bold text-[color:var(--foreground)] transition hover:bg-[color:var(--surface-hover)] md:hidden"
+        >
+          {coffeeCollapsed ? "→" : "←"}
+        </button>
       </div>
     </div>
   );

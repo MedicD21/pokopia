@@ -25,13 +25,11 @@ interface BuilderState {
   blocks: VoxelBlock[];
   activeMaterial: BlockMaterialId;
   activeColor: string;
-  activeLayer: number;
   mode: BuilderMode;
   setName: (name: string) => void;
   setDescription: (description: string) => void;
   setActiveMaterial: (material: BlockMaterialId) => void;
   setActiveColor: (color: string) => void;
-  setActiveLayer: (layer: number) => void;
   setMode: (mode: BuilderMode) => void;
   loadTemplate: (buildingId: string) => void;
   loadBlueprint: (building: BuildingData) => void;
@@ -74,7 +72,6 @@ interface BuilderState {
     dy: number,
     dz: number,
   ) => string | null;
-  clearLayer: (layer: number) => void;
   clear: () => void;
   exportBuilding: () => BuildingData;
 }
@@ -264,7 +261,6 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   blocks: cloneBlocks(defaultBuilding.blocks),
   activeMaterial: "wooden-wall",
   activeColor: blockMaterialLookup["wooden-wall"]?.color ?? blockMaterialLookup.stone.color,
-  activeLayer: 0,
   mode: "hand",
   setName: (name) => set({ name }),
   setDescription: (description) => set({ description }),
@@ -274,10 +270,6 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       activeColor: blockMaterialLookup[activeMaterial].color,
     }),
   setActiveColor: (activeColor) => set({ activeColor }),
-  setActiveLayer: (layer) =>
-    set({
-      activeLayer: Math.max(0, Math.min(12, Math.round(layer))),
-    }),
   setMode: (mode) => set({ mode }),
   loadTemplate: (buildingId) => {
     const template = sampleBuildingLookup[buildingId];
@@ -296,7 +288,6 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       blocks: cloneBlocks(nextBuilding.blocks),
       activeMaterial: "wooden-wall",
       activeColor: blockMaterialLookup["wooden-wall"]?.color ?? blockMaterialLookup.stone.color,
-      activeLayer: 0,
       mode: "hand",
     });
   },
@@ -311,7 +302,6 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       blocks: cloneBlocks(nextBuilding.blocks),
       activeMaterial: "wooden-wall",
       activeColor: blockMaterialLookup["wooden-wall"]?.color ?? blockMaterialLookup.stone.color,
-      activeLayer: 0,
       mode: "hand",
     });
   },
@@ -460,12 +450,6 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
 
     return nextId;
   },
-  clearLayer: (layer) => {
-    const { blocks } = get();
-    set({
-      blocks: sortBlocks(blocks.filter((block) => block.y !== layer)),
-    });
-  },
   clear: () =>
     set({
       name: "New Build",
@@ -474,7 +458,6 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       loadedTemplateId: "custom",
       blocks: [],
       activeMaterial: "wooden-wall",
-      activeLayer: 0,
       activeColor: blockMaterialLookup["wooden-wall"]?.color ?? blockMaterialLookup.stone.color,
       mode: "hand",
     }),
