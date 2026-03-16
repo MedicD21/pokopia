@@ -19,6 +19,11 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "Pokopia Planner",
   description: "Town planning, voxel building, material tracking, and helper recommendations for an original monster-building world.",
+  icons: {
+    icon: "/branding/pokopia-logo.png",
+    shortcut: "/branding/pokopia-logo.png",
+    apple: "/branding/pokopia-logo.png",
+  },
 };
 
 export default function RootLayout({

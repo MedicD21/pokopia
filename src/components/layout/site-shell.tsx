@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
@@ -27,9 +28,26 @@ export function SiteShell({ children }: { children: ReactNode }) {
         >
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="space-y-2">
-              <Link href="/home" className="inline-flex items-center gap-3">
-                <span className="rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-3 py-2 font-display text-lg text-[color:var(--foreground)]">
-                  Pokopia Planner
+              <Link href="/home" className="inline-flex items-center gap-4">
+                <span className="relative flex h-16 w-16 items-center justify-center rounded-full border border-[color:var(--foreground)]/45 bg-[radial-gradient(circle_at_35%_30%,rgba(242,160,39,0.28),rgba(17,27,44,0.94)_72%)] shadow-[0_16px_34px_rgba(0,0,0,0.32)]">
+                  <span className="absolute inset-[6px] rounded-full border border-[color:var(--foreground)]/18 bg-[color:var(--surface)]/95" />
+                  <Image
+                    src="/branding/pokopia-logo.png"
+                    alt="Pokopia Planner logo"
+                    width={512}
+                    height={512}
+                    sizes="64px"
+                    priority
+                    className="relative z-10 h-11 w-11 object-contain"
+                  />
+                </span>
+                <span className="flex flex-col">
+                  <span className="font-display text-2xl text-[color:var(--foreground)]">
+                    Pokopia Planner
+                  </span>
+                  <span className="text-xs font-semibold uppercase tracking-[0.28em] text-[color:var(--accent-2)]">
+                    Town + Build Studio
+                  </span>
                 </span>
               </Link>
               <p className="max-w-2xl text-sm leading-6 text-[color:var(--muted)]">
