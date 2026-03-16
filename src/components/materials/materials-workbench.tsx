@@ -48,22 +48,22 @@ export function MaterialsWorkbench() {
             <button
               type="button"
               onClick={() => setSource("sample")}
-              className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold ${
-                source === "sample"
-                  ? "bg-[color:var(--foreground)] text-[color:var(--background)]"
-                  : "bg-white/70 text-[color:var(--foreground)]"
-              }`}
+                className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold ${
+                  source === "sample"
+                    ? "bg-[color:var(--foreground)] text-[color:var(--background)]"
+                    : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+                }`}
             >
               Starter blueprint
             </button>
             <button
               type="button"
               onClick={() => setSource("builder")}
-              className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold ${
-                source === "builder" && builderBlocks.length > 0
-                  ? "bg-[color:var(--foreground)] text-[color:var(--background)]"
-                  : "bg-white/70 text-[color:var(--foreground)]"
-              }`}
+                className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold ${
+                  source === "builder" && builderBlocks.length > 0
+                    ? "bg-[color:var(--foreground)] text-[color:var(--background)]"
+                    : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+                }`}
               disabled={builderBlocks.length === 0}
             >
               Live builder scene
@@ -77,7 +77,7 @@ export function MaterialsWorkbench() {
               <select
                 value={selectedId}
                 onChange={(event) => setSelectedId(event.target.value)}
-                className="w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm outline-none"
+                className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
               >
                 {sampleBuildings.map((building) => (
                   <option key={building.id} value={building.id}>
@@ -87,7 +87,7 @@ export function MaterialsWorkbench() {
               </select>
             </label>
           ) : null}
-          <div className="rounded-2xl bg-white/70 p-4">
+          <div className="rounded-2xl bg-[color:var(--surface)] p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[color:var(--accent-2)]">
               Active Build
             </p>

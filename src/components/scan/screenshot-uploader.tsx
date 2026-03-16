@@ -79,7 +79,7 @@ export function ScreenshotUploader() {
             className={`rounded-[28px] border-2 border-dashed px-6 py-10 text-center transition ${
               isDragActive
                 ? "border-[color:var(--accent-2)] bg-[color:var(--accent-2)]/10"
-                : "border-white/70 bg-white/65"
+                : "border-[color:var(--line)] bg-[color:var(--surface)]"
             }`}
           >
             <input {...getInputProps()} />
@@ -91,7 +91,7 @@ export function ScreenshotUploader() {
             </p>
           </div>
           {file ? (
-            <div className="rounded-2xl bg-white/70 px-4 py-4">
+            <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4">
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[color:var(--accent-2)]">
                 Selected file
               </p>
@@ -137,13 +137,13 @@ export function ScreenshotUploader() {
             }
           >
             <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl bg-white/70 px-4 py-4">
+              <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4">
                 <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
                   Blocks
                 </p>
                 <p className="mt-1 font-display text-2xl">{summary.totalBlocks}</p>
               </div>
-              <div className="rounded-2xl bg-white/70 px-4 py-4">
+              <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4">
                 <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
                   Footprint
                 </p>
@@ -151,7 +151,7 @@ export function ScreenshotUploader() {
                   {summary.footprint.width} x {summary.footprint.depth}
                 </p>
               </div>
-              <div className="rounded-2xl bg-white/70 px-4 py-4">
+              <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4">
                 <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
                   Height
                 </p>

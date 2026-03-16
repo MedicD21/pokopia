@@ -19,7 +19,7 @@ export function SectionCard({
 }: SectionCardProps) {
   return (
     <section
-      className={`rounded-[28px] border border-[color:var(--line)]/70 bg-[color:var(--card)]/90 p-6 shadow-[0_20px_60px_rgba(18,39,63,0.08)] backdrop-blur ${className}`.trim()}
+      className={`rounded-[28px] border border-[color:var(--line)] bg-[color:var(--card)]/95 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.34)] backdrop-blur ${className}`.trim()}
     >
       {(title || eyebrow || description || action) && (
         <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

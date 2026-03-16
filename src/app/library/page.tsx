@@ -13,13 +13,13 @@ export default function LibraryPage() {
         description="These reusable templates seed the builder, planner, materials calculator, and recommendation system."
       >
         <div className="grid gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl bg-white/70 px-4 py-4">
+          <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4">
             <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
               Library items
             </p>
             <p className="mt-1 font-display text-3xl">{sampleBuildings.length}</p>
           </div>
-          <div className="rounded-2xl bg-white/70 px-4 py-4">
+          <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4">
             <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
               Largest build
             </p>
@@ -27,7 +27,7 @@ export default function LibraryPage() {
               {Math.max(...sampleBuildings.map((building) => building.blocks.length))}
             </p>
           </div>
-          <div className="rounded-2xl bg-white/70 px-4 py-4">
+          <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4">
             <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
               Reusable
             </p>
@@ -55,13 +55,13 @@ export default function LibraryPage() {
             >
               <div className="space-y-4">
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="rounded-2xl bg-white/70 px-3 py-3 text-center">
+                  <div className="rounded-2xl bg-[color:var(--surface)] px-3 py-3 text-center">
                     <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
                       Blocks
                     </p>
                     <p className="mt-1 font-display text-xl">{building.blocks.length}</p>
                   </div>
-                  <div className="rounded-2xl bg-white/70 px-3 py-3 text-center">
+                  <div className="rounded-2xl bg-[color:var(--surface)] px-3 py-3 text-center">
                     <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
                       Size
                     </p>
@@ -69,7 +69,7 @@ export default function LibraryPage() {
                       {building.footprint.width}x{building.footprint.depth}
                     </p>
                   </div>
-                  <div className="rounded-2xl bg-white/70 px-3 py-3 text-center">
+                  <div className="rounded-2xl bg-[color:var(--surface)] px-3 py-3 text-center">
                     <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
                       Theme
                     </p>
@@ -80,7 +80,7 @@ export default function LibraryPage() {
                   {summary.materials.slice(0, 3).map((material) => (
                     <div
                       key={material.materialId}
-                      className="flex items-center justify-between rounded-2xl bg-white/70 px-4 py-3 text-sm"
+                      className="flex items-center justify-between rounded-2xl bg-[color:var(--surface)] px-4 py-3 text-sm"
                     >
                       <span>{material.name}</span>
                       <strong>{material.count}</strong>

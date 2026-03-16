@@ -1,13 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6efe1;
-  --foreground: #12273f;
-  --card: rgba(255, 247, 235, 0.9);
-  --line: #d9c7a2;
-  --muted: #5d6d82;
-  --accent: #ff8a3d;
-  --accent-2: #29a892;
+  --background: #08111f;
+  --foreground: #eef4ff;
+  --card: rgba(12, 21, 37, 0.9);
+  --panel: rgba(10, 18, 31, 0.82);
+  --surface: rgba(20, 32, 52, 0.82);
+  --surface-strong: rgba(28, 44, 71, 0.94);
+  --surface-hover: rgba(37, 58, 92, 0.96);
+  --line: #324564;
+  --muted: #9bb0d1;
+  --accent: #ff9d45;
+  --accent-2: #42d3bd;
 }
 
 @theme inline {
@@ -31,16 +35,17 @@ body {
   color: var(--foreground);
   font-family: var(--font-round), sans-serif;
   min-height: 100vh;
+  color-scheme: dark;
 }
 
 body::before {
   background-image:
-    linear-gradient(rgba(18, 39, 63, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 39, 63, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(157, 181, 219, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(157, 181, 219, 0.06) 1px, transparent 1px);
   background-size: 34px 34px;
   content: "";
   inset: 0;
-  opacity: 0.55;
+  opacity: 1;
   pointer-events: none;
   position: fixed;
   z-index: -1;
@@ -59,6 +64,6 @@ textarea {
 }
 
 ::selection {
-  background: rgba(255, 138, 61, 0.28);
+  background: rgba(255, 157, 69, 0.34);
   color: var(--foreground);
 }

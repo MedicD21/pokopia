@@ -30,7 +30,7 @@ export default function HomePage() {
               </Link>
               <Link
                 href="/map"
-                className="rounded-2xl bg-white/80 px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
+                className="rounded-2xl bg-[color:var(--surface-strong)] px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
               >
                 Open map
               </Link>
@@ -69,6 +69,7 @@ export default function HomePage() {
                 <Link
                   href={item.href}
                   className="rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
                 >
                   Open
                 </Link>

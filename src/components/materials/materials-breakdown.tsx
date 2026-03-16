@@ -16,7 +16,7 @@ export function MaterialsBreakdown({
 }: MaterialsBreakdownProps) {
   return (
     <SectionCard title={title} description={description}>
-      <div className="mb-4 flex items-center justify-between rounded-2xl bg-white/60 px-4 py-3">
+      <div className="mb-4 flex items-center justify-between rounded-2xl bg-[color:var(--surface)] px-4 py-3">
         <p className="text-sm font-semibold text-[color:var(--muted)]">
           Total tracked blocks
         </p>
@@ -28,7 +28,7 @@ export function MaterialsBreakdown({
         {materials.map((material) => (
           <div
             key={material.materialId}
-            className="rounded-2xl border border-white/60 bg-white/70 px-4 py-4"
+            className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-4"
           >
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3">

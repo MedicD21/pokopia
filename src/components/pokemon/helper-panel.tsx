@@ -17,7 +17,7 @@ export function HelperPanel({
         {helpers.map((helper) => (
           <div
             key={helper.id}
-            className="rounded-2xl border border-white/60 bg-white/70 px-4 py-4"
+            className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-4"
           >
             <div className="flex items-center justify-between gap-4">
               <div>

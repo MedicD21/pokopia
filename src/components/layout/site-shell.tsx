@@ -12,7 +12,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,214,127,0.35),transparent_30%),radial-gradient(circle_at_top_right,rgba(56,183,161,0.24),transparent_32%),radial-gradient(circle_at_bottom,rgba(125,166,255,0.18),transparent_34%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,157,69,0.16),transparent_30%),radial-gradient(circle_at_top_right,rgba(66,211,189,0.12),transparent_32%),radial-gradient(circle_at_bottom,rgba(125,166,255,0.12),transparent_34%)]" />
       <div
         className={`relative ${
           editorMode
@@ -21,7 +21,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
         }`}
       >
         <header
-          className={`sticky top-3 z-20 rounded-[32px] border border-white/60 bg-white/55 shadow-[0_22px_60px_rgba(18,39,63,0.12)] backdrop-blur ${
+          className={`sticky top-3 z-20 rounded-[32px] border border-[color:var(--line)] bg-[color:var(--panel)] shadow-[0_22px_60px_rgba(0,0,0,0.36)] backdrop-blur ${
             editorMode ? "px-4 py-4 sm:px-5" : "px-5 py-5 sm:px-7"
           }`}
         >

@@ -19,8 +19,8 @@ export function SiteNav() {
             href={item.href}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5 ${
               active
-                ? "bg-[color:var(--foreground)] text-[color:var(--background)] shadow-[0_8px_20px_rgba(18,39,63,0.2)]"
-                : "bg-white/60 text-[color:var(--foreground)] hover:bg-white"
+                ? "bg-[color:var(--foreground)] text-[color:var(--background)] shadow-[0_8px_20px_rgba(0,0,0,0.35)]"
+                : "bg-[color:var(--surface)] text-[color:var(--foreground)] hover:bg-[color:var(--surface-hover)]"
             }`}
           >
             {item.label}
