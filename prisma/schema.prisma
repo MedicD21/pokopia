@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
@@ -127,6 +128,15 @@ model PokemonHelper {
   updatedAt   DateTime @updatedAt
 
   @@map("pokemon_helpers")
+}
+
+model ItemCatalogCache {
+  id        String   @id
+  payload   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("item_catalog_cache")
 }
 
 model ImportedBuild {

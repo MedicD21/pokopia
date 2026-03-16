@@ -3,6 +3,7 @@ import "server-only";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
+import { prisma } from "@/lib/db";
 import type {
   ItemCatalogEntry,
   ItemCatalogHabitatEntry,
@@ -915,10 +916,7 @@ function buildCategoryCounts(items: ItemCatalogEntry[]) {
     });
 }
 
-export async function listItemCatalog(): Promise<ItemCatalogSnapshot> {
-  try {
-    const contents = await readFile(itemCatalogPath, "utf8");
-    const rawCatalog = JSON.parse(contents) as RawItemCatalogSnapshot;
+  function buildSnapshot(rawCatalog: RawItemCatalogSnapshot): ItemCatalogSnapshot {
     const mappedItems = (rawCatalog.items ?? [])
       .map(mapCatalogEntry)
       .filter((item) => item.slug && item.name);
@@ -945,6 +943,27 @@ export async function listItemCatalog(): Promise<ItemCatalogSnapshot> {
       categories: buildCategoryCounts(dedupedItems),
       items: dedupedItems,
     };
+  }
+
+export async function listItemCatalog(): Promise<ItemCatalogSnapshot> {
+    if (prisma) {
+      try {
+        const cachedSnapshot = await prisma.itemCatalogCache.findUnique({
+          where: { id: "primary" },
+        });
+
+        if (cachedSnapshot?.payload) {
+          return buildSnapshot(cachedSnapshot.payload as unknown as RawItemCatalogSnapshot);
+        }
+      } catch {
+        // Fall back to file storage below.
+      }
+    }
+
+  try {
+    const contents = await readFile(itemCatalogPath, "utf8");
+    const rawCatalog = JSON.parse(contents) as RawItemCatalogSnapshot;
+      return buildSnapshot(rawCatalog);
   } catch {
     return emptyCatalog;
   }

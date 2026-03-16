@@ -1,5 +1,38 @@
 [
   {
+    "id": "f2b00807-58ee-454d-9a43-e443cd7a3cc7",
+    "name": "API Probe Build",
+    "description": "route save check",
+    "data": {
+      "id": "f2b00807-58ee-454d-9a43-e443cd7a3cc7",
+      "name": "API Probe Build",
+      "description": "route save check",
+      "theme": "custom",
+      "footprint": {
+        "width": 1,
+        "depth": 1,
+        "height": 1
+      },
+      "blocks": [
+        {
+          "id": "0:0:0",
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "material": "stone",
+          "color": "#8c99b5",
+          "tags": [
+            "custom"
+          ]
+        }
+      ],
+      "tags": [],
+      "suggestedSkills": []
+    },
+    "createdAt": "2026-03-16T19:53:13.038Z",
+    "updatedAt": "2026-03-16T19:53:13.038Z"
+  },
+  {
     "id": "42b8ce15-67f9-424a-85b7-d76a7b047f5e",
     "name": "Smoke Test Build",
     "description": "runtime smoke",

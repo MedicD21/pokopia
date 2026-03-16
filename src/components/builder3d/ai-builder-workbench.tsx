@@ -2,15 +2,20 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { AutoBuildAssistant } from "@/components/builder3d/auto-build-assistant";
 import { MaterialsBreakdown } from "@/components/materials/materials-breakdown";
 import { HelperPanel } from "@/components/pokemon/helper-panel";
 import { SectionCard } from "@/components/ui/section-card";
 import { summarizeMaterials } from "@/lib/materials";
-import type { AutoBuildOptions, BuildingData } from "@/lib/types";
+import type { AutoBuildOptions, BuildingData, StorageMode } from "@/lib/types";
 import { useBuilderStore } from "@/store/use-builder-store";
+
+type SaveNotice = {
+  tone: "success" | "error";
+  message: string;
+};
 
 export function AiBuilderWorkbench() {
   const router = useRouter();
@@ -19,12 +24,26 @@ export function AiBuilderWorkbench() {
     useState<BuildingData | null>(null);
   const [generatedOptions, setGeneratedOptions] =
     useState<AutoBuildOptions | null>(null);
-  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [saveNotice, setSaveNotice] = useState<SaveNotice | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const summary = useMemo(
     () => (generatedBlueprint ? summarizeMaterials(generatedBlueprint) : null),
     [generatedBlueprint],
   );
+
+  useEffect(() => {
+    if (!saveNotice || saveNotice.tone !== "success") {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setSaveNotice(null);
+    }, 3200);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [saveNotice]);
 
   async function handleGenerate(
     blueprint: BuildingData,
@@ -32,7 +51,7 @@ export function AiBuilderWorkbench() {
   ) {
     setGeneratedBlueprint(blueprint);
     setGeneratedOptions(options);
-    setSaveMessage(null);
+    setSaveNotice(null);
 
     // Auto-save the generated blueprint
     await handleAutoSave(blueprint);
@@ -40,7 +59,7 @@ export function AiBuilderWorkbench() {
 
   async function handleAutoSave(blueprint: BuildingData) {
     setIsSaving(true);
-    setSaveMessage(null);
+    setSaveNotice(null);
 
     try {
       const response = await fetch("/api/buildings/save", {
@@ -57,21 +76,31 @@ export function AiBuilderWorkbench() {
 
       const payload = (await response.json()) as {
         building?: { id: string; name: string };
+        storageMode?: StorageMode;
         error?: string;
       };
 
       if (!response.ok || payload.error) {
-        setSaveMessage(payload.error ?? "Unable to save building right now.");
+        setSaveNotice({
+          tone: "error",
+          message: payload.error ?? "Unable to save building right now.",
+        });
         return;
       }
 
-      setSaveMessage(
-        `✓ Auto-saved as "${payload.building?.name}" — ready to edit in the 3D builder.`,
-      );
+      setSaveNotice({
+        tone: "success",
+        message:
+          payload.storageMode === "database"
+            ? `Saved to Neon as "${payload.building?.name}".`
+            : `Saved locally as "${payload.building?.name}".`,
+      });
     } catch {
-      setSaveMessage(
-        "Auto-save failed — check your connection. You can still open in 3D builder.",
-      );
+      setSaveNotice({
+        tone: "error",
+        message:
+          "Auto-save failed. You can still open the draft in the 3D builder.",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -141,15 +170,15 @@ export function AiBuilderWorkbench() {
       >
         {generatedBlueprint && summary ? (
           <div className="space-y-6">
-            {saveMessage && (
+            {saveNotice && (
               <div
                 className={`rounded-2xl border px-4 py-3 text-sm font-semibold ${
-                  saveMessage.startsWith("✓")
-                    ? "border-[color:var(--success)]/40 bg-[color:var(--success)]/8 text-[color:var(--success)]"
+                  saveNotice.tone === "success"
+                    ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-200"
                     : "border-[color:var(--destructive)]/40 bg-[color:var(--destructive)]/8 text-[color:var(--destructive)]"
                 }`}
               >
-                {saveMessage}
+                {saveNotice.message}
               </div>
             )}
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

@@ -37,6 +37,10 @@ const floorLevel = 0;
 type CameraPreset = "iso" | "front" | "back" | "left" | "right" | "top";
 type VoxelPoint = { x: number; y: number; z: number };
 type BuilderPointerEvent = ThreeEvent<PointerEvent | MouseEvent>;
+type SaveNotice = {
+  tone: "success" | "error";
+  message: string;
+};
 const cameraPresets: readonly CameraPreset[] = [
   "iso",
   "front",
@@ -1051,7 +1055,7 @@ function BuildScene({
 
 export function VoxelBuilder() {
   const wallDragActiveRef = useRef(false);
-  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [saveNotice, setSaveNotice] = useState<SaveNotice | null>(null);
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>("iso");
   const [activeLayer, setActiveLayer] = useState(floorLevel);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
@@ -1374,6 +1378,20 @@ export function VoxelBuilder() {
     setSelectedBlockId(`${nextX}:${nextY}:${nextZ}`);
   }
 
+  useEffect(() => {
+    if (!saveNotice || saveNotice.tone !== "success") {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setSaveNotice(null);
+    }, 3200);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [saveNotice]);
+
   async function handleSaveBuilding() {
     try {
       const response = await fetch("/api/buildings/save", {
@@ -1393,17 +1411,25 @@ export function VoxelBuilder() {
       };
 
       if (response.ok) {
-        setSaveMessage(
-          payload.storageMode === "database"
-            ? "Blueprint saved to PostgreSQL through Prisma."
-            : "Blueprint saved to local fallback storage.",
-        );
+        setSaveNotice({
+          tone: "success",
+          message:
+            payload.storageMode === "database"
+              ? "Build saved to Neon."
+              : "Build saved locally.",
+        });
         return;
       }
 
-      setSaveMessage(payload.error ?? "Unable to save building right now.");
+      setSaveNotice({
+        tone: "error",
+        message: payload.error ?? "Unable to save building right now.",
+      });
     } catch {
-      setSaveMessage("Save failed — check your connection and try again.");
+      setSaveNotice({
+        tone: "error",
+        message: "Save failed. Check your connection and try again.",
+      });
     }
   }
 
@@ -1804,10 +1830,16 @@ export function VoxelBuilder() {
                 Clear scene
               </button>
             </div>
-            {saveMessage ? (
-              <p className="text-xs leading-5 text-[color:var(--muted)]">
-                {saveMessage}
-              </p>
+            {saveNotice ? (
+              <div
+                className={`rounded-2xl border px-3 py-2 text-sm font-semibold transition ${
+                  saveNotice.tone === "success"
+                    ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-200"
+                    : "border-amber-400/30 bg-amber-500/10 text-amber-100"
+                }`}
+              >
+                {saveNotice.message}
+              </div>
             ) : null}
           </div>
         </div>

@@ -1,14 +1,29 @@
+import "dotenv/config";
+
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient, type Prisma } from "@prisma/client";
+import { Pool } from "pg";
 
 import { blockMaterials } from "../src/data/materials";
 import { pokemonHelpers } from "../src/data/pokemon-helpers";
 
-const prisma = new PrismaClient();
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is required to seed the database.");
+}
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+const prisma = new PrismaClient({
+  adapter: new PrismaPg(pool),
+});
 const scrapedMaterialsPath = path.join(process.cwd(), "storage", "materials-scraped.json");
 const scrapedHabitatsPath = path.join(process.cwd(), "storage", "game8-habitats-scraped.json");
+const itemCatalogPath = path.join(process.cwd(), "storage", "pokopia-items-catalog.json");
 
 interface ScrapedLinkedHabitatRecord {
   slug: string;
@@ -45,6 +60,20 @@ interface ScrapedHabitatRecord {
   detail_url: string;
   image_url: string;
   source_url: string;
+}
+
+interface RawItemCatalogSnapshot {
+  generated_at?: string | null;
+  sources?: {
+    game8_items?: string | null;
+    game8_habitats?: string | null;
+    serebii_items?: string | null;
+  };
+  total_items?: number;
+  total_items_with_images?: number;
+  total_items_with_location_entries?: number;
+  categories?: Array<{ name: string; count: number }>;
+  items?: unknown[];
 }
 
 interface SeedMaterialRecord {
@@ -120,8 +149,16 @@ async function loadSeedHabitats() {
   return (await readJsonFile<ScrapedHabitatRecord[]>(scrapedHabitatsPath)) ?? [];
 }
 
+async function loadItemCatalogSnapshot() {
+  return await readJsonFile<RawItemCatalogSnapshot>(itemCatalogPath);
+}
+
 async function main() {
-  const [materials, habitats] = await Promise.all([loadSeedMaterials(), loadSeedHabitats()]);
+  const [materials, habitats, itemCatalog] = await Promise.all([
+    loadSeedMaterials(),
+    loadSeedHabitats(),
+    loadItemCatalogSnapshot(),
+  ]);
   const habitatIdBySlug = new Map<string, string>();
   const materialIdBySlug = new Map<string, string>();
 
@@ -233,8 +270,21 @@ async function main() {
     });
   }
 
+  if (itemCatalog) {
+    await prisma.itemCatalogCache.upsert({
+      where: { id: "primary" },
+      update: {
+        payload: itemCatalog as unknown as Prisma.InputJsonValue,
+      },
+      create: {
+        id: "primary",
+        payload: itemCatalog as unknown as Prisma.InputJsonValue,
+      },
+    });
+  }
+
   console.log(
-    `Seeded ${materials.length} materials, ${habitats.length} habitats, ${materialHabitatLinks.length} material-habitat links, and ${pokemonHelpers.length} helper records.`,
+    `Seeded ${materials.length} materials, ${habitats.length} habitats, ${materialHabitatLinks.length} material-habitat links, ${pokemonHelpers.length} helper records, and ${itemCatalog?.items?.length ?? 0} item catalog entries.`,
   );
 }
 
@@ -245,4 +295,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });
