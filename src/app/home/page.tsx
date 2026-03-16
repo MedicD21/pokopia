@@ -24,7 +24,7 @@ export default function HomePage() {
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/builder"
-                className="rounded-2xl bg-[color:var(--foreground)] px-5 py-3 text-sm font-semibold text-[color:var(--background)]"
+                className="rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
               >
                 Open builder
               </Link>

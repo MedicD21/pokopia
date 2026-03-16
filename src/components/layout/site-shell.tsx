@@ -28,7 +28,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="space-y-2">
               <Link href="/home" className="inline-flex items-center gap-3">
-                <span className="rounded-2xl bg-[color:var(--foreground)] px-3 py-2 font-display text-lg text-[color:var(--background)]">
+                <span className="rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-3 py-2 font-display text-lg text-[color:var(--foreground)]">
                   Pokopia Planner
                 </span>
               </Link>

@@ -47,7 +47,7 @@ export default function LibraryPage() {
               action={
                 <Link
                   href="/builder"
-                  className="rounded-2xl bg-[color:var(--foreground)] px-4 py-3 text-sm font-semibold text-[color:var(--background)]"
+                  className="rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
                 >
                   Edit in builder
                 </Link>

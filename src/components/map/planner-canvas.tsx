@@ -383,7 +383,7 @@ export function PlannerCanvas() {
       context.strokeRect(px, py, boxWidth, boxHeight);
 
       if (tileSize > 8) {
-        context.fillStyle = "#eef4ff";
+        context.fillStyle = "#f2a027";
         context.font = "600 10px var(--font-mono)";
         context.fillText(
           placement.label,
@@ -416,11 +416,14 @@ export function PlannerCanvas() {
       });
     }
 
-    context.strokeStyle = "rgba(171, 193, 228, 0.12)";
-    context.lineWidth = 1;
-
     for (let index = 0; index <= width; index += 1) {
+      if (index % 10 === 0 || index === width) {
+        continue;
+      }
+
       const position = offsetX + index * tileSize;
+      context.strokeStyle = "rgba(171, 193, 228, 0.12)";
+      context.lineWidth = 1;
       context.beginPath();
       context.moveTo(position, offsetY);
       context.lineTo(position, offsetY + mapSize);
@@ -428,12 +431,42 @@ export function PlannerCanvas() {
     }
 
     for (let index = 0; index <= height; index += 1) {
+      if (index % 10 === 0 || index === height) {
+        continue;
+      }
+
       const position = offsetY + index * tileSize;
+      context.strokeStyle = "rgba(171, 193, 228, 0.12)";
+      context.lineWidth = 1;
       context.beginPath();
       context.moveTo(offsetX, position);
       context.lineTo(offsetX + mapSize, position);
       context.stroke();
     }
+
+    for (let index = 0; index <= width; index += 10) {
+      const position = offsetX + index * tileSize;
+      context.strokeStyle = "rgba(218, 232, 255, 0.28)";
+      context.lineWidth = 1.9;
+      context.beginPath();
+      context.moveTo(position, offsetY);
+      context.lineTo(position, offsetY + mapSize);
+      context.stroke();
+    }
+
+    for (let index = 0; index <= height; index += 10) {
+      const position = offsetY + index * tileSize;
+      context.strokeStyle = "rgba(218, 232, 255, 0.28)";
+      context.lineWidth = 1.9;
+      context.beginPath();
+      context.moveTo(offsetX, position);
+      context.lineTo(offsetX + mapSize, position);
+      context.stroke();
+    }
+
+    context.strokeStyle = "rgba(236, 244, 255, 0.34)";
+    context.lineWidth = 2.2;
+    context.strokeRect(offsetX, offsetY, mapSize, mapSize);
 
     if (selectedTileForDisplay) {
       context.lineWidth = 3;
@@ -584,13 +617,14 @@ export function PlannerCanvas() {
       <SectionCard
         eyebrow="Phase 3"
         title="2D Town Planner"
-        description="The planner now supports brush, line, rectangle, fill, eyedropper, placement duplication, and precise nudging for a more complete editing workflow."
+        description="The planner supports brush, line, rectangle, fill, eyedropper, placement duplication, precise nudging, and clearer 10x10 guide lines for larger town layouts."
         className="flex min-h-[calc(100vh-11rem)] flex-col"
       >
         <div className="mb-4 flex flex-wrap items-center gap-3 rounded-[24px] bg-[color:var(--surface)] px-4 py-3 text-sm text-[color:var(--muted)]">
           <span>Hand: select and move placed buildings.</span>
           <span>Eyedropper: sample existing map content.</span>
           <span>Brush, line, rectangle, and fill work with roads, decorations, and delete.</span>
+          <span>Bold grid lines mark every 10 tiles without limiting the map size.</span>
         </div>
         <div className="min-h-[720px] flex-1 overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-strong)]">
           <canvas
@@ -684,7 +718,7 @@ export function PlannerCanvas() {
                     }}
                     className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
                       tool === option
-                        ? "bg-[color:var(--foreground)] text-[color:var(--background)]"
+                        ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
                         : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
                     }`}
                   >
@@ -792,7 +826,7 @@ export function PlannerCanvas() {
               <button
                 type="button"
                 onClick={handleSaveMap}
-                className="rounded-2xl bg-[color:var(--foreground)] px-4 py-3 text-sm font-semibold text-[color:var(--background)]"
+                className="rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
               >
                 Save map
               </button>

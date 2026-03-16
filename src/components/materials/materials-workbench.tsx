@@ -48,22 +48,22 @@ export function MaterialsWorkbench() {
             <button
               type="button"
               onClick={() => setSource("sample")}
-                className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold ${
-                  source === "sample"
-                    ? "bg-[color:var(--foreground)] text-[color:var(--background)]"
-                    : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
-                }`}
+              className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold ${
+                source === "sample"
+                  ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
+                  : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+              }`}
             >
               Starter blueprint
             </button>
             <button
               type="button"
               onClick={() => setSource("builder")}
-                className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold ${
-                  source === "builder" && builderBlocks.length > 0
-                    ? "bg-[color:var(--foreground)] text-[color:var(--background)]"
-                    : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
-                }`}
+              className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold ${
+                source === "builder" && builderBlocks.length > 0
+                  ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
+                  : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+              }`}
               disabled={builderBlocks.length === 0}
             >
               Live builder scene

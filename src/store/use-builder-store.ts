@@ -13,6 +13,7 @@ export type BuilderMode =
   | "remove"
   | "paint"
   | "box"
+  | "wall"
   | "eyedropper";
 
 interface BuilderState {
@@ -22,11 +23,13 @@ interface BuilderState {
   loadedTemplateId: string;
   blocks: VoxelBlock[];
   activeMaterial: BlockMaterialId;
+  activeColor: string;
   activeLayer: number;
   mode: BuilderMode;
   setName: (name: string) => void;
   setDescription: (description: string) => void;
   setActiveMaterial: (material: BlockMaterialId) => void;
+  setActiveColor: (color: string) => void;
   setActiveLayer: (layer: number) => void;
   setMode: (mode: BuilderMode) => void;
   loadTemplate: (buildingId: string) => void;
@@ -38,12 +41,18 @@ interface BuilderState {
     start: { x: number; y: number; z: number },
     end: { x: number; y: number; z: number },
   ) => void;
+  buildWall: (
+    start: { x: number; y: number; z: number },
+    end: { x: number; y: number; z: number },
+    height: number,
+  ) => void;
   updateBlockMaterial: (
     x: number,
     y: number,
     z: number,
     material: BlockMaterialId,
   ) => void;
+  updateBlockColor: (x: number, y: number, z: number, color: string) => void;
   moveBlock: (
     x: number,
     y: number,
@@ -84,6 +93,7 @@ function upsertBlock(
   y: number,
   z: number,
   material: BlockMaterialId,
+  color = blockMaterialLookup[material].color,
 ) {
   const existing = blocks.find(
     (block) => block.x === x && block.y === y && block.z === z,
@@ -95,7 +105,7 @@ function upsertBlock(
         ? {
             ...block,
             material,
-            color: blockMaterialLookup[material].color,
+            color,
           }
         : block,
     );
@@ -109,7 +119,7 @@ function upsertBlock(
       y,
       z,
       material,
-      color: blockMaterialLookup[material].color,
+      color,
       tags: ["custom"],
     },
   ];
@@ -132,6 +142,7 @@ function fillVolumeWithMaterial(
   start: { x: number; y: number; z: number },
   end: { x: number; y: number; z: number },
   material: BlockMaterialId,
+  color: string,
 ) {
   let nextBlocks = blocks;
   const x0 = Math.min(start.x, end.x);
@@ -144,10 +155,68 @@ function fillVolumeWithMaterial(
   for (let x = x0; x <= x1; x += 1) {
     for (let y = y0; y <= y1; y += 1) {
       for (let z = z0; z <= z1; z += 1) {
-        nextBlocks = upsertBlock(nextBlocks, x, y, z, material);
+        nextBlocks = upsertBlock(nextBlocks, x, y, z, material, color);
       }
     }
   }
+
+  return nextBlocks;
+}
+
+function getLinePoints(
+  start: { x: number; z: number },
+  end: { x: number; z: number },
+) {
+  const points: Array<{ x: number; z: number }> = [];
+  const deltaX = Math.abs(end.x - start.x);
+  const deltaZ = Math.abs(end.z - start.z);
+  const stepX = start.x < end.x ? 1 : -1;
+  const stepZ = start.z < end.z ? 1 : -1;
+  let error = deltaX - deltaZ;
+  let x = start.x;
+  let z = start.z;
+
+  while (true) {
+    points.push({ x, z });
+
+    if (x === end.x && z === end.z) {
+      break;
+    }
+
+    const doubled = error * 2;
+
+    if (doubled > -deltaZ) {
+      error -= deltaZ;
+      x += stepX;
+    }
+
+    if (doubled < deltaX) {
+      error += deltaX;
+      z += stepZ;
+    }
+  }
+
+  return points;
+}
+
+function buildWallWithMaterial(
+  blocks: VoxelBlock[],
+  start: { x: number; y: number; z: number },
+  end: { x: number; y: number; z: number },
+  height: number,
+  material: BlockMaterialId,
+  color: string,
+) {
+  const baseY = Math.max(0, Math.min(12, start.y));
+  const cappedHeight = Math.max(1, Math.min(13 - baseY, Math.round(height)));
+  const topY = baseY + cappedHeight - 1;
+  let nextBlocks = blocks;
+
+  getLinePoints(start, end).forEach((point) => {
+    for (let y = baseY; y <= topY; y += 1) {
+      nextBlocks = upsertBlock(nextBlocks, point.x, y, point.z, material, color);
+    }
+  });
 
   return nextBlocks;
 }
@@ -161,11 +230,17 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   loadedTemplateId: defaultBuilding.id,
   blocks: cloneBlocks(defaultBuilding.blocks),
   activeMaterial: "stone",
+  activeColor: blockMaterialLookup.stone.color,
   activeLayer: 0,
   mode: "hand",
   setName: (name) => set({ name }),
   setDescription: (description) => set({ description }),
-  setActiveMaterial: (activeMaterial) => set({ activeMaterial }),
+  setActiveMaterial: (activeMaterial) =>
+    set({
+      activeMaterial,
+      activeColor: blockMaterialLookup[activeMaterial].color,
+    }),
+  setActiveColor: (activeColor) => set({ activeColor }),
   setActiveLayer: (layer) =>
     set({
       activeLayer: Math.max(0, Math.min(12, Math.round(layer))),
@@ -186,6 +261,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       theme: nextBuilding.theme,
       loadedTemplateId: nextBuilding.id,
       blocks: cloneBlocks(nextBuilding.blocks),
+      activeMaterial: "stone",
+      activeColor: blockMaterialLookup.stone.color,
       activeLayer: 0,
       mode: "hand",
     });
@@ -199,32 +276,74 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       theme: nextBuilding.theme,
       loadedTemplateId: nextBuilding.id,
       blocks: cloneBlocks(nextBuilding.blocks),
+      activeMaterial: "stone",
+      activeColor: blockMaterialLookup.stone.color,
       activeLayer: 0,
       mode: "hand",
     });
   },
   addBlock: (x, y, z) => {
-    const { activeMaterial, blocks } = get();
-    set({ blocks: sortBlocks(upsertBlock(blocks, x, y, z, activeMaterial)) });
+    const { activeColor, activeMaterial, blocks } = get();
+    set({
+      blocks: sortBlocks(upsertBlock(blocks, x, y, z, activeMaterial, activeColor)),
+    });
   },
   removeBlock: (x, y, z) => {
     const { blocks } = get();
     set({ blocks: sortBlocks(removeBlockAt(blocks, x, y, z)) });
   },
   paintBlock: (x, y, z) => {
-    const { activeMaterial, blocks } = get();
-    set({ blocks: sortBlocks(upsertBlock(blocks, x, y, z, activeMaterial)) });
+    const { activeColor, activeMaterial, blocks } = get();
+    set({
+      blocks: sortBlocks(upsertBlock(blocks, x, y, z, activeMaterial, activeColor)),
+    });
   },
   fillBox: (start, end) => {
-    const { activeMaterial, blocks } = get();
+    const { activeColor, activeMaterial, blocks } = get();
 
     set({
-      blocks: sortBlocks(fillVolumeWithMaterial(blocks, start, end, activeMaterial)),
+      blocks: sortBlocks(
+        fillVolumeWithMaterial(blocks, start, end, activeMaterial, activeColor),
+      ),
+    });
+  },
+  buildWall: (start, end, height) => {
+    const { activeColor, activeMaterial, blocks } = get();
+
+    set({
+      blocks: sortBlocks(
+        buildWallWithMaterial(blocks, start, end, height, activeMaterial, activeColor),
+      ),
     });
   },
   updateBlockMaterial: (x, y, z, material) => {
     const { blocks } = get();
-    set({ blocks: sortBlocks(upsertBlock(blocks, x, y, z, material)) });
+    const existing = findBlock(blocks, x, y, z);
+
+    set({
+      blocks: sortBlocks(
+        upsertBlock(
+          blocks,
+          x,
+          y,
+          z,
+          material,
+          existing?.color ?? blockMaterialLookup[material].color,
+        ),
+      ),
+    });
+  },
+  updateBlockColor: (x, y, z, color) => {
+    const { blocks } = get();
+    const existing = findBlock(blocks, x, y, z);
+
+    if (!existing) {
+      return;
+    }
+
+    set({
+      blocks: sortBlocks(upsertBlock(blocks, x, y, z, existing.material, color)),
+    });
   },
   moveBlock: (x, y, z, dx, dy, dz) => {
     const { blocks } = get();
@@ -312,7 +431,9 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       theme: "custom",
       loadedTemplateId: "custom",
       blocks: [],
+      activeMaterial: "stone",
       activeLayer: 0,
+      activeColor: blockMaterialLookup.stone.color,
       mode: "hand",
     }),
   exportBuilding: () => {

@@ -2,16 +2,16 @@
 
 :root {
   --background: #08111f;
-  --foreground: #eef4ff;
+  --foreground: #f2a027;
   --card: rgba(12, 21, 37, 0.9);
   --panel: rgba(10, 18, 31, 0.82);
   --surface: rgba(20, 32, 52, 0.82);
   --surface-strong: rgba(28, 44, 71, 0.94);
   --surface-hover: rgba(37, 58, 92, 0.96);
   --line: #324564;
-  --muted: #9bb0d1;
-  --accent: #ff9d45;
-  --accent-2: #42d3bd;
+  --muted: #f2a027;
+  --accent: #f2a027;
+  --accent-2: #f2a027;
 }
 
 @theme inline {
@@ -74,5 +74,13 @@ a:focus-visible {
 
 ::selection {
   background: rgba(255, 157, 69, 0.34);
-  color: var(--foreground);
+  color: var(--background);
+}
+
+h2 {
+  font-family: var(--font-display), sans-serif;
+  color: turquoise;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
 }

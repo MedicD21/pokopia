@@ -107,12 +107,12 @@ export function ScreenshotUploader() {
             type="button"
             onClick={handleGenerate}
             disabled={!file || isPending}
-            className="w-full rounded-2xl bg-[color:var(--foreground)] px-4 py-3 text-sm font-semibold text-[color:var(--background)] disabled:opacity-60"
+            className="w-full rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)] disabled:opacity-60"
           >
             {isPending ? "Generating blueprint..." : "Generate blueprint"}
           </button>
           {error ? (
-            <p className="rounded-2xl border border-[#7a3240] bg-[#321923] px-4 py-3 text-sm text-[#ffd1da]">
+            <p className="rounded-2xl border border-[color:var(--foreground)]/30 bg-[#321923] px-4 py-3 text-sm text-[color:var(--foreground)]">
               {error}
             </p>
           ) : null}
@@ -130,7 +130,7 @@ export function ScreenshotUploader() {
                   useBuilderStore.getState().loadBlueprint(result.blueprint);
                   router.push("/builder");
                 }}
-                className="rounded-2xl bg-[color:var(--foreground)] px-4 py-3 text-sm font-semibold text-[color:var(--background)]"
+                className="rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
               >
                 Send to builder
               </button>
