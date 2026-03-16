@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String     @id @default(cuid())
+  email      String     @unique
+  name       String?
+  maps       Map[]
+  buildings  Building[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@map("users")
+}
+
+model Map {
+  id          String              @id @default(cuid())
+  name        String
+  width       Int                 @default(100)
+  height      Int                 @default(100)
+  tiles       Json
+  ownerId     String?
+  owner       User?               @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  placements  BuildingPlacement[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@map("maps")
+}
+
+model Building {
+  id          String              @id @default(cuid())
+  name        String
+  description String?
+  theme       String?
+  data        Json
+  ownerId     String?
+  owner       User?               @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  placements  BuildingPlacement[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@map("buildings")
+}
+
+model BuildingPlacement {
+  id          String    @id @default(cuid())
+  mapId       String
+  buildingId  String
+  x           Int
+  y           Int
+  rotation    Int       @default(0)
+  label       String?
+  metadata    Json?
+  map         Map       @relation(fields: [mapId], references: [id], onDelete: Cascade)
+  building    Building  @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([mapId])
+  @@index([buildingId])
+  @@map("building_placements")
+}
+
+model Material {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  name           String
+  category       String
+  obtainMethod   String
+  craftingRecipe String
+  location       String
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("materials")
+}
+
+model PokemonHelper {
+  id          String   @id @default(cuid())
+  pokemonName String
+  type        String
+  buildSkill  String
+  description String
+  specialties String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("pokemon_helpers")
+}
+
+model ImportedBuild {
+  id            String   @id @default(cuid())
+  userId        String?
+  imagePath     String
+  blueprintJson Json
+  createdAt     DateTime @default(now())
+
+  @@map("imported_builds")
+}

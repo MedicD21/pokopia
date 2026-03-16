@@ -1,0 +1,68 @@
+import type { PokemonHelper } from "@/lib/types";
+
+export const pokemonHelpers: PokemonHelper[] = [
+  {
+    id: "machamp",
+    pokemonName: "Machamp",
+    type: "Fighting",
+    buildSkill: "heavy lifting",
+    description: "Moves massive beams, stone pallets, and roof sections without slowing down.",
+    specialties: ["stone", "metal", "roof"],
+  },
+  {
+    id: "conkeldurr",
+    pokemonName: "Conkeldurr",
+    type: "Fighting",
+    buildSkill: "heavy lifting",
+    description: "Excellent at keeping structural lines true while carrying oversized supports.",
+    specialties: ["stone", "brick", "metal"],
+  },
+  {
+    id: "excadrill",
+    pokemonName: "Excadrill",
+    type: "Ground / Steel",
+    buildSkill: "digging",
+    description: "Cuts footings, tunnels, and drainage paths quickly for larger sites.",
+    specialties: ["stone", "metal"],
+  },
+  {
+    id: "blastoise",
+    pokemonName: "Blastoise",
+    type: "Water",
+    buildSkill: "water shaping",
+    description: "Useful for pressure cleaning, cooling glass, and controlled stone shaping.",
+    specialties: ["glass", "stone"],
+  },
+  {
+    id: "charizard",
+    pokemonName: "Charizard",
+    type: "Fire / Flying",
+    buildSkill: "fire forging",
+    description: "Provides intense heat for kilns, metalwork, and rapid ceramic production.",
+    specialties: ["metal", "brick", "roof"],
+  },
+  {
+    id: "rotom",
+    pokemonName: "Rotom",
+    type: "Electric / Ghost",
+    buildSkill: "electric power",
+    description: "Keeps tool systems, signage, and light networks humming across the site.",
+    specialties: ["metal", "decor", "glass"],
+  },
+  {
+    id: "alakazam",
+    pokemonName: "Alakazam",
+    type: "Psychic",
+    buildSkill: "precision work",
+    description: "Ideal for high-precision placement, glazing alignment, and detail finishing.",
+    specialties: ["glass", "decor", "roof"],
+  },
+  {
+    id: "gogoat",
+    pokemonName: "Gogoat",
+    type: "Grass",
+    buildSkill: "transport",
+    description: "Carries supplies between districts and keeps rural building sites stocked.",
+    specialties: ["wood", "decor", "brick"],
+  },
+];
