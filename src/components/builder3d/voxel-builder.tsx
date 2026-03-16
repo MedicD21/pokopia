@@ -25,6 +25,7 @@ import { summarizeMaterials } from "@/lib/materials";
 import type {
   BlockMaterialId,
   BuildingData,
+  SavedBuildingRecord,
   StorageMode,
   VoxelBlock,
 } from "@/lib/types";
@@ -1056,6 +1057,7 @@ function BuildScene({
 export function VoxelBuilder() {
   const wallDragActiveRef = useRef(false);
   const [saveNotice, setSaveNotice] = useState<SaveNotice | null>(null);
+  const [savedTemplates, setSavedTemplates] = useState<BuildingData[]>([]);
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>("iso");
   const [activeLayer, setActiveLayer] = useState(floorLevel);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
@@ -1089,6 +1091,7 @@ export function VoxelBuilder() {
   const setActiveColor = useBuilderStore((state) => state.setActiveColor);
   const setMode = useBuilderStore((state) => state.setMode);
   const loadTemplate = useBuilderStore((state) => state.loadTemplate);
+  const loadBlueprint = useBuilderStore((state) => state.loadBlueprint);
   const addBlock = useBuilderStore((state) => state.addBlock);
   const removeBlock = useBuilderStore((state) => state.removeBlock);
   const paintBlock = useBuilderStore((state) => state.paintBlock);
@@ -1107,6 +1110,10 @@ export function VoxelBuilder() {
   const summary = summarizeMaterials(blocks);
   const blueprint = exportBuilding();
   const previewBlueprint = buildPreviewBlueprint(blueprint);
+  const templateOptions = [...sampleBuildings, ...savedTemplates].filter(
+    (building, index, all) =>
+      all.findIndex((entry) => entry.id === building.id) === index,
+  );
   const selectedBlock =
     blocks.find((block) => block.id === selectedBlockId) ?? null;
   const availableWallHeight = wallPreviewStart
@@ -1153,6 +1160,46 @@ export function VoxelBuilder() {
       [slotId]: material,
     }));
   }
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadSavedTemplates() {
+      try {
+        const response = await fetch("/api/buildings", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const payload = (await response.json()) as {
+          buildings?: SavedBuildingRecord[];
+        };
+        const templates =
+          payload.buildings?.map((record) => record.data as BuildingData) ?? [];
+
+        if (!active) {
+          return;
+        }
+
+        setSavedTemplates(templates);
+      } catch {
+        if (!active) {
+          return;
+        }
+
+        setSavedTemplates([]);
+      }
+    }
+
+    loadSavedTemplates();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -1748,20 +1795,36 @@ export function VoxelBuilder() {
                 </span>
                 <select
                   value={
-                    sampleBuildings.some(
+                    templateOptions.some(
                       (building) => building.id === loadedTemplateId,
                     )
                       ? loadedTemplateId
                       : ""
                   }
                   onChange={(event) => {
-                    loadTemplate(event.target.value);
+                    const buildingId = event.target.value;
+                    const sampleTemplate = sampleBuildings.find(
+                      (building) => building.id === buildingId,
+                    );
+
+                    if (sampleTemplate) {
+                      loadTemplate(buildingId);
+                    } else {
+                      const savedTemplate = savedTemplates.find(
+                        (building) => building.id === buildingId,
+                      );
+
+                      if (savedTemplate) {
+                        loadBlueprint(savedTemplate);
+                      }
+                    }
+
                     setSelectedBlockId(null);
                     resetTransientToolState();
                   }}
                   className="w-full rounded-xl border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-2 text-xs outline-none"
                 >
-                  {sampleBuildings.map((building) => (
+                  {templateOptions.map((building) => (
                     <option key={building.id} value={building.id}>
                       {building.name}
                     </option>

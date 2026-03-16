@@ -44,6 +44,7 @@ interface MapPlannerState {
   setRoadType: (roadType: NonNullable<GridTile["roadType"]>) => void;
   setDecorationType: (decorationType: string) => void;
   setSelectedBuildingId: (buildingId: string) => void;
+  upsertCustomBuildings: (buildings: BuildingData[]) => void;
   addCustomBuilding: (input: {
     name: string;
     width: number;
@@ -167,6 +168,30 @@ export const useMapStore = create<MapPlannerState>((set, get) => ({
   setRoadType: (roadType) => set({ roadType }),
   setDecorationType: (decorationType) => set({ decorationType }),
   setSelectedBuildingId: (selectedBuildingId) => set({ selectedBuildingId }),
+  upsertCustomBuildings: (buildings) => {
+    if (buildings.length === 0) {
+      return;
+    }
+
+    set((state) => {
+      const nextCustomBuildings = { ...state.customBuildings };
+
+      buildings.forEach((building) => {
+        nextCustomBuildings[building.id] = building;
+      });
+
+      const hasSelectedBuilding =
+        Boolean(sampleBuildingLookup[state.selectedBuildingId]) ||
+        Boolean(nextCustomBuildings[state.selectedBuildingId]);
+
+      return {
+        customBuildings: nextCustomBuildings,
+        selectedBuildingId: hasSelectedBuilding
+          ? state.selectedBuildingId
+          : (buildings[0]?.id ?? state.selectedBuildingId),
+      };
+    });
+  },
   addCustomBuilding: ({ depth, name, theme = "custom", width }) => {
     const id = `custom-${crypto.randomUUID()}`;
     const safeWidth = clamp(Math.round(width), 1, 20);

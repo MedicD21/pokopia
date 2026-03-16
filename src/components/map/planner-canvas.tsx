@@ -8,7 +8,12 @@ import {
   sampleBuildingLookup,
   sampleBuildings,
 } from "@/data/buildings";
-import type { GridTile, StorageMode } from "@/lib/types";
+import type {
+  BuildingData,
+  GridTile,
+  SavedBuildingRecord,
+  StorageMode,
+} from "@/lib/types";
 import {
   findPlacementAtTile,
   type MapTool,
@@ -539,6 +544,9 @@ export function PlannerCanvas() {
   const setSelectedBuildingId = useMapStore(
     (state) => state.setSelectedBuildingId,
   );
+  const upsertCustomBuildings = useMapStore(
+    (state) => state.upsertCustomBuildings,
+  );
   const addCustomBuilding = useMapStore((state) => state.addCustomBuilding);
   const customBuildings = useMapStore((state) => state.customBuildings);
   const selectPlacement = useMapStore((state) => state.selectPlacement);
@@ -604,6 +612,42 @@ export function PlannerCanvas() {
     ...sampleBuildings,
     ...Object.values(customBuildings),
   ];
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadSavedBuildings() {
+      try {
+        const response = await fetch("/api/buildings", {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          return;
+        }
+
+        const payload = (await response.json()) as {
+          buildings?: SavedBuildingRecord[];
+        };
+        const savedBlueprints =
+          payload.buildings?.map((record) => record.data as BuildingData) ?? [];
+
+        if (!active || savedBlueprints.length === 0) {
+          return;
+        }
+
+        upsertCustomBuildings(savedBlueprints);
+      } catch {
+        // Keep planner usable even if saved library fetch fails.
+      }
+    }
+
+    loadSavedBuildings();
+
+    return () => {
+      active = false;
+    };
+  }, [upsertCustomBuildings]);
 
   function clearPlannerUiState() {
     setHoveredTile(null);

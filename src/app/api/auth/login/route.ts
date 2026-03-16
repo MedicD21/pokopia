@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
     if (!prisma) {
       return NextResponse.json(
-        { error: "Account sign-in requires DATABASE_URL." },
+        { error: "Account sign-in requires a configured database connection." },
         { status: 500 },
       );
     }

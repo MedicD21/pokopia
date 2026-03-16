@@ -9,21 +9,41 @@ declare global {
   var __pokopiaPgPool: Pool | undefined;
 }
 
-export function isDatabaseConfigured() {
-  return Boolean(process.env.DATABASE_URL);
+const databaseUrlEnvKeys = [
+  "DATABASE_URL",
+  "POSTGRES_URL",
+  "POSTGRES_PRISMA_URL",
+  "POSTGRES_URL_NON_POOLING",
+] as const;
+
+export function getDatabaseUrl() {
+  for (const key of databaseUrlEnvKeys) {
+    const value = process.env[key];
+
+    if (value && value.trim().length > 0) {
+      return value;
+    }
+  }
+
+  return null;
 }
 
-const pgPool =
-  isDatabaseConfigured() && process.env.DATABASE_URL
-    ? (global.__pokopiaPgPool ??
-      new Pool({
-        connectionString: process.env.DATABASE_URL,
-      }))
-    : null;
+export function isDatabaseConfigured() {
+  return Boolean(getDatabaseUrl());
+}
+
+const databaseUrl = getDatabaseUrl();
+
+const pgPool = databaseUrl
+  ? (global.__pokopiaPgPool ??
+    new Pool({
+      connectionString: databaseUrl,
+    }))
+  : null;
 
 const pgAdapter = pgPool ? new PrismaPg(pgPool) : null;
 
-export const prisma = isDatabaseConfigured()
+export const prisma = databaseUrl
   ? (global.__pokopiaPrisma ??
     new PrismaClient({
       adapter: pgAdapter ?? undefined,

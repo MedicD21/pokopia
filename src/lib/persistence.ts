@@ -35,7 +35,7 @@ function assertLocalSaveFallbackAvailable(target: "building" | "map") {
   }
 
   throw new Error(
-    `Vercel deployments require DATABASE_URL for ${target} saves. ` +
+    `Vercel deployments require a configured database URL for ${target} saves. ` +
       "The local JSON fallback in storage/ is for local development only.",
   );
 }
