@@ -7,7 +7,7 @@ import { blockMaterialLookup } from "@/data/materials";
 import { deriveFootprintFromBlocks } from "@/lib/materials";
 import type { BlockMaterialId, BuildingData, VoxelBlock } from "@/lib/types";
 
-export type BuilderMode = "add" | "remove" | "paint";
+export type BuilderMode = "hand" | "add" | "remove" | "paint";
 
 interface BuilderState {
   name: string;
@@ -28,6 +28,12 @@ interface BuilderState {
   addBlock: (x: number, y: number, z: number) => void;
   removeBlock: (x: number, y: number, z: number) => void;
   paintBlock: (x: number, y: number, z: number) => void;
+  updateBlockMaterial: (
+    x: number,
+    y: number,
+    z: number,
+    material: BlockMaterialId,
+  ) => void;
   clear: () => void;
   exportBuilding: () => BuildingData;
 }
@@ -98,7 +104,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   blocks: cloneBlocks(defaultBuilding.blocks),
   activeMaterial: "stone",
   activeLayer: 0,
-  mode: "add",
+  mode: "hand",
   setName: (name) => set({ name }),
   setDescription: (description) => set({ description }),
   setActiveMaterial: (activeMaterial) => set({ activeMaterial }),
@@ -123,7 +129,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       loadedTemplateId: nextBuilding.id,
       blocks: cloneBlocks(nextBuilding.blocks),
       activeLayer: 0,
-      mode: "add",
+      mode: "hand",
     });
   },
   loadBlueprint: (building) => {
@@ -136,7 +142,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       loadedTemplateId: nextBuilding.id,
       blocks: cloneBlocks(nextBuilding.blocks),
       activeLayer: 0,
-      mode: "add",
+      mode: "hand",
     });
   },
   addBlock: (x, y, z) => {
@@ -151,6 +157,10 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     const { activeMaterial, blocks } = get();
     set({ blocks: sortBlocks(upsertBlock(blocks, x, y, z, activeMaterial)) });
   },
+  updateBlockMaterial: (x, y, z, material) => {
+    const { blocks } = get();
+    set({ blocks: sortBlocks(upsertBlock(blocks, x, y, z, material)) });
+  },
   clear: () =>
     set({
       name: "New Build",
@@ -159,7 +169,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       loadedTemplateId: "custom",
       blocks: [],
       activeLayer: 0,
-      mode: "add",
+      mode: "hand",
     }),
   exportBuilding: () => {
     const { blocks, description, loadedTemplateId, name, theme } = get();

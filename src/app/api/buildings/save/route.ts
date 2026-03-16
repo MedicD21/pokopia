@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { upsertSavedBuilding } from "@/lib/demo-storage";
+import { saveBuildingRecord } from "@/lib/persistence";
 import type { BuildingData } from "@/lib/types";
 
 export async function POST(request: Request) {
@@ -19,25 +19,20 @@ export async function POST(request: Request) {
       );
     }
 
-    const id = body.id ?? body.data.id ?? crypto.randomUUID();
     const name = body.name?.trim() || body.data.name || "Untitled Build";
     const description =
       body.description?.trim() ||
       body.data.description ||
       "Saved from the Pokopia planner builder.";
-    const record = await upsertSavedBuilding({
-      id,
+
+    const payload = await saveBuildingRecord({
+      id: body.id,
       name,
       description,
-      data: {
-        ...body.data,
-        id,
-        name,
-        description,
-      },
+      data: body.data,
     });
 
-    return NextResponse.json({ building: record }, { status: 201 });
+    return NextResponse.json(payload, { status: 201 });
   } catch {
     return NextResponse.json(
       { error: "Unable to save the building right now." },

@@ -1,18 +1,11 @@
 "use client";
 
-import { Canvas, type ThreeEvent } from "@react-three/fiber";
+import { Canvas, type ThreeEvent, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import {
-  Color,
-  type InstancedMesh,
-  Matrix4,
-  Object3D,
-} from "three";
-import {
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import { Color, type InstancedMesh, Matrix4, Object3D } from "three";
+import type { RefObject } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { HelperPanel } from "@/components/pokemon/helper-panel";
 import { MaterialsBreakdown } from "@/components/materials/materials-breakdown";
@@ -20,11 +13,13 @@ import { SectionCard } from "@/components/ui/section-card";
 import { sampleBuildings } from "@/data/buildings";
 import { blockMaterials, blockMaterialLookup } from "@/data/materials";
 import { summarizeMaterials } from "@/lib/materials";
-import type { BuildingData, VoxelBlock } from "@/lib/types";
+import type { BuildingData, StorageMode, VoxelBlock } from "@/lib/types";
 import { useBuilderStore } from "@/store/use-builder-store";
 
 const gridSize = 24;
 const maxInstances = 12000;
+
+type CameraPreset = "iso" | "front" | "back" | "left" | "right" | "top";
 
 function buildPreviewBlueprint(building: BuildingData) {
   return {
@@ -39,11 +34,11 @@ function BlockInstances({
   onInteract,
 }: {
   blocks: VoxelBlock[];
-  mode: "add" | "remove" | "paint";
+  mode: "hand" | "add" | "remove" | "paint";
   onInteract: (
     block: VoxelBlock,
     event: ThreeEvent<MouseEvent>,
-    mode: "add" | "remove" | "paint",
+    mode: "hand" | "add" | "remove" | "paint",
   ) => void;
 }) {
   const meshRef = useRef<InstancedMesh>(null);
@@ -103,28 +98,84 @@ function BlockInstances({
   );
 }
 
+function SelectedBlockOutline({ block }: { block: VoxelBlock | null }) {
+  if (!block) {
+    return null;
+  }
+
+  return (
+    <mesh position={[block.x + 0.5, block.y + 0.5, block.z + 0.5]}>
+      <boxGeometry args={[1.08, 1.08, 1.08]} />
+      <meshBasicMaterial color="#ff8a3d" wireframe />
+    </mesh>
+  );
+}
+
+function CameraRig({
+  controlsRef,
+  preset,
+}: {
+  controlsRef: RefObject<OrbitControlsImpl | null>;
+  preset: CameraPreset;
+}) {
+  const { camera } = useThree();
+
+  useEffect(() => {
+    const centerX = gridSize / 2;
+    const centerY = 4;
+    const centerZ = gridSize / 2;
+    const distance = 26;
+
+    const presets: Record<CameraPreset, [number, number, number]> = {
+      iso: [centerX + distance, centerY + 14, centerZ + distance],
+      front: [centerX, centerY + 6, centerZ + distance + 6],
+      back: [centerX, centerY + 6, centerZ - distance - 6],
+      left: [centerX - distance - 6, centerY + 6, centerZ],
+      right: [centerX + distance + 6, centerY + 6, centerZ],
+      top: [centerX, centerY + 34, centerZ],
+    };
+
+    const [x, y, z] = presets[preset];
+    camera.position.set(x, y, z);
+    camera.lookAt(centerX, centerY, centerZ);
+    controlsRef.current?.target.set(centerX, centerY, centerZ);
+    controlsRef.current?.update();
+  }, [camera, controlsRef, preset]);
+
+  return null;
+}
+
 function BuildScene({
   activeLayer,
   blocks,
+  cameraPreset,
   mode,
   onAddFromSurface,
   onBlockInteract,
+  onSelectBlock,
+  selectedBlock,
 }: {
   activeLayer: number;
   blocks: VoxelBlock[];
-  mode: "add" | "remove" | "paint";
+  cameraPreset: CameraPreset;
+  mode: "hand" | "add" | "remove" | "paint";
   onAddFromSurface: (x: number, z: number) => void;
   onBlockInteract: (
     block: VoxelBlock,
     event: ThreeEvent<MouseEvent>,
-    mode: "add" | "remove" | "paint",
+    mode: "hand" | "add" | "remove" | "paint",
   ) => void;
+  onSelectBlock: (blockId: string | null) => void;
+  selectedBlock: VoxelBlock | null;
 }) {
+  const controlsRef = useRef<OrbitControlsImpl>(null);
+
   return (
     <Canvas
       camera={{ position: [18, 16, 18], fov: 42 }}
       shadows
       className="h-full w-full"
+      onPointerMissed={() => onSelectBlock(null)}
     >
       <color attach="background" args={["#f4eee0"]} />
       <ambientLight intensity={1} />
@@ -135,13 +186,23 @@ function BuildScene({
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
       />
-      <gridHelper args={[gridSize, gridSize, "#9eb1cf", "#d1d9e9"]} position={[gridSize / 2, activeLayer, gridSize / 2]} />
+      <CameraRig controlsRef={controlsRef} preset={cameraPreset} />
+      <gridHelper
+        args={[gridSize, gridSize, "#9eb1cf", "#d1d9e9"]}
+        position={[gridSize / 2, activeLayer, gridSize / 2]}
+      />
       <mesh
         rotation-x={-Math.PI / 2}
         position={[gridSize / 2, activeLayer + 0.01, gridSize / 2]}
         receiveShadow
         onClick={(event) => {
           event.stopPropagation();
+
+          if (mode === "hand") {
+            onSelectBlock(null);
+            return;
+          }
+
           const x = Math.max(0, Math.min(gridSize - 1, Math.floor(event.point.x)));
           const z = Math.max(0, Math.min(gridSize - 1, Math.floor(event.point.z)));
           onAddFromSurface(x, z);
@@ -159,13 +220,23 @@ function BuildScene({
         <meshStandardMaterial color="#d4c29a" />
       </mesh>
       <BlockInstances blocks={blocks} mode={mode} onInteract={onBlockInteract} />
-      <OrbitControls makeDefault />
+      <SelectedBlockOutline block={selectedBlock} />
+      <OrbitControls
+        ref={controlsRef}
+        makeDefault
+        enableDamping
+        maxDistance={64}
+        minDistance={6}
+        maxPolarAngle={Math.PI / 2.05}
+      />
     </Canvas>
   );
 }
 
 export function VoxelBuilder() {
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [cameraPreset, setCameraPreset] = useState<CameraPreset>("iso");
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const name = useBuilderStore((state) => state.name);
   const description = useBuilderStore((state) => state.description);
   const loadedTemplateId = useBuilderStore((state) => state.loadedTemplateId);
@@ -182,13 +253,21 @@ export function VoxelBuilder() {
   const addBlock = useBuilderStore((state) => state.addBlock);
   const removeBlock = useBuilderStore((state) => state.removeBlock);
   const paintBlock = useBuilderStore((state) => state.paintBlock);
+  const updateBlockMaterial = useBuilderStore((state) => state.updateBlockMaterial);
   const clear = useBuilderStore((state) => state.clear);
   const exportBuilding = useBuilderStore((state) => state.exportBuilding);
   const summary = summarizeMaterials(blocks);
   const blueprint = exportBuilding();
   const previewBlueprint = buildPreviewBlueprint(blueprint);
+  const selectedBlock =
+    blocks.find((block) => block.id === selectedBlockId) ?? null;
 
   function handleSurfaceAction(x: number, z: number) {
+    if (mode === "hand") {
+      setSelectedBlockId(null);
+      return;
+    }
+
     if (mode === "remove") {
       removeBlock(x, activeLayer, z);
       return;
@@ -205,8 +284,14 @@ export function VoxelBuilder() {
   function handleBlockInteraction(
     block: VoxelBlock,
     event: ThreeEvent<MouseEvent>,
-    interactionMode: "add" | "remove" | "paint",
+    interactionMode: "hand" | "add" | "remove" | "paint",
   ) {
+    if (interactionMode === "hand") {
+      setSelectedBlockId(block.id);
+      setActiveLayer(block.y);
+      return;
+    }
+
     if (interactionMode === "remove") {
       removeBlock(block.x, block.y, block.z);
       return;
@@ -228,6 +313,7 @@ export function VoxelBuilder() {
     const nextZ = Math.max(0, Math.min(gridSize - 1, block.z + Math.round(normal.z)));
     addBlock(nextX, nextY, nextZ);
     setActiveLayer(nextY);
+    setSelectedBlockId(`${nextX}:${nextY}:${nextZ}`);
   }
 
   async function handleSaveBuilding() {
@@ -242,22 +328,30 @@ export function VoxelBuilder() {
         data: blueprint,
       }),
     });
+    const payload = (await response.json()) as {
+      storageMode?: StorageMode;
+      error?: string;
+    };
 
     if (response.ok) {
-      setSaveMessage("Building blueprint saved to local storage bootstrap.");
+      setSaveMessage(
+        payload.storageMode === "database"
+          ? "Blueprint saved to PostgreSQL through Prisma."
+          : "Blueprint saved to local fallback storage.",
+      );
       return;
     }
 
-    setSaveMessage("Unable to save building right now.");
+    setSaveMessage(payload.error ?? "Unable to save building right now.");
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)_360px]">
-      <div className="space-y-6">
+    <div className="grid min-h-[calc(100vh-10rem)] gap-5 xl:grid-cols-[300px_minmax(0,1fr)_360px] 2xl:grid-cols-[320px_minmax(0,1.35fr)_380px]">
+      <div className="space-y-5 xl:sticky xl:top-28 xl:self-start">
         <SectionCard
           eyebrow="Phase 2"
           title="Builder Controls"
-          description="Switch materials, change layers, and save a blueprint draft."
+          description="Use hand mode to inspect and edit existing blocks. Drag inside the scene to orbit the camera, right-drag to pan, and scroll to zoom."
         >
           <div className="space-y-4">
             <label className="block space-y-2">
@@ -265,7 +359,11 @@ export function VoxelBuilder() {
                 Template
               </span>
               <select
-                value={sampleBuildings.some((building) => building.id === loadedTemplateId) ? loadedTemplateId : ""}
+                value={
+                  sampleBuildings.some((building) => building.id === loadedTemplateId)
+                    ? loadedTemplateId
+                    : ""
+                }
                 onChange={(event) => loadTemplate(event.target.value)}
                 className="w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm outline-none"
               >
@@ -297,8 +395,8 @@ export function VoxelBuilder() {
                 className="w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm outline-none"
               />
             </label>
-            <div className="grid grid-cols-3 gap-3">
-              {(["add", "paint", "remove"] as const).map((option) => (
+            <div className="grid grid-cols-2 gap-3">
+              {(["hand", "add", "paint", "remove"] as const).map((option) => (
                 <button
                   key={option}
                   type="button"
@@ -361,7 +459,10 @@ export function VoxelBuilder() {
               </button>
               <button
                 type="button"
-                onClick={clear}
+                onClick={() => {
+                  clear();
+                  setSelectedBlockId(null);
+                }}
                 className="rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
               >
                 Clear scene
@@ -376,20 +477,117 @@ export function VoxelBuilder() {
       <SectionCard
         eyebrow="Voxel Scene"
         title="3D Builder"
-        description="Click the floor to add blocks on the current layer. Click a block face in add mode to extend the structure."
-        className="overflow-hidden"
+        description="Hand mode selects existing blocks for editing. Add mode extrudes from a clicked face, while paint and remove work directly on the current structure."
+        action={
+          <div className="flex flex-wrap gap-2">
+            {(["iso", "front", "back", "left", "right", "top"] as const).map(
+              (preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => setCameraPreset(preset)}
+                  className={`rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] ${
+                    cameraPreset === preset
+                      ? "bg-[color:var(--foreground)] text-[color:var(--background)]"
+                      : "bg-white/80 text-[color:var(--foreground)]"
+                  }`}
+                >
+                  {preset}
+                </button>
+              ),
+            )}
+          </div>
+        }
+        className="flex min-h-[calc(100vh-11rem)] flex-col"
       >
-        <div className="h-[620px] overflow-hidden rounded-[24px] border border-white/60">
+        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-[24px] bg-white/70 px-4 py-3 text-sm text-[color:var(--muted)]">
+          <span>Drag: orbit camera.</span>
+          <span>Right-drag: pan.</span>
+          <span>Scroll: zoom.</span>
+          <span>Camera buttons: snap to every side.</span>
+        </div>
+        <div className="min-h-[760px] flex-1 overflow-hidden rounded-[24px] border border-white/60">
           <BuildScene
             activeLayer={activeLayer}
             blocks={blocks}
+            cameraPreset={cameraPreset}
             mode={mode}
             onAddFromSurface={handleSurfaceAction}
             onBlockInteract={handleBlockInteraction}
+            onSelectBlock={setSelectedBlockId}
+            selectedBlock={selectedBlock}
           />
         </div>
       </SectionCard>
-      <div className="space-y-6">
+      <div className="space-y-5 xl:sticky xl:top-28 xl:self-start">
+        <SectionCard
+          title="Block Inspector"
+          description="Select a block with the hand tool to edit or remove it directly."
+        >
+          {selectedBlock ? (
+            <div className="space-y-4">
+              <div className="rounded-2xl bg-white/70 px-4 py-4">
+                <p className="text-xs uppercase tracking-[0.26em] text-[color:var(--accent-2)]">
+                  Selected Block
+                </p>
+                <p className="mt-2 font-display text-2xl text-[color:var(--foreground)]">
+                  {selectedBlock.x}, {selectedBlock.y}, {selectedBlock.z}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">
+                  Current material: {blockMaterialLookup[selectedBlock.material].displayName}
+                </p>
+              </div>
+              <label className="block space-y-2">
+                <span className="text-sm font-semibold text-[color:var(--muted)]">
+                  Change material
+                </span>
+                <select
+                  value={selectedBlock.material}
+                  onChange={(event) => {
+                    const material = event.target.value as keyof typeof blockMaterialLookup;
+                    updateBlockMaterial(
+                      selectedBlock.x,
+                      selectedBlock.y,
+                      selectedBlock.z,
+                      material,
+                    );
+                    setActiveMaterial(material);
+                  }}
+                  className="w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm outline-none"
+                >
+                  {blockMaterials.map((material) => (
+                    <option key={material.id} value={material.id}>
+                      {material.displayName}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setActiveMaterial(selectedBlock.material)}
+                  className="rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold"
+                >
+                  Match brush
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    removeBlock(selectedBlock.x, selectedBlock.y, selectedBlock.z);
+                    setSelectedBlockId(null);
+                  }}
+                  className="rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold"
+                >
+                  Delete block
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm leading-6 text-[color:var(--muted)]">
+              Nothing selected yet. Switch to hand mode and click an existing block in the structure.
+            </p>
+          )}
+        </SectionCard>
         <MaterialsBreakdown
           title="Live Materials"
           materials={summary.materials}
@@ -398,9 +596,9 @@ export function VoxelBuilder() {
         <HelperPanel helpers={summary.helpers} />
         <SectionCard
           title="Blueprint Export"
-          description="The exported data is plain JSON so it can feed the map planner, material calculator, and future AI tools."
+          description="The exported JSON stays lightweight so it can flow into the map planner, persistence layer, and future AI import pipeline."
         >
-          <pre className="max-h-[360px] overflow-auto rounded-2xl bg-[color:var(--foreground)] p-4 text-xs leading-6 text-[color:var(--background)]">
+          <pre className="max-h-[300px] overflow-auto rounded-2xl bg-[color:var(--foreground)] p-4 text-xs leading-6 text-[color:var(--background)]">
             {JSON.stringify(previewBlueprint, null, 2)}
           </pre>
         </SectionCard>

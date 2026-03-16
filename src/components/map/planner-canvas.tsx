@@ -3,8 +3,12 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 
 import { SectionCard } from "@/components/ui/section-card";
-import { sampleBuildingLookup, sampleBuildings, getRotatedFootprint } from "@/data/buildings";
-import type { GridTile } from "@/lib/types";
+import {
+  getRotatedFootprint,
+  sampleBuildingLookup,
+  sampleBuildings,
+} from "@/data/buildings";
+import type { GridTile, StorageMode } from "@/lib/types";
 import { findPlacementAtTile, useMapStore } from "@/store/use-map-store";
 
 const roadColors: Record<NonNullable<GridTile["roadType"]>, string> = {
@@ -32,10 +36,17 @@ function roundToTile(value: number, tileSize: number) {
   return Math.floor(value / tileSize);
 }
 
+function tileKey(x: number, y: number) {
+  return `${x}:${y}`;
+}
+
 export function PlannerCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dragActiveRef = useRef(false);
   const [hoveredTile, setHoveredTile] = useState<{ x: number; y: number } | null>(
+    null,
+  );
+  const [selectedTile, setSelectedTile] = useState<{ x: number; y: number } | null>(
     null,
   );
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
@@ -64,6 +75,14 @@ export function PlannerCanvas() {
   const deleteAt = useMapStore((state) => state.deleteAt);
   const resetMap = useMapStore((state) => state.resetMap);
   const exportMap = useMapStore((state) => state.exportMap);
+
+  const selectedPlacement =
+    placements.find((placement) => placement.id === selectedPlacementId) ?? null;
+  const selectedTileRecord = selectedTile
+    ? tiles[tileKey(selectedTile.x, selectedTile.y)] ?? null
+    : null;
+  const selectedTileForDisplay =
+    selectedTile && selectedTileRecord ? selectedTile : null;
 
   const redrawCanvas = useEffectEvent(() => {
     const canvas = canvasRef.current;
@@ -169,6 +188,17 @@ export function PlannerCanvas() {
       context.stroke();
     }
 
+    if (selectedTileForDisplay) {
+      context.lineWidth = 3;
+      context.strokeStyle = "#ff8a3d";
+      context.strokeRect(
+        offsetX + selectedTileForDisplay.x * tileSize,
+        offsetY + selectedTileForDisplay.y * tileSize,
+        tileSize,
+        tileSize,
+      );
+    }
+
     if (hoveredTile) {
       context.fillStyle = "rgba(255, 138, 61, 0.18)";
       context.fillRect(
@@ -192,7 +222,15 @@ export function PlannerCanvas() {
     observer.observe(canvas);
 
     return () => observer.disconnect();
-  }, [height, hoveredTile, placements, selectedPlacementId, tiles, width]);
+  }, [
+    height,
+    hoveredTile,
+    placements,
+    selectedPlacementId,
+    selectedTileForDisplay,
+    tiles,
+    width,
+  ]);
 
   function getTileCoordinates(event: React.PointerEvent<HTMLCanvasElement>) {
     const canvas = canvasRef.current;
@@ -216,16 +254,29 @@ export function PlannerCanvas() {
     return { x, y };
   }
 
-  function handlePaint(tile: { x: number; y: number }) {
+  function handleHandTool(tile: { x: number; y: number }) {
     const placement = findPlacementAtTile(placements, tile.x, tile.y);
 
-    if (tool === "move") {
-      if (placement) {
-        selectPlacement(placement.id);
-        dragActiveRef.current = true;
-      }
+    if (placement) {
+      selectPlacement(placement.id);
+      setSelectedTile(null);
+      dragActiveRef.current = true;
       return;
     }
+
+    selectPlacement(null);
+    setSelectedTile(
+      tiles[tileKey(tile.x, tile.y)] ? tile : null,
+    );
+  }
+
+  function handlePaint(tile: { x: number; y: number }) {
+    if (tool === "hand") {
+      handleHandTool(tile);
+      return;
+    }
+
+    setSelectedTile(null);
 
     if (tool === "delete") {
       deleteAt(tile.x, tile.y);
@@ -253,26 +304,42 @@ export function PlannerCanvas() {
       },
       body: JSON.stringify(exportMap()),
     });
+    const payload = (await response.json()) as {
+      storageMode?: StorageMode;
+      error?: string;
+    };
 
     if (response.ok) {
-      setSaveMessage("Map snapshot saved to local storage bootstrap.");
+      setSaveMessage(
+        payload.storageMode === "database"
+          ? "Map saved to PostgreSQL through Prisma."
+          : "Map snapshot saved to local fallback storage.",
+      );
       return;
     }
 
-    setSaveMessage("Unable to save map right now.");
+    setSaveMessage(payload.error ?? "Unable to save map right now.");
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+    <div className="grid min-h-[calc(100vh-10rem)] gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
       <SectionCard
         eyebrow="Phase 3"
         title="2D Town Planner"
-        description="Paint roads and decorations directly onto the grid, then place or move blueprints around the district."
+        description="Use the hand tool to grab and edit existing placements, or switch brushes to paint new roads, decorations, and building footprints."
+        className="flex min-h-[calc(100vh-11rem)] flex-col"
       >
-        <div className="aspect-square w-full overflow-hidden rounded-[24px] border border-white/60 bg-white/80">
+        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-[24px] bg-white/70 px-4 py-3 text-sm text-[color:var(--muted)]">
+          <span>Hand: select and move existing items.</span>
+          <span>Road/Decoration: paint directly on the grid.</span>
+          <span>Building: place selected blueprint.</span>
+        </div>
+        <div className="min-h-[720px] flex-1 overflow-hidden rounded-[24px] border border-white/60 bg-white/80">
           <canvas
             ref={canvasRef}
-            className="h-full w-full touch-none"
+            className={`h-full w-full touch-none ${
+              tool === "hand" ? "cursor-grab" : "cursor-crosshair"
+            }`}
             onPointerDown={(event) => {
               const tile = getTileCoordinates(event);
 
@@ -300,10 +367,10 @@ export function PlannerCanvas() {
           />
         </div>
       </SectionCard>
-      <div className="space-y-6">
+      <div className="space-y-5 xl:sticky xl:top-28 xl:self-start">
         <SectionCard
           title="Planner Controls"
-          description="Switch tools, rotate selected structures, and save the town draft."
+          description="The editor is intentionally large now, so the side panel focuses on tools and selection details."
         >
           <div className="space-y-4">
             <label className="block space-y-2">
@@ -317,7 +384,7 @@ export function PlannerCanvas() {
               />
             </label>
             <div className="grid grid-cols-2 gap-3">
-              {(["road", "building", "decoration", "move", "delete"] as const).map(
+              {(["hand", "road", "building", "decoration", "delete"] as const).map(
                 (option) => (
                   <button
                     key={option}
@@ -391,22 +458,6 @@ export function PlannerCanvas() {
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
-                onClick={rotateSelectedPlacement}
-                className="rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
-              >
-                Rotate selected
-              </button>
-              <button
-                type="button"
-                onClick={deleteSelectedPlacement}
-                className="rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
-              >
-                Remove selected
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
                 onClick={handleSaveMap}
                 className="rounded-2xl bg-[color:var(--foreground)] px-4 py-3 text-sm font-semibold text-[color:var(--background)]"
               >
@@ -426,18 +477,141 @@ export function PlannerCanvas() {
           </div>
         </SectionCard>
         <SectionCard
+          title="Selection Inspector"
+          description="Use the hand tool to pick an existing building, road tile, or decoration tile."
+        >
+          {selectedPlacement ? (
+            <div className="space-y-4">
+              <div className="rounded-2xl bg-white/70 px-4 py-4">
+                <p className="text-xs uppercase tracking-[0.26em] text-[color:var(--accent-2)]">
+                  Building Placement
+                </p>
+                <p className="mt-2 font-display text-2xl text-[color:var(--foreground)]">
+                  {selectedPlacement.label}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">
+                  Position {selectedPlacement.x}, {selectedPlacement.y} with rotation{" "}
+                  {selectedPlacement.rotation} degrees.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={rotateSelectedPlacement}
+                  className="rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold"
+                >
+                  Rotate
+                </button>
+                <button
+                  type="button"
+                  onClick={deleteSelectedPlacement}
+                  className="rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          ) : selectedTileRecord ? (
+            <div className="space-y-4">
+              <div className="rounded-2xl bg-white/70 px-4 py-4">
+                <p className="text-xs uppercase tracking-[0.26em] text-[color:var(--accent-2)]">
+                  Tile
+                </p>
+                <p className="mt-2 font-display text-2xl text-[color:var(--foreground)]">
+                  {selectedTileRecord.tileType}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">
+                  Coordinates {selectedTileRecord.x}, {selectedTileRecord.y}
+                </p>
+              </div>
+              {selectedTileRecord.tileType === "road" ? (
+                <div className="grid grid-cols-2 gap-3">
+                  {(["stone", "path", "dirt", "wood", "bridge"] as const).map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => {
+                        if (!selectedTile) {
+                          return;
+                        }
+
+                        setRoadType(option);
+                        paintRoad(selectedTile.x, selectedTile.y);
+                      }}
+                      className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
+                        selectedTileRecord.roadType === option
+                          ? "bg-[color:var(--accent)]/18"
+                          : "bg-white/80"
+                      }`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+              {selectedTileRecord.tileType === "decoration" ? (
+                <div className="grid grid-cols-3 gap-3">
+                  {(["tree", "flower", "lamp"] as const).map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => {
+                        if (!selectedTile) {
+                          return;
+                        }
+
+                        setDecorationType(option);
+                        paintDecoration(selectedTile.x, selectedTile.y);
+                      }}
+                      className={`rounded-2xl px-4 py-3 text-center text-sm font-semibold capitalize ${
+                        selectedTileRecord.decorationType === option
+                          ? "bg-[color:var(--accent-2)]/18"
+                          : "bg-white/80"
+                      }`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => {
+                  if (selectedTile) {
+                    deleteAt(selectedTile.x, selectedTile.y);
+                  }
+                }}
+                className="w-full rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold"
+              >
+                Delete tile
+              </button>
+            </div>
+          ) : (
+            <p className="text-sm leading-6 text-[color:var(--muted)]">
+              Nothing selected yet. Switch to the hand tool and click an existing item in the map.
+            </p>
+          )}
+        </SectionCard>
+        <SectionCard
           title="Map Snapshot"
-          description="The planner keeps sparse tile data and separate placement records so footprints can rotate cleanly."
+          description="Sparse tile storage keeps roads and decorations lightweight while placements stay rotatable."
         >
           <div className="space-y-3 text-sm leading-6 text-[color:var(--muted)]">
             <p>
-              Roads and decorations: <strong className="text-[color:var(--foreground)]">{Object.keys(tiles).length}</strong>
+              Roads and decorations:{" "}
+              <strong className="text-[color:var(--foreground)]">
+                {Object.keys(tiles).length}
+              </strong>
             </p>
             <p>
-              Building placements: <strong className="text-[color:var(--foreground)]">{placements.length}</strong>
+              Building placements:{" "}
+              <strong className="text-[color:var(--foreground)]">
+                {placements.length}
+              </strong>
             </p>
             <p>
-              Selected tool: <strong className="text-[color:var(--foreground)]">{tool}</strong>
+              Active tool:{" "}
+              <strong className="text-[color:var(--foreground)]">{tool}</strong>
             </p>
           </div>
         </SectionCard>

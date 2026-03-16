@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { sampleBuildingLookup } from "@/data/buildings";
-import { getSavedBuildingById } from "@/lib/demo-storage";
+import { getSavedBuildingById } from "@/lib/persistence";
 
 export async function GET(
   _request: Request,

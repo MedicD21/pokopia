@@ -138,3 +138,5 @@ export interface ScanBlueprintResult {
   blueprint: BuildingData;
   detectedMaterials: BlockMaterialId[];
 }
+
+export type StorageMode = "database" | "file";

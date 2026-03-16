@@ -1,0 +1,37 @@
+[
+  {
+    "id": "42b8ce15-67f9-424a-85b7-d76a7b047f5e",
+    "name": "Smoke Test Build",
+    "description": "runtime smoke",
+    "data": {
+      "id": "42b8ce15-67f9-424a-85b7-d76a7b047f5e",
+      "name": "Smoke Test Build",
+      "description": "runtime smoke",
+      "theme": "custom",
+      "footprint": {
+        "width": 1,
+        "depth": 1,
+        "height": 1
+      },
+      "blocks": [
+        {
+          "id": "0:0:0",
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "material": "stone",
+          "color": "#8c99b5",
+          "tags": [
+            "custom"
+          ]
+        }
+      ],
+      "tags": [
+        "builder-export"
+      ],
+      "suggestedSkills": []
+    },
+    "createdAt": "2026-03-16T12:59:26.973Z",
+    "updatedAt": "2026-03-16T12:59:26.973Z"
+  }
+]

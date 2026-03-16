@@ -6,7 +6,7 @@ import { getRotatedFootprint, sampleBuildingLookup } from "@/data/buildings";
 import { starterTownMap } from "@/data/map-template";
 import type { BuildingPlacement, GridTile, TownMap } from "@/lib/types";
 
-export type MapTool = "road" | "building" | "decoration" | "move" | "delete";
+export type MapTool = "hand" | "road" | "building" | "decoration" | "delete";
 
 interface MapPlannerState {
   id: string;
@@ -90,7 +90,7 @@ function createStarterState() {
     height: starterTownMap.height,
     tiles: tilesToRecord(starterTownMap.tiles),
     placements: starterTownMap.placements,
-    tool: "road" as MapTool,
+    tool: "hand" as MapTool,
     roadType: "stone" as NonNullable<GridTile["roadType"]>,
     decorationType: "tree",
     selectedBuildingId: starterTownMap.placements[0]?.buildingId ?? "pokecenter",
