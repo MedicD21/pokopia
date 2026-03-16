@@ -18,7 +18,9 @@ interface RawItemCatalogSnapshot {
 
 async function main() {
   if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL is required to refresh the item catalog cache.");
+    throw new Error(
+      "DATABASE_URL is required to refresh the item catalog cache.",
+    );
   }
 
   const itemCatalogPath = path.join(
