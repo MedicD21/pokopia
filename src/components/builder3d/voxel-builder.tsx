@@ -3,7 +3,7 @@
 import { Canvas, type ThreeEvent, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
-import { Color, type InstancedMesh, Matrix4, Object3D } from "three";
+import { type InstancedMesh, Matrix4, Object3D, Plane, Vector3 } from "three";
 import type { RefObject } from "react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
@@ -13,11 +13,10 @@ import { SectionCard } from "@/components/ui/section-card";
 import { sampleBuildings } from "@/data/buildings";
 import { blockMaterialLookup, blockMaterials } from "@/data/materials";
 import { summarizeMaterials } from "@/lib/materials";
-import type { BuildingData, StorageMode, VoxelBlock } from "@/lib/types";
+import type { BlockMaterialId, BuildingData, StorageMode, VoxelBlock } from "@/lib/types";
 import { type BuilderMode, useBuilderStore } from "@/store/use-builder-store";
 
 const gridSize = 24;
-const maxInstances = 12000;
 const maxBuildHeight = 13;
 const blockColorSwatches = [
   "#8c99b5",
@@ -25,7 +24,12 @@ const blockColorSwatches = [
   "#5e6e8a",
   "#7fd0df",
   "#d36f4c",
+  "#8f5f3f",
+  "#9ddbf1",
+  "#64798f",
+  "#a1a7b6",
   "#f0544f",
+  "#f5c15f",
   "#f6d46b",
   "#f2a027",
   "#6fc28e",
@@ -34,6 +38,220 @@ const blockColorSwatches = [
 
 type CameraPreset = "iso" | "front" | "back" | "left" | "right" | "top";
 type VoxelPoint = { x: number; y: number; z: number };
+
+const toolDefinitions: ReadonlyArray<{
+  mode: BuilderMode;
+  label: string;
+  shortcut: string;
+  description: string;
+}> = [
+  {
+    mode: "hand",
+    label: "Hand",
+    shortcut: "H",
+    description: "Inspect existing blocks and unlock camera orbit, pan, and zoom.",
+  },
+  {
+    mode: "add",
+    label: "Add",
+    shortcut: "A",
+    description: "Place new blocks with the active material on the current layer.",
+  },
+  {
+    mode: "paint",
+    label: "Paint",
+    shortcut: "P",
+    description: "Recolor or rematerial existing blocks without changing their position.",
+  },
+  {
+    mode: "remove",
+    label: "Remove",
+    shortcut: "X",
+    description: "Delete existing blocks quickly from the current structure.",
+  },
+  {
+    mode: "box",
+    label: "Box",
+    shortcut: "B",
+    description: "Pick two corners to fill a full rectangular volume at once.",
+  },
+  {
+    mode: "wall",
+    label: "Wall",
+    shortcut: "W",
+    description: "Click and drag a wall line, then stack it to the chosen height automatically.",
+  },
+  {
+    mode: "eyedropper",
+    label: "Eyedropper",
+    shortcut: "E",
+    description: "Sample a placed block's material and color back into the active brush.",
+  },
+];
+
+const materialSections: ReadonlyArray<{
+  title: string;
+  items: readonly BlockMaterialId[];
+}> = [
+  {
+    title: "Core blocks",
+    items: ["stone", "wood", "brick", "metal", "glass", "roof"],
+  },
+  {
+    title: "Architectural pieces",
+    items: ["door", "window", "beam", "pillar", "light", "decor"],
+  },
+];
+
+const toolShortcutLookup: Partial<Record<string, BuilderMode>> = {
+  h: "hand",
+  a: "add",
+  p: "paint",
+  x: "remove",
+  b: "box",
+  w: "wall",
+  e: "eyedropper",
+};
+
+function isTypingTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  return (
+    target.isContentEditable ||
+    target.tagName === "INPUT" ||
+    target.tagName === "TEXTAREA" ||
+    target.tagName === "SELECT"
+  );
+}
+
+function ToolIcon({
+  mode,
+  className = "h-5 w-5",
+}: {
+  mode: BuilderMode;
+  className?: string;
+}) {
+  const sharedProps = {
+    className,
+    fill: "none",
+    stroke: "currentColor",
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    strokeWidth: 1.8,
+    viewBox: "0 0 24 24",
+  };
+
+  switch (mode) {
+    case "hand":
+      return (
+        <svg {...sharedProps}>
+          <path d="M7 11.5V5.5a1.5 1.5 0 0 1 3 0v4" />
+          <path d="M10 9.5V4.5a1.5 1.5 0 0 1 3 0v5" />
+          <path d="M13 9V5.5a1.5 1.5 0 0 1 3 0v6" />
+          <path d="M16 10.5V7.5a1.5 1.5 0 0 1 3 0v6.5a6 6 0 0 1-6 6H12a5 5 0 0 1-4.7-3.3L5.6 12A1.5 1.5 0 0 1 8.4 11l1.1 2.2" />
+        </svg>
+      );
+    case "add":
+      return (
+        <svg {...sharedProps}>
+          <path d="M12 5v14" />
+          <path d="M5 12h14" />
+          <path d="m6.5 6.5 5.5-3 5.5 3v11l-5.5 3-5.5-3z" />
+        </svg>
+      );
+    case "paint":
+      return (
+        <svg {...sharedProps}>
+          <path d="m14 4 6 6" />
+          <path d="m11 7 6 6" />
+          <path d="m7 11 6 6" />
+          <path d="M5 19c0-1.7 1.3-3 3-3 1.1 0 2 .9 2 2 0 1.7-1.3 3-3 3H5v-2Z" />
+          <path d="m10 8 4-4 6 6-4 4" />
+        </svg>
+      );
+    case "remove":
+      return (
+        <svg {...sharedProps}>
+          <path d="M6 12h12" />
+          <path d="m6.5 6.5 5.5-3 5.5 3v11l-5.5 3-5.5-3z" />
+        </svg>
+      );
+    case "box":
+      return (
+        <svg {...sharedProps}>
+          <path d="M5 9V5h4" />
+          <path d="M15 5h4v4" />
+          <path d="M19 15v4h-4" />
+          <path d="M9 19H5v-4" />
+          <path d="M8 8h8v8H8z" />
+        </svg>
+      );
+    case "wall":
+      return (
+        <svg {...sharedProps}>
+          <path d="M3 9h18" />
+          <path d="M3 15h18" />
+          <path d="M7 9V5" />
+          <path d="M14 9V5" />
+          <path d="M10 15V9" />
+          <path d="M17 15V9" />
+          <path d="M7 19v-4" />
+          <path d="M14 19v-4" />
+        </svg>
+      );
+    case "eyedropper":
+      return (
+        <svg {...sharedProps}>
+          <path d="m14 4 6 6" />
+          <path d="m10 8 6 6" />
+          <path d="m8 10-4 10 10-4" />
+          <path d="M15 5 5 15" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
+function ToolbarToolButton({
+  active,
+  description,
+  label,
+  mode,
+  onClick,
+  shortcut,
+}: {
+  active: boolean;
+  description: string;
+  label: string;
+  mode: BuilderMode;
+  onClick: () => void;
+  shortcut: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={`${label} (${shortcut})`}
+      aria-label={`${label} tool (${shortcut})`}
+      className={`group relative flex h-16 w-16 items-center justify-center rounded-[22px] border transition ${
+        active
+          ? "border-[color:var(--accent)]/70 bg-[color:var(--accent)]/16 text-[color:var(--foreground)] shadow-[0_12px_24px_rgba(0,0,0,0.18)]"
+          : "border-[color:var(--line)] bg-[color:var(--surface)] text-[color:var(--foreground)] hover:border-[color:var(--accent)]/45 hover:bg-[color:var(--accent)]/8"
+      }`}
+    >
+      <ToolIcon mode={mode} className="h-6 w-6" />
+      <span className="absolute bottom-1.5 right-1.5 rounded-md bg-black/25 px-1.5 py-0.5 text-[10px] font-bold leading-none text-[color:var(--muted)]">
+        {shortcut}
+      </span>
+      <span className="sr-only">
+        {label}: {description}
+      </span>
+    </button>
+  );
+}
 
 function buildPreviewBlueprint(building: BuildingData) {
   return {
@@ -44,6 +262,25 @@ function buildPreviewBlueprint(building: BuildingData) {
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
+}
+
+function snapPointerToLayer(
+  event: ThreeEvent<PointerEvent | MouseEvent>,
+  layer: number,
+) {
+  const interactionPlane = new Plane(new Vector3(0, 1, 0), -layer);
+  const intersection = new Vector3();
+  const point = event.ray.intersectPlane(interactionPlane, intersection);
+
+  if (!point) {
+    return null;
+  }
+
+  return {
+    x: clamp(Math.floor(point.x), 0, gridSize - 1),
+    y: layer,
+    z: clamp(Math.floor(point.z), 0, gridSize - 1),
+  };
 }
 
 function getWallLinePoints(start: VoxelPoint, end: VoxelPoint) {
@@ -157,12 +394,14 @@ function deriveSceneFocus(blocks: VoxelBlock[]) {
   };
 }
 
-function BlockInstances({
+function ColorBlockInstances({
   blocks,
+  color,
   mode,
   onInteract,
 }: {
   blocks: VoxelBlock[];
+  color: string;
   mode: BuilderMode;
   onInteract: (
     block: VoxelBlock,
@@ -187,21 +426,16 @@ function BlockInstances({
       helper.updateMatrix();
       matrix.copy(helper.matrix);
       mesh.setMatrixAt(index, matrix);
-      mesh.setColorAt(index, new Color(block.color));
     });
 
     mesh.count = blocks.length;
     mesh.instanceMatrix.needsUpdate = true;
-
-    if (mesh.instanceColor) {
-      mesh.instanceColor.needsUpdate = true;
-    }
   }, [blocks]);
 
   return (
     <instancedMesh
       ref={meshRef}
-      args={[undefined, undefined, maxInstances]}
+      args={[undefined, undefined, blocks.length]}
       castShadow
       receiveShadow
       onClick={(event) => {
@@ -222,8 +456,49 @@ function BlockInstances({
       }}
     >
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial vertexColors />
+      <meshStandardMaterial color={color} metalness={0.12} roughness={0.78} />
     </instancedMesh>
+  );
+}
+
+function BlockInstances({
+  blocks,
+  mode,
+  onInteract,
+}: {
+  blocks: VoxelBlock[];
+  mode: BuilderMode;
+  onInteract: (
+    block: VoxelBlock,
+    event: ThreeEvent<MouseEvent>,
+    mode: BuilderMode,
+  ) => void;
+}) {
+  const blocksByColor = blocks.reduce<Map<string, VoxelBlock[]>>((lookup, block) => {
+    const resolvedColor = block.color || blockMaterialLookup[block.material].color;
+    const existing = lookup.get(resolvedColor);
+
+    if (existing) {
+      existing.push(block);
+      return lookup;
+    }
+
+    lookup.set(resolvedColor, [block]);
+    return lookup;
+  }, new Map<string, VoxelBlock[]>());
+
+  return (
+    <>
+      {[...blocksByColor.entries()].map(([color, colorBlocks]) => (
+        <ColorBlockInstances
+          key={`${color}:${colorBlocks.length}`}
+          blocks={colorBlocks}
+          color={color}
+          mode={mode}
+          onInteract={onInteract}
+        />
+      ))}
+    </>
   );
 }
 
@@ -407,6 +682,7 @@ function BuildScene({
     wallPreviewEnd,
     wallHeight,
   );
+  const cameraUnlocked = mode === "hand";
 
   return (
     <Canvas
@@ -442,11 +718,15 @@ function BuildScene({
         rotation-x={-Math.PI / 2}
         position={[gridSize / 2, activeLayer + 0.01, gridSize / 2]}
         receiveShadow
-        onClick={(event) => {
+        onPointerDown={(event) => {
           event.stopPropagation();
-          const x = clamp(Math.floor(event.point.x), 0, gridSize - 1);
-          const z = clamp(Math.floor(event.point.z), 0, gridSize - 1);
-          onSurfaceInteract(x, activeLayer, z);
+          const snappedPoint = snapPointerToLayer(event, activeLayer);
+
+          if (!snappedPoint) {
+            return;
+          }
+
+          onSurfaceInteract(snappedPoint.x, snappedPoint.y, snappedPoint.z);
         }}
       >
         <planeGeometry args={[gridSize, gridSize]} />
@@ -466,21 +746,33 @@ function BuildScene({
           position={[gridSize / 2, maxBuildHeight + 0.35, gridSize / 2]}
           onPointerDown={(event) => {
             event.stopPropagation();
-            const x = clamp(Math.floor(event.point.x), 0, gridSize - 1);
-            const z = clamp(Math.floor(event.point.z), 0, gridSize - 1);
-            onWallDragStart(x, activeLayer, z);
+            const snappedPoint = snapPointerToLayer(event, activeLayer);
+
+            if (!snappedPoint) {
+              return;
+            }
+
+            onWallDragStart(snappedPoint.x, snappedPoint.y, snappedPoint.z);
           }}
           onPointerMove={(event) => {
             event.stopPropagation();
-            const x = clamp(Math.floor(event.point.x), 0, gridSize - 1);
-            const z = clamp(Math.floor(event.point.z), 0, gridSize - 1);
-            onWallDragMove(x, activeLayer, z);
+            const snappedPoint = snapPointerToLayer(event, activeLayer);
+
+            if (!snappedPoint) {
+              return;
+            }
+
+            onWallDragMove(snappedPoint.x, snappedPoint.y, snappedPoint.z);
           }}
           onPointerUp={(event) => {
             event.stopPropagation();
-            const x = clamp(Math.floor(event.point.x), 0, gridSize - 1);
-            const z = clamp(Math.floor(event.point.z), 0, gridSize - 1);
-            onWallDragEnd(x, activeLayer, z);
+            const snappedPoint = snapPointerToLayer(event, activeLayer);
+
+            if (!snappedPoint) {
+              return;
+            }
+
+            onWallDragEnd(snappedPoint.x, snappedPoint.y, snappedPoint.z);
           }}
         >
           <planeGeometry args={[gridSize, gridSize]} />
@@ -494,7 +786,11 @@ function BuildScene({
       <OrbitControls
         ref={controlsRef}
         makeDefault
+        enabled={cameraUnlocked}
         enableDamping
+        enablePan={cameraUnlocked}
+        enableRotate={cameraUnlocked}
+        enableZoom={cameraUnlocked}
         maxDistance={72}
         minDistance={4}
         maxPolarAngle={Math.PI / 2.05}
@@ -545,14 +841,44 @@ export function VoxelBuilder() {
   const selectedBlock = blocks.find((block) => block.id === selectedBlockId) ?? null;
   const maxWallHeight = Math.max(1, maxBuildHeight - activeLayer);
   const effectiveWallHeight = Math.min(wallHeight, maxWallHeight);
+  const activeTool =
+    toolDefinitions.find((tool) => tool.mode === mode) ?? toolDefinitions[0];
 
-  function selectMode(nextMode: BuilderMode) {
-    setMode(nextMode);
+  function resetTransientToolState() {
     setBoxStart(null);
     setWallPreviewStart(null);
     setWallPreviewEnd(null);
     wallDragActiveRef.current = false;
   }
+
+  function selectMode(nextMode: BuilderMode) {
+    setMode(nextMode);
+    resetTransientToolState();
+  }
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.metaKey || event.ctrlKey || event.altKey || isTypingTarget(event.target)) {
+        return;
+      }
+
+      const nextMode = toolShortcutLookup[event.key.toLowerCase()];
+
+      if (!nextMode) {
+        return;
+      }
+
+      event.preventDefault();
+      setMode(nextMode);
+      setBoxStart(null);
+      setWallPreviewStart(null);
+      setWallPreviewEnd(null);
+      wallDragActiveRef.current = false;
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [setMode]);
 
   function commitBoxPoint(point: VoxelPoint) {
     if (!boxStart) {
@@ -745,8 +1071,8 @@ export function VoxelBuilder() {
         <div className="xl:sticky xl:top-28 xl:max-h-[calc(100vh-7.5rem)] xl:overflow-y-auto">
           <SectionCard
             eyebrow="Phase 2"
-            title="Builder Controls"
-            description="Sculpt with direct-edit tools, drag out walls at a chosen height, swap materials, and control the active layer without giving up screen space."
+            title="Build Setup"
+            description="Choose a template, tune the active layer, pick materials, and manage the current scene. Editing tools now live above the voxel scene."
           >
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
@@ -780,10 +1106,7 @@ export function VoxelBuilder() {
                   onChange={(event) => {
                     loadTemplate(event.target.value);
                     setSelectedBlockId(null);
-                    setBoxStart(null);
-                    setWallPreviewStart(null);
-                    setWallPreviewEnd(null);
-                    wallDragActiveRef.current = false;
+                    resetTransientToolState();
                   }}
                   className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
                 >
@@ -815,54 +1138,6 @@ export function VoxelBuilder() {
                   className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
                 />
               </label>
-              <div className="grid grid-cols-2 gap-3">
-                {(["hand", "add", "paint", "remove", "box", "wall", "eyedropper"] as const).map(
-                  (option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => selectMode(option)}
-                      className={`rounded-2xl px-4 py-3 text-sm font-semibold capitalize ${
-                        mode === option
-                          ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
-                          : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
-                      }`}
-                    >
-                      {option}
-                    </button>
-                  ),
-                )}
-              </div>
-              {mode === "wall" ? (
-                <div className="space-y-3 rounded-2xl bg-[color:var(--surface)] px-4 py-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-[color:var(--muted)]">
-                      Wall height
-                    </span>
-                    <span className="rounded-full bg-[color:var(--accent)]/14 px-3 py-1 text-sm font-semibold text-[color:var(--foreground)]">
-                      {effectiveWallHeight} high
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={1}
-                    max={maxWallHeight}
-                    value={effectiveWallHeight}
-                    onChange={(event) => setWallHeight(Number(event.target.value))}
-                    className="w-full accent-[color:var(--accent)]"
-                  />
-                  <p className="text-sm leading-6 text-[color:var(--muted)]">
-                    Click and drag across the grid to raise a wall path from the active layer through all {effectiveWallHeight} levels automatically.
-                  </p>
-                </div>
-              ) : null}
-              {mode === "box" ? (
-                <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4 text-sm leading-6 text-[color:var(--muted)]">
-                  {boxStart
-                    ? `Box start locked at ${boxStart.x}, ${boxStart.y}, ${boxStart.z}. Click a second point to fill the full volume.`
-                    : "Click one corner, then a second point to fill a complete box volume with the active material."}
-                </div>
-              ) : null}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-[color:var(--muted)]">
@@ -881,24 +1156,38 @@ export function VoxelBuilder() {
                   className="w-full accent-[color:var(--accent)]"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                {blockMaterials.map((material) => (
-                  <button
-                    key={material.id}
-                    type="button"
-                    onClick={() => setActiveMaterial(material.id)}
-                    className={`flex items-center gap-3 rounded-2xl px-3 py-3 text-left text-sm font-semibold ${
-                      activeMaterial === material.id
-                        ? "bg-[color:var(--accent-2)]/18 text-[color:var(--foreground)]"
-                        : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
-                    }`}
-                  >
-                    <span
-                      className="h-4 w-4 rounded-full border border-black/10"
-                      style={{ backgroundColor: material.color }}
-                    />
-                    {material.displayName}
-                  </button>
+              <div className="space-y-4">
+                {materialSections.map((section) => (
+                  <div key={section.title} className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
+                      {section.title}
+                    </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {section.items.map((materialId) => {
+                        const material = blockMaterialLookup[materialId];
+
+                        return (
+                          <button
+                            key={material.id}
+                            type="button"
+                            onClick={() => setActiveMaterial(material.id)}
+                            className={`flex items-center gap-3 rounded-2xl px-3 py-3 text-left text-sm font-semibold ${
+                              activeMaterial === material.id
+                                ? "bg-[color:var(--accent-2)]/18 text-[color:var(--foreground)]"
+                                : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+                            }`}
+                            title={material.displayName}
+                          >
+                            <span
+                              className="h-4 w-4 shrink-0 rounded-full border border-black/10"
+                              style={{ backgroundColor: material.color }}
+                            />
+                            <span className="leading-5">{material.displayName}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 ))}
               </div>
               <div className="space-y-3 rounded-2xl bg-[color:var(--surface)] px-4 py-4">
@@ -955,10 +1244,7 @@ export function VoxelBuilder() {
                   onClick={() => {
                     clear();
                     setSelectedBlockId(null);
-                    setBoxStart(null);
-                    setWallPreviewStart(null);
-                    setWallPreviewEnd(null);
-                    wallDragActiveRef.current = false;
+                    resetTransientToolState();
                   }}
                   className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
                 >
@@ -991,7 +1277,7 @@ export function VoxelBuilder() {
         <SectionCard
           eyebrow="Voxel Scene"
           title="3D Builder"
-          description="Orbit, pan, and zoom around the current build. Drag walls directly in the scene, and use the heavier 10x10 guides to judge larger footprints quickly."
+          description="Use the tool strip just above the voxel scene or press H, A, P, X, B, W, and E to switch tools. Hand mode unlocks camera orbit, while placement tools stay locked for precision."
           action={
             <div className="flex flex-wrap gap-2">
               {(["iso", "front", "back", "left", "right", "top"] as const).map((preset) => (
@@ -1013,15 +1299,118 @@ export function VoxelBuilder() {
           className="flex min-h-[600px] flex-col xl:min-h-[calc(100vh-9rem)]"
         >
           <div className="mb-3 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--muted)]">
-            <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">Orbit: drag</span>
-            <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">Pan: right drag</span>
-            <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">Zoom: wheel</span>
             <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
-              Hand: inspect
+              Camera: hand mode only
+            </span>
+            <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
+              Hand: inspect + orbit
             </span>
             <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
               Wall: click + drag
             </span>
+            <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
+              Grid: bold every 10 tiles
+            </span>
+          </div>
+          <div className="mb-4 rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface)]/88 p-4">
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
+              <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
+                  Active tool
+                </p>
+                <div className="mt-3 flex items-start gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--surface)] text-[color:var(--foreground)]">
+                    <ToolIcon mode={activeTool.mode} className="h-6 w-6" />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="font-display text-2xl text-[color:var(--foreground)]">
+                      {activeTool.label}
+                    </p>
+                    <p className="text-sm leading-6 text-[color:var(--muted)]">
+                      {activeTool.description}
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  {toolDefinitions.map((tool) => (
+                    <ToolbarToolButton
+                      key={tool.mode}
+                      active={mode === tool.mode}
+                      description={tool.description}
+                      label={tool.label}
+                      mode={tool.mode}
+                      onClick={() => selectMode(tool.mode)}
+                      shortcut={tool.shortcut}
+                    />
+                  ))}
+                </div>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {toolDefinitions.map((tool) => (
+                    <span
+                      key={tool.mode}
+                      className="rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]"
+                    >
+                      {tool.shortcut} {tool.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
+                {mode === "wall" ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-[color:var(--muted)]">
+                        Wall height
+                      </span>
+                      <span className="rounded-full bg-[color:var(--accent)]/14 px-3 py-1 text-sm font-semibold text-[color:var(--foreground)]">
+                        {effectiveWallHeight} high
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min={1}
+                      max={maxWallHeight}
+                      value={effectiveWallHeight}
+                      onChange={(event) => setWallHeight(Number(event.target.value))}
+                      className="w-full accent-[color:var(--accent)]"
+                    />
+                    <p className="text-sm leading-6 text-[color:var(--muted)]">
+                      Click and drag across the grid to raise a wall path from the active layer through all {effectiveWallHeight} levels automatically.
+                    </p>
+                  </div>
+                ) : mode === "box" ? (
+                  <div className="space-y-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
+                      Box tool
+                    </p>
+                    <p className="text-sm leading-6 text-[color:var(--muted)]">
+                      {boxStart
+                        ? `Box start locked at ${boxStart.x}, ${boxStart.y}, ${boxStart.z}. Click a second point to fill the full volume.`
+                        : "Click one corner, then a second point to fill a complete box volume with the active material."}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
+                      Builder state
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
+                        Layer Y {activeLayer}
+                      </span>
+                      <span className="rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
+                        Material {blockMaterialLookup[activeMaterial].displayName}
+                      </span>
+                    </div>
+                    <p className="text-sm leading-6 text-[color:var(--muted)]">
+                      {mode === "hand"
+                        ? "Hand mode unlocks orbit controls so you can inspect every side before switching back to a placement tool."
+                        : "Placement tools keep the camera locked to prevent the scene from drifting while you draw walls, add blocks, or sample materials."}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
           <div className="min-h-[clamp(480px,70vh,860px)] flex-1 overflow-hidden rounded-[24px] border border-[color:var(--line)]">
             <BuildScene

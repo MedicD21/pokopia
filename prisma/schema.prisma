@@ -75,11 +75,45 @@ model Material {
   obtainMethod   String
   craftingRecipe String
   location       String
+  detailUrl      String?
+  imageUrl       String?
+  summary        String?
   notes          String?
+  habitats       MaterialHabitat[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   @@map("materials")
+}
+
+model Habitat {
+  id               String            @id @default(cuid())
+  slug             String            @unique
+  name             String
+  dexNumber        String?
+  conditions       String[]
+  pokemonAvailable String[]
+  detailUrl        String?
+  imageUrl         String?
+  sourceUrl        String?
+  materials        MaterialHabitat[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@map("habitats")
+}
+
+model MaterialHabitat {
+  materialId String
+  habitatId  String
+  reason     String
+  createdAt  DateTime @default(now())
+  material   Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  habitat    Habitat  @relation(fields: [habitatId], references: [id], onDelete: Cascade)
+
+  @@id([materialId, habitatId])
+  @@index([habitatId])
+  @@map("material_habitats")
 }
 
 model PokemonHelper {

@@ -22,7 +22,12 @@ export function countBlocksByMaterial(blocks: VoxelBlock[]) {
       metal: 0,
       glass: 0,
       brick: 0,
+      door: 0,
+      window: 0,
+      beam: 0,
+      pillar: 0,
       roof: 0,
+      light: 0,
       decor: 0,
     },
   );
@@ -42,6 +47,8 @@ export function generateMaterialsList(
       return {
         materialId,
         name: definition.displayName,
+        catalogMatchName: definition.catalogMatchName,
+        imageUrl: definition.imageUrl,
         category: definition.category,
         color: definition.color,
         count,

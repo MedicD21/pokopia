@@ -23,7 +23,12 @@ export type BlockMaterialId =
   | "metal"
   | "glass"
   | "brick"
+  | "door"
+  | "window"
+  | "beam"
+  | "pillar"
   | "roof"
+  | "light"
   | "decor";
 
 export type RoadType = "dirt" | "stone" | "wood" | "bridge" | "path";
@@ -33,6 +38,8 @@ export type MapTileType = "empty" | "road" | "decoration";
 export interface BlockMaterialDefinition {
   id: BlockMaterialId;
   displayName: string;
+  catalogMatchName?: string;
+  imageUrl?: string;
   category: MaterialCategory;
   color: string;
   obtainMethod: string;
@@ -71,6 +78,8 @@ export interface BuildingData {
 export interface MaterialCount {
   materialId: BlockMaterialId;
   name: string;
+  catalogMatchName?: string;
+  imageUrl?: string;
   category: MaterialCategory;
   color: string;
   count: number;
@@ -78,6 +87,77 @@ export interface MaterialCount {
   craftingRecipe: string;
   location: string;
   notes: string;
+}
+
+export type ItemCatalogLocationKind =
+  | "location"
+  | "dream_island"
+  | "build_kit"
+  | "recipe"
+  | "trade"
+  | "exchange"
+  | "appraisal"
+  | "processing"
+  | "method"
+  | "linked"
+  | "unknown";
+
+export interface ItemCatalogLocationEntry {
+  label: string;
+  href: string | null;
+  qualifier: string | null;
+  kind: ItemCatalogLocationKind;
+  rawText: string;
+  notes: string | null;
+}
+
+export interface ItemCatalogHabitatEntry {
+  slug: string;
+  name: string;
+  dexNumber: string | null;
+  conditions: string[];
+  pokemonAvailable: string[];
+  detailUrl: string | null;
+  imageUrl: string | null;
+  sourceUrl: string | null;
+  reason: string;
+}
+
+export interface ItemCatalogEntry {
+  slug: string;
+  name: string;
+  primaryCategory: string;
+  serebiiCategory: string | null;
+  game8Category: string | null;
+  description: string;
+  tag: string | null;
+  tagDetailUrl: string | null;
+  primaryImageUrl: string | null;
+  serebiiImageUrl: string | null;
+  game8ImageUrl: string | null;
+  locationSummary: string;
+  locationEntries: ItemCatalogLocationEntry[];
+  obtainMethod: string | null;
+  craftingRecipe: string | null;
+  habitats: ItemCatalogHabitatEntry[];
+  sourceUrls: {
+    serebii: string | null;
+    game8: string | null;
+  };
+}
+
+export interface ItemCatalogSnapshot {
+  generatedAt: string | null;
+  sources: {
+    game8Items: string | null;
+    game8Habitats: string | null;
+    serebiiItems: string | null;
+  };
+  totalItems: number;
+  totalItemsWithImages: number;
+  totalItemsWithLocationEntries: number;
+  categories: Array<{ name: string; count: number }>;
+  items: ItemCatalogEntry[];
 }
 
 export interface PokemonHelper {

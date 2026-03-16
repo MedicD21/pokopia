@@ -79,7 +79,7 @@ a:focus-visible {
 
 h2 {
   font-family: var(--font-display), sans-serif;
-  color: turquoise;
+  color: #256c01;
   font-size: 1.5rem;
   line-height: 2rem;
   font-weight: 700;

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { SectionCard } from "@/components/ui/section-card";
 import type { MaterialCount } from "@/lib/types";
 
@@ -32,10 +34,21 @@ export function MaterialsBreakdown({
           >
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-start gap-3">
-                <span
-                  className="mt-1 h-4 w-4 rounded-full border border-black/10"
-                  style={{ backgroundColor: material.color }}
-                />
+                {material.imageUrl ? (
+                  <Image
+                    src={material.imageUrl}
+                    alt={material.name}
+                    width={56}
+                    height={56}
+                    sizes="56px"
+                    className="h-14 w-14 rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] object-contain p-2"
+                  />
+                ) : (
+                  <span
+                    className="mt-1 h-4 w-4 rounded-full border border-black/10"
+                    style={{ backgroundColor: material.color }}
+                  />
+                )}
                 <div>
                   <p className="font-display text-lg text-[color:var(--foreground)]">
                     {material.name}

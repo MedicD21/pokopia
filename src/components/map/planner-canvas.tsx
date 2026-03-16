@@ -62,7 +62,12 @@ function uniqueTiles(tiles: TilePoint[]) {
   });
 }
 
-function expandBrush(center: TilePoint, brushSize: number, width: number, height: number) {
+function expandBrush(
+  center: TilePoint,
+  brushSize: number,
+  width: number,
+  height: number,
+) {
   const radius = brushSize - 1;
   const tiles: TilePoint[] = [];
 
@@ -167,7 +172,9 @@ export function PlannerCanvas() {
   const setTool = useMapStore((state) => state.setTool);
   const setRoadType = useMapStore((state) => state.setRoadType);
   const setDecorationType = useMapStore((state) => state.setDecorationType);
-  const setSelectedBuildingId = useMapStore((state) => state.setSelectedBuildingId);
+  const setSelectedBuildingId = useMapStore(
+    (state) => state.setSelectedBuildingId,
+  );
   const selectPlacement = useMapStore((state) => state.selectPlacement);
   const updateSelectedPlacementLabel = useMapStore(
     (state) => state.updateSelectedPlacementLabel,
@@ -175,21 +182,30 @@ export function PlannerCanvas() {
   const duplicateSelectedPlacement = useMapStore(
     (state) => state.duplicateSelectedPlacement,
   );
-  const nudgeSelectedPlacement = useMapStore((state) => state.nudgeSelectedPlacement);
+  const nudgeSelectedPlacement = useMapStore(
+    (state) => state.nudgeSelectedPlacement,
+  );
   const paintRoad = useMapStore((state) => state.paintRoad);
   const paintDecoration = useMapStore((state) => state.paintDecoration);
   const placeBuilding = useMapStore((state) => state.placeBuilding);
-  const moveSelectedPlacement = useMapStore((state) => state.moveSelectedPlacement);
-  const rotateSelectedPlacement = useMapStore((state) => state.rotateSelectedPlacement);
-  const deleteSelectedPlacement = useMapStore((state) => state.deleteSelectedPlacement);
+  const moveSelectedPlacement = useMapStore(
+    (state) => state.moveSelectedPlacement,
+  );
+  const rotateSelectedPlacement = useMapStore(
+    (state) => state.rotateSelectedPlacement,
+  );
+  const deleteSelectedPlacement = useMapStore(
+    (state) => state.deleteSelectedPlacement,
+  );
   const deleteAt = useMapStore((state) => state.deleteAt);
   const resetMap = useMapStore((state) => state.resetMap);
   const exportMap = useMapStore((state) => state.exportMap);
 
   const selectedPlacement =
-    placements.find((placement) => placement.id === selectedPlacementId) ?? null;
+    placements.find((placement) => placement.id === selectedPlacementId) ??
+    null;
   const selectedTileRecord = selectedTile
-    ? tiles[tileKey(selectedTile.x, selectedTile.y)] ?? null
+    ? (tiles[tileKey(selectedTile.x, selectedTile.y)] ?? null)
     : null;
   const selectedTileForDisplay =
     selectedTile && selectedTileRecord ? selectedTile : null;
@@ -214,7 +230,9 @@ export function PlannerCanvas() {
     const expanded =
       drawMode === "brush"
         ? uniqueTiles(
-            points.flatMap((point) => expandBrush(point, brushSize, width, height)),
+            points.flatMap((point) =>
+              expandBrush(point, brushSize, width, height),
+            ),
           )
         : uniqueTiles(points);
 
@@ -379,18 +397,22 @@ export function PlannerCanvas() {
       context.globalAlpha = 1;
       context.lineWidth = placement.id === selectedPlacementId ? 2.5 : 1;
       context.strokeStyle =
-        placement.id === selectedPlacementId ? "#ff9d45" : "rgba(219, 231, 255, 0.4)";
+        placement.id === selectedPlacementId
+          ? "#ff9d45"
+          : "rgba(219, 231, 255, 0.4)";
       context.strokeRect(px, py, boxWidth, boxHeight);
 
       if (tileSize > 8) {
-        context.fillStyle = "#f2a027";
+        const labelX = px + 4;
+        const labelY = py + Math.min(boxHeight / 2, 16);
+        const maxLabelWidth = Math.max(boxWidth - 8, 24);
+
+        context.fillStyle = "#ffffff";
         context.font = "600 10px var(--font-mono)";
-        context.fillText(
-          placement.label,
-          px + 4,
-          py + Math.min(boxHeight / 2, 16),
-          Math.max(boxWidth - 8, 24),
-        );
+        context.lineWidth = 3;
+        context.strokeStyle = "rgba(9, 17, 31, 0.9)";
+        context.strokeText(placement.label, labelX, labelY, maxLabelWidth);
+        context.fillText(placement.label, labelX, labelY, maxLabelWidth);
       }
     });
 
@@ -623,14 +645,23 @@ export function PlannerCanvas() {
         <div className="mb-4 flex flex-wrap items-center gap-3 rounded-[24px] bg-[color:var(--surface)] px-4 py-3 text-sm text-[color:var(--muted)]">
           <span>Hand: select and move placed buildings.</span>
           <span>Eyedropper: sample existing map content.</span>
-          <span>Brush, line, rectangle, and fill work with roads, decorations, and delete.</span>
-          <span>Bold grid lines mark every 10 tiles without limiting the map size.</span>
+          <span>
+            Brush, line, rectangle, and fill work with roads, decorations, and
+            delete.
+          </span>
+          <span>
+            Bold grid lines mark every 10 tiles without limiting the map size.
+          </span>
         </div>
         <div className="min-h-[720px] flex-1 overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-strong)]">
           <canvas
             ref={canvasRef}
             className={`h-full w-full touch-none ${
-              tool === "hand" ? "cursor-grab" : tool === "eyedropper" ? "cursor-copy" : "cursor-crosshair"
+              tool === "hand"
+                ? "cursor-grab"
+                : tool === "eyedropper"
+                  ? "cursor-copy"
+                  : "cursor-crosshair"
             }`}
             onPointerDown={(event) => {
               const tile = getTileCoordinates(event);
@@ -652,7 +683,9 @@ export function PlannerCanvas() {
               if (
                 paintActiveRef.current &&
                 tile &&
-                (tool === "road" || tool === "decoration" || tool === "delete") &&
+                (tool === "road" ||
+                  tool === "decoration" ||
+                  tool === "delete") &&
                 drawMode === "brush"
               ) {
                 applyDrawTiles([tile]);
@@ -694,7 +727,7 @@ export function PlannerCanvas() {
         >
           <div className="space-y-4">
             <label className="block space-y-2">
-              <span className="text-sm font-semibold text-[color:var(--muted)]">
+              <span className="text-sm font-semibold text-[color: white]">
                 Town name
               </span>
               <input
@@ -704,46 +737,59 @@ export function PlannerCanvas() {
               />
             </label>
             <div className="grid grid-cols-2 gap-3">
-              {(["hand", "road", "building", "decoration", "eyedropper", "delete"] as const).map(
-                (option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => {
-                      setTool(option);
+              {(
+                [
+                  "hand",
+                  "road",
+                  "building",
+                  "decoration",
+                  "eyedropper",
+                  "delete",
+                ] as const
+              ).map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => {
+                    setTool(option);
 
-                      if (option === "building" || option === "hand" || option === "eyedropper") {
-                        setDrawStart(null);
-                      }
-                    }}
-                    className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
-                      tool === option
-                        ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
-                        : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
-                    }`}
-                  >
-                    {option}
-                  </button>
-                ),
-              )}
+                    if (
+                      option === "building" ||
+                      option === "hand" ||
+                      option === "eyedropper"
+                    ) {
+                      setDrawStart(null);
+                    }
+                  }}
+                  className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
+                    tool === option
+                      ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
+                      : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+                  }`}
+                >
+                  {option}
+                </button>
+              ))}
             </div>
             {tool === "road" || tool === "decoration" || tool === "delete" ? (
               <>
                 <div className="grid grid-cols-2 gap-3">
-                  {(["brush", "line", "rectangle", "fill"] as const).map((mode) => (
-                    <button
-                      key={mode}
-                      type="button"
-                      onClick={() => setDrawMode(mode)}
-                      className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
-                        drawMode === mode
-                          ? "bg-[color:var(--accent)]/20 text-[color:var(--foreground)]"
-                          : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
-                      }`}
-                    >
-                      {mode}
-                    </button>
-                  ))}
+                  {(["brush", "line", "rectangle", "fill"] as const).map(
+                    (mode) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => setDrawMode(mode)}
+                        className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
+                          drawMode === mode
+                            ? "bg-[color:var(--accent)]/20 text-[color:var(--foreground)]"
+                            : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+                        }`}
+                      >
+                        {mode}
+                      </button>
+                    ),
+                  )}
                 </div>
                 {drawMode === "brush" ? (
                   <div className="space-y-2">
@@ -761,7 +807,9 @@ export function PlannerCanvas() {
                       max={3}
                       step={1}
                       value={brushSize}
-                      onChange={(event) => setBrushSize(Number(event.target.value))}
+                      onChange={(event) =>
+                        setBrushSize(Number(event.target.value))
+                      }
                       className="w-full accent-[color:var(--accent)]"
                     />
                   </div>
@@ -770,20 +818,22 @@ export function PlannerCanvas() {
             ) : null}
             {tool === "road" ? (
               <div className="grid grid-cols-2 gap-3">
-                {(["stone", "path", "dirt", "wood", "bridge"] as const).map((option) => (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => setRoadType(option)}
-                    className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
-                      roadType === option
-                        ? "bg-[color:var(--accent)]/18 text-[color:var(--foreground)]"
-                        : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
-                    }`}
-                  >
-                    {option}
-                  </button>
-                ))}
+                {(["stone", "path", "dirt", "wood", "bridge"] as const).map(
+                  (option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => setRoadType(option)}
+                      className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
+                        roadType === option
+                          ? "bg-[color:var(--accent)]/18 text-[color:var(--foreground)]"
+                          : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+                      }`}
+                    >
+                      {option}
+                    </button>
+                  ),
+                )}
               </div>
             ) : null}
             {tool === "decoration" ? (
@@ -811,7 +861,9 @@ export function PlannerCanvas() {
                 </span>
                 <select
                   value={selectedBuildingId}
-                  onChange={(event) => setSelectedBuildingId(event.target.value)}
+                  onChange={(event) =>
+                    setSelectedBuildingId(event.target.value)
+                  }
                   className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
                 >
                   {sampleBuildings.map((building) => (
@@ -839,7 +891,9 @@ export function PlannerCanvas() {
               </button>
             </div>
             {saveMessage ? (
-              <p className="text-sm leading-6 text-[color:var(--muted)]">{saveMessage}</p>
+              <p className="text-sm leading-6 text-[color:var(--muted)]">
+                {saveMessage}
+              </p>
             ) : null}
           </div>
         </SectionCard>
@@ -857,8 +911,8 @@ export function PlannerCanvas() {
                   {selectedPlacement.label}
                 </p>
                 <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">
-                  Position {selectedPlacement.x}, {selectedPlacement.y} with rotation{" "}
-                  {selectedPlacement.rotation} degrees.
+                  Position {selectedPlacement.x}, {selectedPlacement.y} with
+                  rotation {selectedPlacement.rotation} degrees.
                 </p>
               </div>
               <label className="block space-y-2">
@@ -867,7 +921,9 @@ export function PlannerCanvas() {
                 </span>
                 <input
                   value={selectedPlacement.label}
-                  onChange={(event) => updateSelectedPlacementLabel(event.target.value)}
+                  onChange={(event) =>
+                    updateSelectedPlacementLabel(event.target.value)
+                  }
                   className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
                 />
               </label>
@@ -950,27 +1006,29 @@ export function PlannerCanvas() {
               </div>
               {selectedTileRecord.tileType === "road" ? (
                 <div className="grid grid-cols-2 gap-3">
-                  {(["stone", "path", "dirt", "wood", "bridge"] as const).map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      onClick={() => {
-                        if (!selectedTile) {
-                          return;
-                        }
+                  {(["stone", "path", "dirt", "wood", "bridge"] as const).map(
+                    (option) => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => {
+                          if (!selectedTile) {
+                            return;
+                          }
 
-                        setRoadType(option);
-                        paintRoad(selectedTile.x, selectedTile.y);
-                      }}
-                      className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
-                        selectedTileRecord.roadType === option
-                          ? "bg-[color:var(--accent)]/18"
-                          : "bg-[color:var(--surface-strong)]"
-                      }`}
-                    >
-                      {option}
-                    </button>
-                  ))}
+                          setRoadType(option);
+                          paintRoad(selectedTile.x, selectedTile.y);
+                        }}
+                        className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
+                          selectedTileRecord.roadType === option
+                            ? "bg-[color:var(--accent)]/18"
+                            : "bg-[color:var(--surface-strong)]"
+                        }`}
+                      >
+                        {option}
+                      </button>
+                    ),
+                  )}
                 </div>
               ) : null}
               {selectedTileRecord.tileType === "decoration" ? (
@@ -1012,7 +1070,8 @@ export function PlannerCanvas() {
             </div>
           ) : (
             <p className="text-sm leading-6 text-[color:var(--muted)]">
-              Nothing selected yet. Use the hand tool or eyedropper to inspect what is already on the map.
+              Nothing selected yet. Use the hand tool or eyedropper to inspect
+              what is already on the map.
             </p>
           )}
         </SectionCard>

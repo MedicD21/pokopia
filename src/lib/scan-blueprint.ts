@@ -37,27 +37,69 @@ function createBlock(
   };
 }
 
+function isStructuralMaterial(material: BlockMaterialId) {
+  return (
+    material === "stone" ||
+    material === "wood" ||
+    material === "metal" ||
+    material === "glass" ||
+    material === "brick" ||
+    material === "beam" ||
+    material === "pillar" ||
+    material === "roof"
+  );
+}
+
 function detectMaterials(name: string): BlockMaterialId[] {
   const lowerName = name.toLowerCase();
   const detected = new Set<BlockMaterialId>();
 
   if (lowerName.includes("glass") || lowerName.includes("greenhouse")) {
     detected.add("glass");
+    detected.add("window");
     detected.add("metal");
   }
 
   if (lowerName.includes("forge") || lowerName.includes("workshop")) {
     detected.add("metal");
+    detected.add("beam");
     detected.add("wood");
   }
 
   if (lowerName.includes("center") || lowerName.includes("clinic")) {
     detected.add("brick");
     detected.add("roof");
+    detected.add("door");
   }
 
   if (lowerName.includes("wood") || lowerName.includes("cabin")) {
     detected.add("wood");
+    detected.add("door");
+  }
+
+  if (lowerName.includes("window")) {
+    detected.add("window");
+    detected.add("glass");
+  }
+
+  if (lowerName.includes("door") || lowerName.includes("gate")) {
+    detected.add("door");
+    detected.add("wood");
+  }
+
+  if (lowerName.includes("beam")) {
+    detected.add("beam");
+    detected.add("metal");
+  }
+
+  if (lowerName.includes("pillar") || lowerName.includes("column")) {
+    detected.add("pillar");
+    detected.add("stone");
+  }
+
+  if (lowerName.includes("lantern") || lowerName.includes("light")) {
+    detected.add("light");
+    detected.add("decor");
   }
 
   if (detected.size === 0) {
@@ -72,23 +114,38 @@ function detectMaterials(name: string): BlockMaterialId[] {
 function suggestedSkillsFromMaterials(materials: BlockMaterialId[]): BuildSkill[] {
   const suggestions = new Set<BuildSkill>();
 
-  if (materials.includes("stone") || materials.includes("metal")) {
+  if (
+    materials.includes("stone") ||
+    materials.includes("metal") ||
+    materials.includes("beam") ||
+    materials.includes("pillar")
+  ) {
     suggestions.add("heavy lifting");
   }
 
-  if (materials.includes("stone")) {
+  if (materials.includes("stone") || materials.includes("pillar")) {
     suggestions.add("digging");
   }
 
-  if (materials.includes("metal") || materials.includes("brick") || materials.includes("roof")) {
+  if (
+    materials.includes("metal") ||
+    materials.includes("beam") ||
+    materials.includes("brick") ||
+    materials.includes("roof")
+  ) {
     suggestions.add("fire forging");
   }
 
-  if (materials.includes("glass") || materials.includes("decor")) {
+  if (
+    materials.includes("glass") ||
+    materials.includes("window") ||
+    materials.includes("decor") ||
+    materials.includes("light")
+  ) {
     suggestions.add("precision work");
   }
 
-  if (materials.includes("glass")) {
+  if (materials.includes("glass") || materials.includes("window")) {
     suggestions.add("water shaping");
   }
 
@@ -104,9 +161,19 @@ export function createBlueprintFromUpload(
 ): ScanBlueprintResult {
   const seed = hashString(`${fileName}:${fileSize}:${fileType}`);
   const materials = detectMaterials(fileName);
-  const primary = materials[0] ?? "stone";
-  const secondary = materials[1] ?? "wood";
-  const accent = materials[2] ?? "decor";
+  const structuralMaterials = materials.filter(isStructuralMaterial);
+  const primary = structuralMaterials[0] ?? "stone";
+  const secondary =
+    structuralMaterials.find((material) => material !== primary) ?? "wood";
+  const accent =
+    materials.find(
+      (material) =>
+        material === "roof" ||
+        material === "decor" ||
+        material === "light" ||
+        material === "door" ||
+        material === "window",
+    ) ?? "decor";
   const width = 6 + (seed % 4);
   const depth = 5 + (seed % 3);
   const height = 4 + (seed % 3);

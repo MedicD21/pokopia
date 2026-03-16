@@ -1,0 +1,3759 @@
+[
+  {
+    "slug": "tall-grass",
+    "name": "Tall grass",
+    "dex_number": "001",
+    "conditions": [
+      "Tall grass x4"
+    ],
+    "pokemon_available": [
+      "Bulbasaur",
+      "Charmander",
+      "Charizard",
+      "Squirtle",
+      "Oddish",
+      "Geodude"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585094",
+    "image_url": "https://img.game8.co/4423971/dee0b00910ddee74eb7f5f9f510f4cd6.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tree-shaded-tall-grass",
+    "name": "Tree-shaded tall grass",
+    "dex_number": "002",
+    "conditions": [
+      "Tall grass x4",
+      "Large Tree (any) x1"
+    ],
+    "pokemon_available": [
+      "Bellsprout",
+      "Scyther",
+      "Scizor",
+      "Pinsir",
+      "Heracross"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585082",
+    "image_url": "https://img.game8.co/4423956/e63a2a1800ceb7c833c468c11131104e.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "boulder-shaded-tall-grass",
+    "name": "Boulder-shaded tall grass",
+    "dex_number": "003",
+    "conditions": [
+      "Tall grass x4",
+      "Large boulder x1"
+    ],
+    "pokemon_available": [
+      "Timburr",
+      "Gurdurr",
+      "Machop"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585081",
+    "image_url": "https://img.game8.co/4423970/3424780ef75b20a293a96327eb98730e.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "hydrated-tall-grass",
+    "name": "Hydrated tall grass",
+    "dex_number": "004",
+    "conditions": [
+      "Tall grass x4",
+      "Water x2"
+    ],
+    "pokemon_available": [
+      "Squirtle",
+      "Wartortle",
+      "Blastoise",
+      "Sliggoo",
+      "Cramorant"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585080",
+    "image_url": "https://img.game8.co/4431647/8482ea23489e50475a687ad424bbd1eb.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "seaside-tall-grass",
+    "name": "Seaside tall grass",
+    "dex_number": "005",
+    "conditions": [
+      "Tall grass x4",
+      "Ocean Water x2"
+    ],
+    "pokemon_available": [
+      "Slowpoke",
+      "Slowbro",
+      "Slowking"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585079",
+    "image_url": "https://img.game8.co/4431648/1fd6876bd66068d0b0dd614477027150.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "elevated-tall-grass",
+    "name": "Elevated tall grass",
+    "dex_number": "006",
+    "conditions": [
+      "Tall grass x4",
+      "High-up location x1"
+    ],
+    "pokemon_available": [
+      "Pidgey",
+      "Pidgeotto",
+      "Hoothoot",
+      "Noctowl"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585424",
+    "image_url": "https://img.game8.co/4433193/da9a7e810387fd50c14d1e755a5405ff.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "illuminated-tall-grass",
+    "name": "Illuminated tall grass",
+    "dex_number": "007",
+    "conditions": [
+      "Tall Grass (any) x4",
+      "Lighting (any) x1"
+    ],
+    "pokemon_available": [
+      "Venonat",
+      "Venomoth"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585078",
+    "image_url": "https://img.game8.co/4431649/f95f3157d3df68f05acdad6d7d84e491.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "pretty-flower-bed",
+    "name": "Pretty flower bed",
+    "dex_number": "008",
+    "conditions": [
+      "Wildflowers x4"
+    ],
+    "pokemon_available": [
+      "Pidgey",
+      "Pidgeotto",
+      "Hoothoot",
+      "Combee",
+      "Magby",
+      "Eevee"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585077",
+    "image_url": "https://img.game8.co/4423958/ff1d96f0883af3346cfd7389c065c241.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tree-shaded-flower-bed",
+    "name": "Tree-shaded flower bed",
+    "dex_number": "009",
+    "conditions": [
+      "Wildflowers x4",
+      "Berry Tree (any) x1"
+    ],
+    "pokemon_available": [
+      "Cacturne",
+      "Goomy",
+      "Vikavolt"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585076",
+    "image_url": "https://img.game8.co/4431652/ff356a08c435f6dc19e71db341ad662f.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "hydrated-flower-bed",
+    "name": "Hydrated flower bed",
+    "dex_number": "010",
+    "conditions": [
+      "Wildflowers x4",
+      "Water x2"
+    ],
+    "pokemon_available": [
+      "Volbeat",
+      "Illumise"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585075",
+    "image_url": "https://img.game8.co/4431653/86a344012795aee579f55f42a8093c77.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "field-of-flowers",
+    "name": "Field of flowers",
+    "dex_number": "011",
+    "conditions": [
+      "Wildflowers x8"
+    ],
+    "pokemon_available": [
+      "Ivysaur",
+      "Venusaur",
+      "Vespiquen"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585074",
+    "image_url": "https://img.game8.co/4431654/c000cd9770fba5c7edda44d93d351d9d.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "elevated-flower-bed",
+    "name": "Elevated flower bed",
+    "dex_number": "012",
+    "conditions": [
+      "Wildflowers x4",
+      "High-up location x1"
+    ],
+    "pokemon_available": [
+      "Paras",
+      "Parasect"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585413",
+    "image_url": "https://img.game8.co/4433138/1e93316ffc65a195502dd5e3e8d2677f.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "grave-with-flowers",
+    "name": "Grave with flowers",
+    "dex_number": "013",
+    "conditions": [
+      "Wildflowers x4",
+      "Gravestone x1"
+    ],
+    "pokemon_available": [
+      "Cubone",
+      "Marowak"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585414",
+    "image_url": "https://img.game8.co/4433188/aa5f2a01563b4d03f03342f4bab7ded6.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "flower-garden",
+    "name": "Flower garden",
+    "dex_number": "014",
+    "conditions": [
+      "Wildflowers x4",
+      "Hedge (any) x4"
+    ],
+    "pokemon_available": [
+      "Paras",
+      "Parasect"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585415",
+    "image_url": "https://img.game8.co/4433125/cf211339489f21158d0661336ded3d35.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "fresh-veggie-field",
+    "name": "Fresh veggie field",
+    "dex_number": "015",
+    "conditions": [
+      "Vegetable field (any) x8"
+    ],
+    "pokemon_available": [
+      "Drilbur",
+      "Excadrill"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585073",
+    "image_url": "https://img.game8.co/4423954/5599935e337e36c684615fc890af74d0.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "riding-warm-updrafts",
+    "name": "Riding warm updrafts",
+    "dex_number": "016",
+    "conditions": [
+      "Campfire x3"
+    ],
+    "pokemon_available": [
+      "Drifloon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585061",
+    "image_url": "https://img.game8.co/4431657/ef715a5359e7b53f0390fb306ae2e9f3.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "campsite",
+    "name": "Campsite",
+    "dex_number": "017",
+    "conditions": [
+      "Campfire x1",
+      "Straw stool x1",
+      "Straw table x1"
+    ],
+    "pokemon_available": [
+      "Charmeleon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585071",
+    "image_url": "https://img.game8.co/4431660/3a3de83c4fb66b8fba0f4b16f8365a7c.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "training-waterfall",
+    "name": "Training waterfall",
+    "dex_number": "018",
+    "conditions": [
+      "Seat (any) x1",
+      "Water x2",
+      "Waterfall x1"
+    ],
+    "pokemon_available": [
+      "Tyrogue"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585416",
+    "image_url": "https://img.game8.co/4433229/3094ae25af2ab5742c6b9a42f27ac03f.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tantalizing-dining-set",
+    "name": "Tantalizing dining set",
+    "dex_number": "019",
+    "conditions": [
+      "Plated food x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Gulpin"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585070",
+    "image_url": "https://img.game8.co/4431684/6c10faa301953ccd4cfb878fd1c6c162.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "picnic-set",
+    "name": "Picnic set",
+    "dex_number": "020",
+    "conditions": [
+      "Picnic basket x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Pichu",
+      "Pikachu"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585537",
+    "image_url": "https://img.game8.co/4434462/e444551ffc52be412b9b264bf461bc2c.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "flowery-table",
+    "name": "Flowery table",
+    "dex_number": "021",
+    "conditions": [
+      "Small vase x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Weepinbell",
+      "Victreebel"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585069",
+    "image_url": "https://img.game8.co/4431685/f1019185953c86d82c2b1326c5ac4ea4.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "bench-with-greenery",
+    "name": "Bench with greenery",
+    "dex_number": "022",
+    "conditions": [
+      "Hedge (any) x2",
+      "Seat (wide) x1"
+    ],
+    "pokemon_available": [
+      "Bulbasaur",
+      "Ivysaur"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585068",
+    "image_url": "https://img.game8.co/4432135/e913eec1acaf7b46beb3df19bf7dcf8f.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "illuminated-bench",
+    "name": "Illuminated bench",
+    "dex_number": "023",
+    "conditions": [
+      "Streetlight (any) x1",
+      "Seat (wide) x1"
+    ],
+    "pokemon_available": [
+      "Venonat",
+      "Venomoth"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585067",
+    "image_url": "https://img.game8.co/4431686/4b2d71ebf675d591c35459000195c35f.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "exercise-resting-spot",
+    "name": "Exercise resting spot",
+    "dex_number": "024",
+    "conditions": [
+      "Punching bag x1",
+      "Seat (any) x1"
+    ],
+    "pokemon_available": [
+      "Hitmonchan"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585066",
+    "image_url": "https://img.game8.co/4423959/bb0e7801e0457586c7128e33f894bd23.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "urgent-care",
+    "name": "Urgent care",
+    "dex_number": "025",
+    "conditions": [
+      "First aid kit x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Hitmonlee"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585065",
+    "image_url": "https://img.game8.co/4431689/5a6ec3f73c81665f9bfd6eebf47b6bf9.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "gym-first-aid",
+    "name": "Gym first aid",
+    "dex_number": "026",
+    "conditions": [
+      "First aid kit x1",
+      "Punching bag x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Hitmontop"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585417",
+    "image_url": "https://img.game8.co/4433239/34721793036585ee0ea0f7de49e8dbf5.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "road-sign",
+    "name": "Road sign",
+    "dex_number": "027",
+    "conditions": [
+      "Arrow sign x1",
+      "Wooden path x3"
+    ],
+    "pokemon_available": [
+      "West Sea Shellos",
+      "East Sea Shellos"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585064",
+    "image_url": "https://img.game8.co/4431693/c2db1a085cfcd1719a93e6f986642f8d.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "large-luggage-carrier",
+    "name": "Large luggage carrier",
+    "dex_number": "028",
+    "conditions": [
+      "Cart x1",
+      "Wooden crate x2"
+    ],
+    "pokemon_available": [
+      "Gurdurr",
+      "Tinkatink",
+      "Tinkatuff"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585063",
+    "image_url": "https://img.game8.co/4431694/763789b806bd1603da503d27aa46be1f.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "lumberjack-s-workplace",
+    "name": "Lumberjack's workplace",
+    "dex_number": "029",
+    "conditions": [
+      "Log chair x1",
+      "Cart x1",
+      "Log table x1",
+      "Tree stump (any) x1"
+    ],
+    "pokemon_available": [
+      "Axew",
+      "Fraxure",
+      "Haxorus"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585062",
+    "image_url": "https://img.game8.co/4431695/1bb627864db4eb7011611a7437eba96f.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "bed-with-a-plush",
+    "name": "Bed with a plush",
+    "dex_number": "030",
+    "conditions": [
+      "Bed (any) x1",
+      "Doll (any) x1"
+    ],
+    "pokemon_available": [
+      "Slowbro",
+      "Slowking",
+      "Drifloon",
+      "Munchlax"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585072",
+    "image_url": "https://img.game8.co/4433866/d29c2f6023d912be3fceb17b113df8ff.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "gently-lit-bed",
+    "name": "Gently lit bed",
+    "dex_number": "031",
+    "conditions": [
+      "Slender candle x1",
+      "Bed (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Hoothoot",
+      "Noctowl"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585103",
+    "image_url": "https://img.game8.co/4431696/1f13c5df49caa5fbf494af5ce730e0ee.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "grave-offering",
+    "name": "Grave offering",
+    "dex_number": "032",
+    "conditions": [
+      "Gravestone x1",
+      "Slender candle x2",
+      "Plated food x1"
+    ],
+    "pokemon_available": [
+      "Litwick",
+      "Lampent"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585628",
+    "image_url": "https://img.game8.co/4434611/0ee88dd1fa21b6b407008db4400e63f6.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "creepy-grave-offering",
+    "name": "Creepy grave offering",
+    "dex_number": "033",
+    "conditions": [
+      "Eerie candle x2",
+      "Gravestone x1",
+      "Plated food x1"
+    ],
+    "pokemon_available": [
+      "Litwick",
+      "Lampent",
+      "Chandelure"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585629",
+    "image_url": "https://img.game8.co/4434612/b753742c5a7261462d31c952b44f2e6c.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "chansey-resting-area",
+    "name": "Chansey resting area",
+    "dex_number": "034",
+    "conditions": [
+      "Chansey plant x1",
+      "Hedge (any) x6",
+      "Seat (wide) x1"
+    ],
+    "pokemon_available": [
+      "Vileplume",
+      "Bellossom"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585630",
+    "image_url": "https://img.game8.co/4434613/5a171c520b985dff97eda806b2629fab.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "irresistible-scent-and-glow",
+    "name": "Irresistible scent and glow",
+    "dex_number": "035",
+    "conditions": [
+      "Pitcher-plant pot x1",
+      "Plated food x1",
+      "Mushroom lamp x1"
+    ],
+    "pokemon_available": [
+      "Weepinbell",
+      "Victreebel"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586095",
+    "image_url": "https://img.game8.co/4434614/785522e8c2f65962867eb8f8bf5284e3.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "floating-in-the-shade",
+    "name": "Floating in the shade",
+    "dex_number": "036",
+    "conditions": [
+      "Inflatable boat x1",
+      "Beach Parasol x1",
+      "Water x2"
+    ],
+    "pokemon_available": [
+      "Blastoise"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585102",
+    "image_url": "https://img.game8.co/4431779/ba42326837d35b88d5294cef4c16beee.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "smooth-tall-grass",
+    "name": "Smooth tall grass",
+    "dex_number": "037",
+    "conditions": [
+      "Dry tall grass x4",
+      "Smooth Rock x1"
+    ],
+    "pokemon_available": [
+      "Onix"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585101",
+    "image_url": "https://img.game8.co/4431781/488564dfdf6500957ab14893bbb641bb.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "factory-storage",
+    "name": "Factory storage",
+    "dex_number": "038",
+    "conditions": [
+      "Metal drum x1",
+      "Control unit x1",
+      "Jumbled cords x1",
+      "Streetlight (any) x1"
+    ],
+    "pokemon_available": [
+      "Magnemite"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585418",
+    "image_url": "https://img.game8.co/4433868/24c3edec3fddc9c0e606de1be28fbc42.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "luxury-chirp-chirp-meal",
+    "name": "Luxury chirp-chirp meal",
+    "dex_number": "039",
+    "conditions": [
+      "Wooden birdhouse x1",
+      "Berry basket x1"
+    ],
+    "pokemon_available": [
+      "Pidgeot"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586086",
+    "image_url": "https://img.game8.co/4434615/f0ea3ae24c1f104bf51c42a32285c6a6.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "berry-feast-campsite",
+    "name": "Berry-feast campsite",
+    "dex_number": "040",
+    "conditions": [
+      "Castform weather charm (sun) x2",
+      "Bonfire x1",
+      "Berry basket x1",
+      "High-up location x1"
+    ],
+    "pokemon_available": [
+      "Charizard"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585100",
+    "image_url": "https://img.game8.co/4431782/7823e8585d21319d32910b7f71bd9b82.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "rain-dance-site",
+    "name": "Rain Dance site",
+    "dex_number": "041",
+    "conditions": [
+      "Castform weather charm (rain) x2",
+      "Plated food x1"
+    ],
+    "pokemon_available": [
+      "Goomy"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585099",
+    "image_url": "https://img.game8.co/4431786/e1a230b23cd3bdf2e861700ef31d603f.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "sunny-day-site",
+    "name": "Sunny Day site",
+    "dex_number": "042",
+    "conditions": [
+      "Castform weather charm (sun) x2",
+      "Plated food x1"
+    ],
+    "pokemon_available": [
+      "Cacnea"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585419",
+    "image_url": "https://img.game8.co/4433151/53adce3612f7786680ca00e994b9dc96.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "professor-s-treasure-trove",
+    "name": "Professor's treasure trove",
+    "dex_number": "043",
+    "conditions": [
+      "Professor's treasure trove x1",
+      "Lost relic (large) x4",
+      "Bed (any) x1"
+    ],
+    "pokemon_available": [
+      "Tangrowth (Professor Tangrowth)"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586087",
+    "image_url": "https://img.game8.co/4437261/2448204bd02ffb05414d6e7a70ad5091.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "cozy-log-handicrafts",
+    "name": "Cozy log handicrafts",
+    "dex_number": "044",
+    "conditions": [
+      "Log chair x1",
+      "Log bed x1",
+      "Log table x1"
+    ],
+    "pokemon_available": [
+      "Axew",
+      "Fraxure",
+      "Haxorus"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585631",
+    "image_url": "https://img.game8.co/4435014/2010d5281dd024ff7a084a86600befda.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "very-berry-space",
+    "name": "Very-berry space",
+    "dex_number": "045",
+    "conditions": [
+      "Berry chair x1",
+      "Berry bed x1",
+      "Berry table x1",
+      "Berry table lamp x1"
+    ],
+    "pokemon_available": [
+      "Goodra"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586088",
+    "image_url": "https://img.game8.co/4437263/8b075cebbcd5cef4eed7bda2bf8ecc3a.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "garden-terrace",
+    "name": "Garden terrace",
+    "dex_number": "046",
+    "conditions": [
+      "Wildflowers x4",
+      "Garden chair x1",
+      "Garden light x1",
+      "Garden table x1"
+    ],
+    "pokemon_available": [
+      "Venusaur"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585098",
+    "image_url": "https://img.game8.co/4431792/4f2528188a8e52afdcf9b6df1aa001d3.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tree-shaded-snoozing-snorlax",
+    "name": "Tree-shaded snoozing Snorlax",
+    "dex_number": "047",
+    "conditions": [
+      "Naptime bed x1",
+      "Large tree (any) x1"
+    ],
+    "pokemon_available": [
+      "Munchlax",
+      "Snorlax"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585908",
+    "image_url": "https://img.game8.co/4435858/56ab510cbc91f1df4cd44637c8180153.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "good-old-fashioned-antiques",
+    "name": "Good old-fashioned antiques",
+    "dex_number": "048",
+    "conditions": [
+      "Antique closet x1",
+      "Antiue bed x1",
+      "Antique dresser x1",
+      "Antique chair x1"
+    ],
+    "pokemon_available": [
+      "Weezing",
+      "Snorlax"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586089",
+    "image_url": "https://img.game8.co/4437264/b69e8a20ce54d4cef8527ee020a7b7ef.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "nothin-but-poke-balls",
+    "name": "Nothin' but Poke Balls",
+    "dex_number": "049",
+    "conditions": [
+      "Poke Ball sofa x1",
+      "Poke Ball bed x1",
+      "Poke Ball table x1",
+      "Poke Ball light x1"
+    ],
+    "pokemon_available": [
+      "Tangela"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586090",
+    "image_url": "https://img.game8.co/4437265/5c4013d2fcc9ba483e2b74022449586a.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "yellow-tall-grass",
+    "name": "Yellow tall grass",
+    "dex_number": "050",
+    "conditions": [
+      "Yellow tall grass x4"
+    ],
+    "pokemon_available": [
+      "Spinarak",
+      "Ariados",
+      "Grubbin"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585097",
+    "image_url": "https://img.game8.co/4431794/d6dc372cbd4d3a4ec0abf223365b8f38.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tree-shaded-yellow-tall-grass",
+    "name": "Tree-shaded yellow tall grass",
+    "dex_number": "051",
+    "conditions": [
+      "Yellow tall grass x4",
+      "Large tree (any) x1"
+    ],
+    "pokemon_available": [
+      "Zubat",
+      "Golbat",
+      "Makuhita",
+      "Hariyama"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585096",
+    "image_url": "https://img.game8.co/4431796/5c0ef2aab8827f891f322a921051b49e.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "elevated-yellow-tall-grass",
+    "name": "Elevated yellow tall grass",
+    "dex_number": "052",
+    "conditions": [
+      "Yellow tall grass x4",
+      "High-up location x1"
+    ],
+    "pokemon_available": [
+      "Crobat",
+      "Wingull",
+      "Pelipper"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585095",
+    "image_url": "https://img.game8.co/4431799/4b4644ef8663141c463c915d0e9858ae.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "hydrated-yellow-tall-grass",
+    "name": "Hydrated yellow tall grass",
+    "dex_number": "053",
+    "conditions": [
+      "Yellow tall grass x4",
+      "Water x2"
+    ],
+    "pokemon_available": [
+      "Azurill",
+      "Marill",
+      "Piplup",
+      "Prinplup"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585083",
+    "image_url": "https://img.game8.co/4431803/368ef54f0960b7e1ee03fef21d6c73f0.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "marshy-tall-grass",
+    "name": "Marshy tall grass",
+    "dex_number": "054",
+    "conditions": [
+      "Yellow tall grass x4",
+      "Muddy Water x2"
+    ],
+    "pokemon_available": [
+      "Paldean Wooper",
+      "Clodsire"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585632",
+    "image_url": "https://img.game8.co/4434669/aabe32a290c749e17a3ca89585d16626.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "overgrowth-vending-machine",
+    "name": "Overgrowth vending machine",
+    "dex_number": "055",
+    "conditions": [
+      "Yellow tall grass x4",
+      "Vending machine x1"
+    ],
+    "pokemon_available": [
+      "Mareep"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585538",
+    "image_url": "https://img.game8.co/4434469/5032328ac9753c9671b754e1a7924d2e.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "breezy-flower-bed",
+    "name": "Breezy flower bed",
+    "dex_number": "056",
+    "conditions": [
+      "Seashore flowers x4"
+    ],
+    "pokemon_available": [
+      "Zorua",
+      "Zoroark",
+      "Pawmi"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585093",
+    "image_url": "https://img.game8.co/4431810/ed0cf6641105364def317046ff94f476.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tropical-vibes",
+    "name": "Tropical vibes",
+    "dex_number": "057",
+    "conditions": [
+      "Seashore flowers x4",
+      "Large palm tree x1"
+    ],
+    "pokemon_available": [
+      "Gloom",
+      "Exeggcute",
+      "Exeggutor"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585092",
+    "image_url": "https://img.game8.co/4431812/bb6b35885d2d75b28b279d0e3b84d286.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "windy-flower-bed",
+    "name": "Windy flower bed",
+    "dex_number": "058",
+    "conditions": [
+      "Seashore flowers x4",
+      "Windmill x1"
+    ],
+    "pokemon_available": [
+      "Wingull",
+      "Pelipper"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585091",
+    "image_url": "https://img.game8.co/4431813/5aa210e95cc2aeb50940e1ff3d4086e8.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "shaded-beach",
+    "name": "Shaded beach",
+    "dex_number": "059",
+    "conditions": [
+      "Large palm tree x1",
+      "Beach chair x1"
+    ],
+    "pokemon_available": [
+      "Exeggcute",
+      "Exeggutor"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585090",
+    "image_url": "https://img.game8.co/4431815/edf58194cd48b5b9ccb6baba8ce878fd.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tropical-seaside",
+    "name": "Tropical seaside",
+    "dex_number": "060",
+    "conditions": [
+      "Large palm tree x1",
+      "Ocean water x2",
+      "Hedge (any) x4"
+    ],
+    "pokemon_available": [
+      "Lapras"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585089",
+    "image_url": "https://img.game8.co/4432152/623c9c783abcefc743c8ac30eb0f68e5.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "resting-spot",
+    "name": "Resting spot",
+    "dex_number": "061",
+    "conditions": [
+      "Cardboard boxes x1",
+      "Straw bed x1"
+    ],
+    "pokemon_available": [
+      "Meowth"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585088",
+    "image_url": "https://img.game8.co/4431817/f11101e4b7027bae4085d48f6bef0f93.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "perpetual-mess",
+    "name": "Perpetual mess",
+    "dex_number": "062",
+    "conditions": [
+      "Cardboard boxes x1",
+      "Toy (any) x2"
+    ],
+    "pokemon_available": [
+      "Growlithe",
+      "Azurill"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585087",
+    "image_url": "https://img.game8.co/4431818/0c392d04089db76ce010d64bcc7dba12.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "trash-collection-site",
+    "name": "Trash collection site",
+    "dex_number": "063",
+    "conditions": [
+      "Garbage bags x1",
+      "Waste bin (any) x1",
+      "Sign (any) x1"
+    ],
+    "pokemon_available": [
+      "Koffing",
+      "Weezing",
+      "Trubbish",
+      "Garbodor"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585086",
+    "image_url": "https://img.game8.co/4431820/91d0562483039bd4ba404de1a3da00e5.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "trash-can-central",
+    "name": "Trash can central",
+    "dex_number": "064",
+    "conditions": [
+      "Garbage bin x4"
+    ],
+    "pokemon_available": [
+      "Magneton",
+      "Magnezone",
+      "Electabuzz"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585085",
+    "image_url": "https://img.game8.co/4431824/2e2827f2afd97fd193bba98fe9de3335.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "trash-disposal-site",
+    "name": "Trash disposal site",
+    "dex_number": "065",
+    "conditions": [
+      "Garbage bags x1",
+      "Utility pole x1"
+    ],
+    "pokemon_available": [
+      "Crobat"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585084",
+    "image_url": "https://img.game8.co/4431826/c02abbddac4320415d546c4b668448a7.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "park-bench",
+    "name": "Park bench",
+    "dex_number": "066",
+    "conditions": [
+      "Garbage bin x1",
+      "Seat (wide) x1"
+    ],
+    "pokemon_available": [
+      "Zubat",
+      "Voltorb",
+      "Electrode"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585051",
+    "image_url": "https://img.game8.co/4431832/d70e16be1b64715284c0d3f5d9281b44.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tantalizing-restaurant",
+    "name": "Tantalizing restaurant",
+    "dex_number": "067",
+    "conditions": [
+      "Menu board x1",
+      "Plated food x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Pawmi",
+      "Pawmo"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585039",
+    "image_url": "https://img.game8.co/4431835/2e8521e6efdb4718e89b4202c322d089.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tableside-delivery-cart",
+    "name": "Tableside delivery cart",
+    "dex_number": "068",
+    "conditions": [
+      "Chic chair x2",
+      "Chic table x1",
+      "Small vase x1",
+      "Push cart x1",
+      "Plated food x1"
+    ],
+    "pokemon_available": [
+      "Empoleon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586091",
+    "image_url": "https://img.game8.co/4437266/bb06aad96616a200f8c18a57b428dbd1.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "chirp-chirp-meal",
+    "name": "Chirp-chirp meal",
+    "dex_number": "069",
+    "conditions": [
+      "Wooden birdhouse x1",
+      "Plated food x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Torchic",
+      "Blaziken"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585038",
+    "image_url": "https://img.game8.co/4431838/551af908a8bb2f8680a70d0ee7f5f1e0.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "cafe-space",
+    "name": "Cafe space",
+    "dex_number": "070",
+    "conditions": [
+      "Counter x2",
+      "Menu board x1",
+      "Mug x1",
+      "Seat (any) x1",
+      "Potted plant (any) x1"
+    ],
+    "pokemon_available": [
+      "Pawmi",
+      "Pawmo"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585539",
+    "image_url": "https://img.game8.co/4434473/3c0be629cbb83e39e2db3c0029ec26f5.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "beach-set",
+    "name": "Beach set",
+    "dex_number": "071",
+    "conditions": [
+      "Beach chair x1",
+      "Beach parasol x1",
+      "Side table x1"
+    ],
+    "pokemon_available": [
+      "Curly Form Tatsugiri",
+      "Droopy Form Tatsugiri",
+      "Stretchy Form Tatsugiri"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586092",
+    "image_url": "https://img.game8.co/4434670/0c2829cca63036b533f5a50971e0842b.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "light-up-stage",
+    "name": "Light-up stage",
+    "dex_number": "072",
+    "conditions": [
+      "Spotlight x2",
+      "Small stage x1"
+    ],
+    "pokemon_available": [
+      "Electabuzz"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585037",
+    "image_url": "https://img.game8.co/4431839/77c0f08eb159f197bbbc0d984c660502.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "surprise-in-store",
+    "name": "Surprise in store",
+    "dex_number": "073",
+    "conditions": [
+      "Balloons x1",
+      "Boo-in-the-box x1"
+    ],
+    "pokemon_available": [
+      "Haunter",
+      "Gengar",
+      "Zoroark"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586093",
+    "image_url": "https://img.game8.co/4437267/bcb8a7d05c7eb35b2703949cccb38000.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "night-festival-venue",
+    "name": "Night festival venue",
+    "dex_number": "074",
+    "conditions": [
+      "Balloons x1",
+      "Raichu sign x1"
+    ],
+    "pokemon_available": [
+      "Flaaffy"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586094",
+    "image_url": "https://img.game8.co/4434671/4b61ccf7485e9c9494816d1f6f2c806a.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "changing-area",
+    "name": "Changing area",
+    "dex_number": "075",
+    "conditions": [
+      "Closet (any) x1",
+      "Mirror (large) x1"
+    ],
+    "pokemon_available": [
+      "Minccino"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585036",
+    "image_url": "https://img.game8.co/4431840/e37f4fb786775d782a6f8485d3bcfc8b.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "private-makeup-stand",
+    "name": "Private makeup stand",
+    "dex_number": "076",
+    "conditions": [
+      "Partition (any) x1",
+      "Closet (any) x1",
+      "Dresser (any) x1"
+    ],
+    "pokemon_available": [
+      "Minccino",
+      "Cinccino"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586085",
+    "image_url": "https://img.game8.co/4437268/18f4c19c36e6810705066ad299801d8b.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "knitting-station",
+    "name": "Knitting station",
+    "dex_number": "077",
+    "conditions": [
+      "Knitting supplies x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Mareep",
+      "Flaaffy"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585035",
+    "image_url": "https://img.game8.co/4431842/36f509a39db5a44c19c55caeefcdd2ed.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "hot-spring-shower",
+    "name": "Hot-spring shower",
+    "dex_number": "078",
+    "conditions": [
+      "Shower x1",
+      "Hot-spring water x2",
+      "Seat (any) x1"
+    ],
+    "pokemon_available": [
+      "Psyduck",
+      "Golduck"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585420",
+    "image_url": "https://img.game8.co/4433885/ea9e531fbdf1507c0cc641b91694a104.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "resort-meal-prep",
+    "name": "Resort meal prep",
+    "dex_number": "079",
+    "conditions": [
+      "Large palm tree x1",
+      "Plated food x1",
+      "Campfire x1",
+      "Seat (any) x1"
+    ],
+    "pokemon_available": [
+      "Growlithe",
+      "Torchic",
+      "Combusken"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585034",
+    "image_url": "https://img.game8.co/4431843/02cd52dad6f8f6afb6f1fdd23aef1764.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "all-packed-up",
+    "name": "All packed up",
+    "dex_number": "080",
+    "conditions": [
+      "Cart x1",
+      "Cardboard boxes x2"
+    ],
+    "pokemon_available": [
+      "Farfetch",
+      "Makuhita",
+      "Hariyama"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585033",
+    "image_url": "https://img.game8.co/4431844/43d5a08849c18f1116e1f5d956be1f06.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "full-recovery",
+    "name": "Full recovery",
+    "dex_number": "081",
+    "conditions": [
+      "Plain chest x1",
+      "First aid kit x1",
+      "Bed (any) x1"
+    ],
+    "pokemon_available": [
+      "Pikachu (Peakychu)",
+      "Chansey"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585909",
+    "image_url": "https://img.game8.co/4434672/1bd9cc03e50d935c7a166962ef668abf.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "alarm-clock-sleep-zone",
+    "name": "Alarm clock sleep zone",
+    "dex_number": "082",
+    "conditions": [
+      "Alarm clock x1",
+      "Bed (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Happiny"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585032",
+    "image_url": "https://img.game8.co/4432159/c8beaa5d15af402eea2d323e05912bea.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "vending-machine-break-area",
+    "name": "Vending machine break area",
+    "dex_number": "083",
+    "conditions": [
+      "Vending machine x1",
+      "Seat (wide) x1"
+    ],
+    "pokemon_available": [
+      "Grubbin",
+      "Charjabug"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585633",
+    "image_url": "https://img.game8.co/4434675/9479d7796685de8b0f45289125efb417.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "vending-machine-set",
+    "name": "Vending machine set",
+    "dex_number": "084",
+    "conditions": [
+      "Vending machine x1",
+      "Waste bin (any) x1"
+    ],
+    "pokemon_available": [
+      "Elekid",
+      "Electivire"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585031",
+    "image_url": "https://img.game8.co/4431846/4732164388e7b7e22065016145c77957.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "mini-game-corner",
+    "name": "Mini Game Corner",
+    "dex_number": "085",
+    "conditions": [
+      "Arcade machine x1",
+      "Punching game x1",
+      "Seat (any) x1"
+    ],
+    "pokemon_available": [
+      "Magneton",
+      "Magnezone"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586096",
+    "image_url": "https://img.game8.co/4434677/f3f856d7ecefaa91f2e14d039acd015b.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "waterwheel-spot",
+    "name": "Waterwheel spot",
+    "dex_number": "086",
+    "conditions": [
+      "Waterwheel x1",
+      "Water x1",
+      "Waterfall x1"
+    ],
+    "pokemon_available": [
+      "Prinplup",
+      "Empoleon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585030",
+    "image_url": "https://img.game8.co/4431848/42c1262a4c69df23deb6f62bae888c22.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "furnace-spot",
+    "name": "Furnace spot",
+    "dex_number": "087",
+    "conditions": [
+      "Metal drum x1",
+      "Furnace x1"
+    ],
+    "pokemon_available": [
+      "Combusken",
+      "Blaziken"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585910",
+    "image_url": "https://img.game8.co/4434678/f969cba9615cf4bfc6ba8efc3e41c314.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "dock",
+    "name": "Dock",
+    "dex_number": "088",
+    "conditions": [
+      "Walkway x4",
+      "Ocean water x2",
+      "Streetlight (any) x1"
+    ],
+    "pokemon_available": [
+      "Marill",
+      "Azumarill"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585018",
+    "image_url": "https://img.game8.co/4431852/a2e423bed0e90005e140ecd87063afb7.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "spooky-study",
+    "name": "Spooky study",
+    "dex_number": "089",
+    "conditions": [
+      "Bookcase x1",
+      "Chic sofa x1",
+      "Plain table x1",
+      "Slender candle x1"
+    ],
+    "pokemon_available": [
+      "Gastly",
+      "Haunter"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585028",
+    "image_url": "https://img.game8.co/4431857/15cae8493d460e77745646037ea57c8a.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "playing-pirate",
+    "name": "Playing pirate",
+    "dex_number": "090",
+    "conditions": [
+      "Barrel x2",
+      "Ship's wheel x1",
+      "Cannon x2"
+    ],
+    "pokemon_available": [
+      "Voltorb",
+      "Electrode"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585027",
+    "image_url": "https://img.game8.co/4431858/bbd4dc1937094ae1e173b2dd3ac879e9.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "working-the-register",
+    "name": "Working the register",
+    "dex_number": "091",
+    "conditions": [
+      "Cash register x1",
+      "Table (any) x2"
+    ],
+    "pokemon_available": [
+      "Meowth",
+      "Happiny",
+      "Audino",
+      "Mawile"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585026",
+    "image_url": "https://img.game8.co/4432163/80e07dc9a4d681a668507f8c14b5a7f0.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tiny-atelier",
+    "name": "Tiny atelier",
+    "dex_number": "092",
+    "conditions": [
+      "Canvas x1",
+      "Seat (any) x1"
+    ],
+    "pokemon_available": [
+      "Smeargle (Smearguru)"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586097",
+    "image_url": "https://img.game8.co/4437269/3bd4da05f2ddaecfbb48bea896146a9b.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "gourmet-s-altar",
+    "name": "Gourmet's altar",
+    "dex_number": "093",
+    "conditions": [
+      "Offering dish x1"
+    ],
+    "pokemon_available": [
+      "Snorlax (Mosslax)"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585421",
+    "image_url": "https://img.game8.co/4433888/657bd1e06d50aa6c40b7227101a1e020.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "pikachu-space",
+    "name": "Pikachu space",
+    "dex_number": "094",
+    "conditions": [
+      "Pikachu sofa x1",
+      "Pikachu doll x1"
+    ],
+    "pokemon_available": [
+      "Mimikyu"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585422",
+    "image_url": "https://img.game8.co/4433899/a95aa60e55ac4ff85b46e20e0fbd4cce.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "cuteness-overload",
+    "name": "Cuteness overload",
+    "dex_number": "095",
+    "conditions": [
+      "Cute sofa x1",
+      "Cute table x1",
+      "Cute lamp x1",
+      "Cute bed x1",
+      "Cutre dresser x1"
+    ],
+    "pokemon_available": [
+      "Blissey"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586098",
+    "image_url": "https://img.game8.co/4437270/490bdf484ff58e2b9efaff3755a5c87f.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "welcoming-resort",
+    "name": "Welcoming resort",
+    "dex_number": "096",
+    "conditions": [
+      "Resort sofa x1",
+      "Resort table x1",
+      "Resort hammock x1",
+      "Resort light x1"
+    ],
+    "pokemon_available": [
+      "Absol"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586099",
+    "image_url": "https://img.game8.co/4434679/11b87f30fbc3c47b93b51b302d70a2b4.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "plain-life",
+    "name": "Plain life",
+    "dex_number": "097",
+    "conditions": [
+      "Plain bed x1",
+      "Plain sofa",
+      "Plain table x1",
+      "Plain lamp x1"
+    ],
+    "pokemon_available": [
+      "Ampharos"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585634",
+    "image_url": "https://img.game8.co/4434989/e97c69639bd20bfaa3a7be605f840ee2.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "red-tall-grass",
+    "name": "Red tall grass",
+    "dex_number": "098",
+    "conditions": [
+      "Red tall grass x4"
+    ],
+    "pokemon_available": [
+      "Kricketot",
+      "Kricketune",
+      "Riolu",
+      "Scorbunny",
+      "Cinderace"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585025",
+    "image_url": "https://img.game8.co/4432175/3fc297463d9c0ca692802ccca4458ece.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tree-shaded-red-tall-grass",
+    "name": "Tree-shaded red tall grass",
+    "dex_number": "099",
+    "conditions": [
+      "Red tall grass x4",
+      "Large tree (any) x1"
+    ],
+    "pokemon_available": [
+      "Diglett",
+      "Dugtrio",
+      "Bonsly",
+      "Sudowoodo"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585024",
+    "image_url": "https://img.game8.co/4432180/ab1a0a3d9ac853e10400a0a47bba64ed.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "pointy-tree-shaded-rocky-tall-grass",
+    "name": "Pointy tree-shaded rocky tall grass",
+    "dex_number": "100",
+    "conditions": [
+      "Pointy tree x1",
+      "Large boulder x1",
+      "Red tall grass x4"
+    ],
+    "pokemon_available": [
+      "Dartrix",
+      "Decidueye"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585023",
+    "image_url": "https://img.game8.co/4432181/8c13c92629c9582c81659e8dcafc9018.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "hydrated-red-tall-grass",
+    "name": "Hydrated red tall grass",
+    "dex_number": "101",
+    "conditions": [
+      "Red tall grass x4",
+      "Water x2"
+    ],
+    "pokemon_available": [
+      "Lotad",
+      "Lombre"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585022",
+    "image_url": "https://img.game8.co/4432195/84001f6ea6528a4211bdc1f5ad987fe3.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "elevated-red-tall-grass",
+    "name": "Elevated red tall grass",
+    "dex_number": "102",
+    "conditions": [
+      "Red tall grass x4",
+      "High-up location x2"
+    ],
+    "pokemon_available": [
+      "Murkrow",
+      "Honchkrow",
+      "Chatot"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585021",
+    "image_url": "https://img.game8.co/4432201/49ebde6d56f3dee15e9cc01830c82a03.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "grassy-training-field",
+    "name": "Grassy training field",
+    "dex_number": "103",
+    "conditions": [
+      "Red tall grass x4",
+      "Sandbags x2"
+    ],
+    "pokemon_available": [
+      "Machoke",
+      "Machamp"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585020",
+    "image_url": "https://img.game8.co/4432204/18517500589c65a50c649eca7c983f99.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "graceful-flower-bed",
+    "name": "Graceful flower bed",
+    "dex_number": "104",
+    "conditions": [
+      "Mountain flowers x4"
+    ],
+    "pokemon_available": [
+      "Cleffa",
+      "Clefairy",
+      "Clefable",
+      "Fidough",
+      "Dachsbun"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585019",
+    "image_url": "https://img.game8.co/4432208/6a0c60a54ca1ac519450d9744656e5dd.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tree-shaded-graceful-flower-bed",
+    "name": "Tree-shaded graceful flower bed",
+    "dex_number": "105",
+    "conditions": [
+      "Mountain flowers x4",
+      "Pointy tree x1"
+    ],
+    "pokemon_available": [
+      "Murkrow",
+      "Larvesta",
+      "Volcarona"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585029",
+    "image_url": "https://img.game8.co/4432214/d3d8f4b661c8ac03910731158d5f6743.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "hydrated-graceful-flower-bed",
+    "name": "Hydrated graceful flower bed",
+    "dex_number": "106",
+    "conditions": [
+      "Mountain flowers x4",
+      "Water x2"
+    ],
+    "pokemon_available": [
+      "Ekans",
+      "Arbok",
+      "Politoed"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585635",
+    "image_url": "https://img.game8.co/4434680/95bff17a94f28c2801fc3a061ddbdc2e.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "flower-garden-stump-stage",
+    "name": "Flower garden stump stage",
+    "dex_number": "107",
+    "conditions": [
+      "Mountain flowers x4. Mushroom lamp x2",
+      "Tree stump (any) x1"
+    ],
+    "pokemon_available": [
+      "Igglybuff",
+      "Jigglypuff",
+      "Politoed"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585636",
+    "image_url": "https://img.game8.co/4434681/0fa34fcf6ab07d292712cf36056f3682.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "toil-in-the-soil",
+    "name": "Toil in the soil",
+    "dex_number": "108",
+    "conditions": [
+      "Wheelbarrow x1",
+      "Vegetable field (any) x4"
+    ],
+    "pokemon_available": [
+      "Tyranitar"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585911",
+    "image_url": "https://img.game8.co/4434682/6df7cb3235ca60650fc104593f2d742d.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "uplifting-duckweed",
+    "name": "Uplifting duckweed",
+    "dex_number": "109",
+    "conditions": [
+      "Duckweed x4",
+      "Water x2"
+    ],
+    "pokemon_available": [
+      "Lotad",
+      "Ludicolo"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585060",
+    "image_url": "https://img.game8.co/4432222/0bbbe3f5d6ebe928f74563705413388a.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "mossy-rest-spot",
+    "name": "Mossy rest spot",
+    "dex_number": "110",
+    "conditions": [
+      "Moss x4"
+    ],
+    "pokemon_available": [
+      "Larvitar",
+      "Tyranitar"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585059",
+    "image_url": "https://img.game8.co/4431869/3a42144ea107f89445d98d176a880e2e.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "mossy-boulder",
+    "name": "Mossy boulder",
+    "dex_number": "111",
+    "conditions": [
+      "Moss x4",
+      "Mossy boulder x1"
+    ],
+    "pokemon_available": [
+      "Graveler",
+      "Golem"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585058",
+    "image_url": "https://img.game8.co/4432227/d5ec0f6a3c89a8cb41822ac668696935.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "mossy-hot-spring",
+    "name": "Mossy hot spring",
+    "dex_number": "112",
+    "conditions": [
+      "Moss x4",
+      "Hot-spring water x2"
+    ],
+    "pokemon_available": [
+      "Torkoal"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585057",
+    "image_url": "https://img.game8.co/4432231/f90d33a6824c90079ca7d72f46898d86.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "open-air-bath",
+    "name": "Open-air bath",
+    "dex_number": "113",
+    "conditions": [
+      "Hot-spring spout x1",
+      "Hot-spring water x2"
+    ],
+    "pokemon_available": [
+      "Raboot"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585423",
+    "image_url": "https://img.game8.co/4433920/4acf47c3fbc87387f7d1e79117b364c8.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "harmonious-hot-spring",
+    "name": "Harmonious hot spring",
+    "dex_number": "114",
+    "conditions": [
+      "Hot-spring spout x1",
+      "Water basin x1",
+      "Hot-spring water x2"
+    ],
+    "pokemon_available": [
+      "Politoed"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585055",
+    "image_url": "https://img.game8.co/4432235/ecb7992b1a6dfb2a89cd12c6cf1cb252.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "piping-hot-lava",
+    "name": "Piping-hot lava",
+    "dex_number": "115",
+    "conditions": [
+      "Molten rock x1",
+      "Lava x2"
+    ],
+    "pokemon_available": [
+      "Volcarona",
+      "Charcadet"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585054",
+    "image_url": "https://img.game8.co/4432279/50cc36d18575bb0333a57cadd82a3660.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "digging-and-burning",
+    "name": "Digging and burning",
+    "dex_number": "116",
+    "conditions": [
+      "Wheelbarrow x1",
+      "Excavation tools x1",
+      "Smelting furnace x1"
+    ],
+    "pokemon_available": [
+      "Magmar"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585053",
+    "image_url": "https://img.game8.co/4432281/3e559f2cfcf7aff4f396abb9decf1f48.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "clink-clang-iron-construction",
+    "name": "Clink-clang iron construction",
+    "dex_number": "117",
+    "conditions": [
+      "Iron beam or column x3",
+      "Wheelbarrow x1",
+      "Excavation tools x1",
+      "Sandbags x1"
+    ],
+    "pokemon_available": [
+      "Steelix",
+      "Machamp"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585052",
+    "image_url": "https://img.game8.co/4432288/65444ea5671060095c97b119203aaa63.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "creepy-white-rocks",
+    "name": "Creepy white rocks",
+    "dex_number": "118",
+    "conditions": [
+      "Stalagmites x1",
+      "Moss x4",
+      "Wooden crate x1",
+      "Lantern x1"
+    ],
+    "pokemon_available": [
+      "Glimmet",
+      "Glimmora"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585040",
+    "image_url": "https://img.game8.co/4432292/acf62e2160912f899ae3a51948d20a52.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "container-snacking",
+    "name": "Container snacking",
+    "dex_number": "119",
+    "conditions": [
+      "Barrel x1",
+      "Wooden crate x1",
+      "Lantern x1",
+      "Plated food x1"
+    ],
+    "pokemon_available": [
+      "Diglett",
+      "Glimmet",
+      "Glimmora"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585050",
+    "image_url": "https://img.game8.co/4432298/ec9fb898c720cd9430f9ea6d3c9c7495.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "dinner-table-surprise",
+    "name": "Dinner table surprise",
+    "dex_number": "120",
+    "conditions": [
+      "Party platter x4",
+      "Seat (wide) x2",
+      "Table (large) x1"
+    ],
+    "pokemon_available": [
+      "Swalot"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586100",
+    "image_url": "https://img.game8.co/4434683/ba27e41685c84b2b56117a4b92772e3a.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "best-bread-bakery",
+    "name": "Best bread bakery",
+    "dex_number": "121",
+    "conditions": [
+      "Bread oven x1",
+      "Counter x2",
+      "Plated food x1"
+    ],
+    "pokemon_available": [
+      "Fidough",
+      "Dachsbun"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585049",
+    "image_url": "https://img.game8.co/4432304/c5a702505f579d630fde5ba5e4867a80.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "mini-kitchen",
+    "name": "Mini kitchen",
+    "dex_number": "122",
+    "conditions": [
+      "Kitchen table x1",
+      "Cooking stove x1",
+      "Modern sink x1",
+      "Frying pan x1"
+    ],
+    "pokemon_available": [
+      "Magmortar"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586101",
+    "image_url": "https://img.game8.co/4434684/4e9fb60cf64845a1fed9c7a9ad07eccb.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "house-party",
+    "name": "House party",
+    "dex_number": "123",
+    "conditions": [
+      "Food counter x1",
+      "Paper party cups x1",
+      "Plated food x1"
+    ],
+    "pokemon_available": [
+      "Dugtrio",
+      "Sudowoodo"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585637",
+    "image_url": "https://img.game8.co/4434685/c6485a859f05019016969e6f9793c53b.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "lazy-photo-album-scrolling",
+    "name": "Lazy photo-album scrolling",
+    "dex_number": "124",
+    "conditions": [
+      "Tablet x1",
+      "Paper part cups x1"
+    ],
+    "pokemon_available": [
+      "Toxel"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585540",
+    "image_url": "https://img.game8.co/4434479/c5dbef16fcfd64e2255d319365f9e7cc.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "chirping-recital",
+    "name": "Chirping recital",
+    "dex_number": "125",
+    "conditions": [
+      "Perch x1",
+      "Standing mic x1"
+    ],
+    "pokemon_available": [
+      "Honchkrow",
+      "Chatot"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585048",
+    "image_url": "https://img.game8.co/4432314/536948904e9a1fbaf211738ee91c35e4.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "recital-stage",
+    "name": "Recital stage",
+    "dex_number": "126",
+    "conditions": [
+      "Speaker x2",
+      "Standing mic x1",
+      "Small stage x1"
+    ],
+    "pokemon_available": [
+      "Jigglypuff",
+      "Wigglytuff"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586102",
+    "image_url": "https://img.game8.co/4437274/ecd6317535249d6c981917186d845303.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "box-to-the-rhythm",
+    "name": "Box to the rhythm",
+    "dex_number": "127",
+    "conditions": [
+      "Punching bag x1",
+      "CD player x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Machoke",
+      "Riolu",
+      "Lucario"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585047",
+    "image_url": "https://img.game8.co/4432318/f17fff606dd12c53f478d2046c483987.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "music-and-magazines",
+    "name": "Music and magazines",
+    "dex_number": "128",
+    "conditions": [
+      "CD player x1",
+      "CD rack x1",
+      "Magazine rack x1"
+    ],
+    "pokemon_available": [
+      "Kricketot",
+      "Kricketune",
+      "Rotom (DJ Rotom)"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586103",
+    "image_url": "https://img.game8.co/4437275/384a8659ef902a8509353ec6364704be.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "mini-museum",
+    "name": "Mini museum",
+    "dex_number": "129",
+    "conditions": [
+      "Pedestal/exhibition stand x1",
+      "Post (any) x3",
+      "Lost relic (large) x1"
+    ],
+    "pokemon_available": [
+      "Arcanine"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585046",
+    "image_url": "https://img.game8.co/4432445/89c248b88c5c1610181772808f1ef80f.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "refreshing-locker-room",
+    "name": "Refreshing locker room",
+    "dex_number": "130",
+    "conditions": [
+      "Office locker x2",
+      "Punching game x1",
+      "Potted plant (any) x1",
+      "Seat (wide) x1"
+    ],
+    "pokemon_available": [
+      "Raboot",
+      "Cinderace"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585045",
+    "image_url": "https://img.game8.co/4432451/f5dd90e58be6b535d989112d8da2e59b.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "bronze-landmark",
+    "name": "Bronze landmark",
+    "dex_number": "131",
+    "conditions": [
+      "Sign x1",
+      "Moonlight dance statue x1",
+      "Hedge (any) x4"
+    ],
+    "pokemon_available": [
+      "Clefairy",
+      "Clefable"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585044",
+    "image_url": "https://img.game8.co/4432453/c43377c70401fcb6924ae53750bde22f.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "railroad-crossing",
+    "name": "Railroad crossing",
+    "dex_number": "132",
+    "conditions": [
+      "Railway track x1",
+      "Crossing gate x1"
+    ],
+    "pokemon_available": [
+      "Rolycoly",
+      "Carkol",
+      "Coalossal"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585043",
+    "image_url": "https://img.game8.co/4432470/988cdc518fbe0be8d2366088df0045c2.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "chef-s-kitchen",
+    "name": "Chef's kitchen",
+    "dex_number": "133",
+    "conditions": [
+      "Cooking stove x1",
+      "Plain table x1",
+      "Cutting board x1",
+      "Modern sink x1",
+      "Stylish cooking pot x1",
+      "Plated food x1"
+    ],
+    "pokemon_available": [
+      "Greedent (Chef Dente)"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585541",
+    "image_url": "https://img.game8.co/4434486/bea584cb20125cc85f9cbcc26b8eb587.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "absolute-luxury",
+    "name": "Absolute luxury",
+    "dex_number": "134",
+    "conditions": [
+      "Luxury lamp x1",
+      "Luxury bed x1",
+      "Luxury sofa x1",
+      "Luxury table x1"
+    ],
+    "pokemon_available": [
+      "Gholdengo"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586104",
+    "image_url": "https://img.game8.co/4434688/222299886eb855aabbace5f998b6c32a.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "heavy-iron",
+    "name": "Heavy iron",
+    "dex_number": "135",
+    "conditions": [
+      "Iron bed x1",
+      "Iron table x1",
+      "Iron chair x1",
+      "Lantern x1"
+    ],
+    "pokemon_available": [
+      "Coalossal"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586075",
+    "image_url": "https://img.game8.co/4437276/c272c50423100292ea95b10d3b20bcdd.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "modern-living",
+    "name": "Modern living",
+    "dex_number": "136",
+    "conditions": [
+      "Industrial bed x1",
+      "Industrial desk x1",
+      "Industrial chair x1"
+    ],
+    "pokemon_available": [
+      "Decidueye"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586066",
+    "image_url": "https://img.game8.co/4437277/76ce2a6ae220a0619dbdec49a0754f58.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "pink-tall-grass",
+    "name": "Pink tall grass",
+    "dex_number": "137",
+    "conditions": [
+      "Pink tall grass x4"
+    ],
+    "pokemon_available": [
+      "Trapinch",
+      "Vibrava",
+      "Flygon",
+      "Swablu",
+      "Duskull"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585412",
+    "image_url": "https://img.game8.co/4433926/46a9086d1e5cdd365af33246358e00a0.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tree-shaded-pink-tall-grass",
+    "name": "Tree-shaded pink tall grass",
+    "dex_number": "138",
+    "conditions": [
+      "Pink tall grass x4",
+      "Large tree (any) x1"
+    ],
+    "pokemon_available": [
+      "Pupitar",
+      "Dreepy",
+      "Drakloak",
+      "Sprigatito"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585425",
+    "image_url": "https://img.game8.co/4433932/96738ba06f2de90cb60406f57a56ea22.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "hydrated-pink-tall-grass",
+    "name": "Hydrated pink tall grass",
+    "dex_number": "139",
+    "conditions": [
+      "Pink tall grass x4",
+      "Water x2"
+    ],
+    "pokemon_available": [
+      "Froakie",
+      "Frogadier",
+      "Greninja"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585426",
+    "image_url": "https://img.game8.co/4433938/1a68398ac71e664e0464c44ce4ab7716.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "elevated-pink-tall-grass",
+    "name": "Elevated pink tall grass",
+    "dex_number": "140",
+    "conditions": [
+      "Pink tall grass x4",
+      "High-up location x1"
+    ],
+    "pokemon_available": [
+      "Corvisquire",
+      "Corviknight",
+      "Wattrel",
+      "Kilowattrel"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585427",
+    "image_url": "https://img.game8.co/4433946/605ea7c55ebcac57496bddab76d327a5.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "concrete-pipe-secret-base",
+    "name": "Concrete pipe secret base",
+    "dex_number": "141",
+    "conditions": [
+      "Concrete pipe x3",
+      "Tall grass (any) x4"
+    ],
+    "pokemon_available": [
+      "Cyndaquil",
+      "Quilava"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585428",
+    "image_url": "https://img.game8.co/4433950/56ea908bc11fff24edc3feb683254fc4.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "fluffy-flower-bed",
+    "name": "Fluffy flower bed",
+    "dex_number": "142",
+    "conditions": [
+      "Skyland flowers x4"
+    ],
+    "pokemon_available": [
+      "Vulpix",
+      "Ninetales",
+      "Misdreavus",
+      "Mismagius",
+      "Rookidee"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585429",
+    "image_url": "https://img.game8.co/4433959/24ab7f18ea297818c3968fd52a82bcd9.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tree-shaded-fluffy-flower-bed",
+    "name": "Tree-shaded fluffy flower bed",
+    "dex_number": "143",
+    "conditions": [
+      "Skyland flowers x4",
+      "Large tree (any) x1"
+    ],
+    "pokemon_available": [
+      "Girafarig",
+      "Farigiraf",
+      "Servine",
+      "Serperior"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585430",
+    "image_url": "https://img.game8.co/4433965/29550e8cd0a0c2186978b9e958ad5bdd.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "hydrated-fluffy-flower-bed",
+    "name": "Hydrated fluffy flower bed",
+    "dex_number": "144",
+    "conditions": [
+      "Skyland flowers x4",
+      "Water x2"
+    ],
+    "pokemon_available": [
+      "Poliwhirl",
+      "Dratini",
+      "Dragonair"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585431",
+    "image_url": "https://img.game8.co/4433967/63dce028739f10506f3466b90b7a609a.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "waterside-dinghy",
+    "name": "Waterside dinghy",
+    "dex_number": "145",
+    "conditions": [
+      "Canoe x1",
+      "Duckweed x2",
+      "Water x2",
+      "High-up location x1"
+    ],
+    "pokemon_available": [
+      "Dragonite"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585432",
+    "image_url": "https://img.game8.co/4433976/d601d5b8fc71ea94c98c9a7ddef3ec58.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "illuminated-waterfall",
+    "name": "Illuminated waterfall",
+    "dex_number": "146",
+    "conditions": [
+      "Stepping stones x3",
+      "Torch x2",
+      "Water x3",
+      "Waterfall x1"
+    ],
+    "pokemon_available": [
+      "Gyarados"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586067",
+    "image_url": "https://img.game8.co/4437278/1ab4cddfbf0fd22499b652220ad4ef38.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "birdsong-garden",
+    "name": "Birdsong garden",
+    "dex_number": "147",
+    "conditions": [
+      "Stylish hedge x1",
+      "Wooden birdhouse x1"
+    ],
+    "pokemon_available": [
+      "Altaria"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585433",
+    "image_url": "https://img.game8.co/4433980/7ac89813bd7451d965e5878912d8fde4.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "simple-bathroom",
+    "name": "Simple bathroom",
+    "dex_number": "148",
+    "conditions": [
+      "Shower x1",
+      "Bathub x1"
+    ],
+    "pokemon_available": [
+      "Dratini",
+      "Dragonair"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585912",
+    "image_url": "https://img.game8.co/4434689/cc8eb3352d514a38e4d8fd2614dca487.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "cycling-rest-stop",
+    "name": "Cycling rest stop",
+    "dex_number": "149",
+    "conditions": [
+      "Bike x1",
+      "Vending machine x1"
+    ],
+    "pokemon_available": [
+      "Beldum"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586068",
+    "image_url": "https://img.game8.co/4437279/b4461521564fd831f081e0aba487e074.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "fireplace-nap-spot",
+    "name": "Fireplace nap spot",
+    "dex_number": "150",
+    "conditions": [
+      "Stone fireplace x1",
+      "Seat (wide) x1"
+    ],
+    "pokemon_available": [
+      "Quilava",
+      "Typhlosion"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585434",
+    "image_url": "https://img.game8.co/4433981/24faab0a38e0156d039d6e23cd743f23.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "surging-psychic-power",
+    "name": "Surging psychic power",
+    "dex_number": "151",
+    "conditions": [
+      "Simple cushion x1",
+      "Crystal ball x1"
+    ],
+    "pokemon_available": [
+      "Abra",
+      "Alakazam"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585542",
+    "image_url": "https://img.game8.co/4434491/4bcae26f3153491d74b329c5b54d0cc6.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "fortune-teller-s-table",
+    "name": "Fortune-teller's table",
+    "dex_number": "152",
+    "conditions": [
+      "Crystal ball x1",
+      "Seat (any) x2",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Abra",
+      "Kadabra"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586069",
+    "image_url": "https://img.game8.co/4437280/5f2b16189c7fbbf1d87be53dd4b889f7.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "trash-site-tv",
+    "name": "Trash site TV",
+    "dex_number": "153",
+    "conditions": [
+      "Garbage bags x2",
+      "Television x1"
+    ],
+    "pokemon_available": [
+      "Dusclops",
+      "Dusknoir"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585435",
+    "image_url": "https://img.game8.co/4433982/cf99bf2869b873bdb9327e20e0de0d66.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "oversized-dumping-ground",
+    "name": "Oversized dumping ground",
+    "dex_number": "154",
+    "conditions": [
+      "Iron beam or column x3",
+      "Tires x1",
+      "Microwave oven x1",
+      "Waste bin (any) x1"
+    ],
+    "pokemon_available": [
+      "Tinkatink",
+      "Tinkaton (Tinkmaster)"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586070",
+    "image_url": "https://img.game8.co/4437281/28bfbd2809610ff4b3c8027249d47f14.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "interrogation-desk",
+    "name": "Interrogation desk",
+    "dex_number": "155",
+    "conditions": [
+      "Arcanine doll x1",
+      "Folding chair x2",
+      "Industrial desk x1",
+      "Desk light x1"
+    ],
+    "pokemon_available": [
+      "Sprigatito",
+      "Floragato"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586071",
+    "image_url": "https://img.game8.co/4434690/16f28f95b9101f3147b13a9d434e9a38.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "sewer-hole-inspection",
+    "name": "Sewer-hole inspection",
+    "dex_number": "156",
+    "conditions": [
+      "Iron pipes x1",
+      "Sewer-hole cover x1",
+      "Excavation tools x1",
+      "Traffic cone x1"
+    ],
+    "pokemon_available": [
+      "Poliwrath",
+      "Corviknight",
+      "Tinkatuff"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585913",
+    "image_url": "https://img.game8.co/4434695/4d8a761240a364097cda63f8b04bdacb.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "spotless-washing-station",
+    "name": "Spotless washing station",
+    "dex_number": "157",
+    "conditions": [
+      "Towel rack x1",
+      "Sink x1",
+      "Wall mirror x1"
+    ],
+    "pokemon_available": [
+      "Mime Jr.",
+      "Mr. Mime"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585408",
+    "image_url": "https://img.game8.co/4433984/81971cdb6859163b87bd6c14e7a54cb6.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "home-theater",
+    "name": "Home theater",
+    "dex_number": "158",
+    "conditions": [
+      "Speaker x2",
+      "Television x1",
+      "Stand (any) x1"
+    ],
+    "pokemon_available": [
+      "Mismagius"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586072",
+    "image_url": "https://img.game8.co/4437282/5974a6fce54ef762a457b4f51f4d00be.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "study-area",
+    "name": "Study area",
+    "dex_number": "159",
+    "conditions": [
+      "Bookcase x1",
+      "Pencil holder x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Ralts",
+      "Kirlia"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585397",
+    "image_url": "https://img.game8.co/4433987/80c6654b5a3fb07328711fd22ab710fd.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "rhythmic-living-room",
+    "name": "Rhythmic living room",
+    "dex_number": "160",
+    "conditions": [
+      "Speaker x2",
+      "Television x2",
+      "Music mat (any) x4"
+    ],
+    "pokemon_available": [
+      "Noibat",
+      "Noivern"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585914",
+    "image_url": "https://img.game8.co/4436292/78c09da6ce0cf858f7131aff0143f86d.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "squeaky-clean",
+    "name": "Squeaky clean",
+    "dex_number": "161",
+    "conditions": [
+      "Bathub x1",
+      "Cleaning supplies x1"
+    ],
+    "pokemon_available": [
+      "Poliwag"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586073",
+    "image_url": "https://img.game8.co/4437284/c36d22a8e99ffe398fa5cbd379ebf4e5.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "moisturizing-makeup-stand",
+    "name": "Moisturizing makeup stand",
+    "dex_number": "162",
+    "conditions": [
+      "Humidifier x1",
+      "Dresser (any) x1",
+      "Seat (any) x1"
+    ],
+    "pokemon_available": [
+      "Kirlia",
+      "Gardevoir"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586074",
+    "image_url": "https://img.game8.co/4437285/45b4626083338054a446b2016bc7d821.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "mini-library",
+    "name": "Mini library",
+    "dex_number": "163",
+    "conditions": [
+      "Bookcase x1",
+      "Step stool x1",
+      "Table (any) x1",
+      "Lighting (any) x1"
+    ],
+    "pokemon_available": [
+      "Gardevoir"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586065",
+    "image_url": "https://img.game8.co/4434696/6b32cc1450370af0718e111606b41ef9.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "game-corner-battle-zone",
+    "name": "Game Corner battle zone",
+    "dex_number": "164",
+    "conditions": [
+      "Arcade machine x2",
+      "Seat (any) x2"
+    ],
+    "pokemon_available": [
+      "Porygon-Z"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585915",
+    "image_url": "https://img.game8.co/4434697/9f5e195d58eb08470a299bff89d45316.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "playland",
+    "name": "Playland",
+    "dex_number": "165",
+    "conditions": [
+      "Slide x1",
+      "Toy (any) x1"
+    ],
+    "pokemon_available": [
+      "Snivy"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585398",
+    "image_url": "https://img.game8.co/4433988/fef9a0da87494ad38e61db7e31bb6e21.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "work-desk",
+    "name": "Work desk",
+    "dex_number": "166",
+    "conditions": [
+      "Office desk x1",
+      "Mug x1",
+      "Laptop x1",
+      "Office chair x1"
+    ],
+    "pokemon_available": [
+      "Porygon2"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585399",
+    "image_url": "https://img.game8.co/4433266/71140bf112167861b3cfdf34390a4296.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "office-storeroom",
+    "name": "Office storeroom",
+    "dex_number": "167",
+    "conditions": [
+      "Office shelf x1",
+      "Cardboard boxes x1",
+      "Step stool x1"
+    ],
+    "pokemon_available": [
+      "Misdreavus",
+      "Mismagius",
+      "Drakloak",
+      "Dragapult"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585400",
+    "image_url": "https://img.game8.co/4433990/efc4299e4d8fb76fe1e4ba77e19c9b60.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "experiment-space",
+    "name": "Experiment space",
+    "dex_number": "168",
+    "conditions": [
+      "Science experiment x1",
+      "Papers x1",
+      "Microscope x1"
+    ],
+    "pokemon_available": [
+      "Alakazam"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586076",
+    "image_url": "https://img.game8.co/4434698/4f19cb0bbff96605923527840465ddb9.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "professor-s-apprentice-program",
+    "name": "Professor's apprentice program",
+    "dex_number": "169",
+    "conditions": [
+      "Whiteboard x1",
+      "Jumbled cords x1",
+      "Laptop x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Metang"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585401",
+    "image_url": "https://img.game8.co/4433993/efb33dfe5df404add6916db0c923da30.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "researcher-s-desk",
+    "name": "Researcher's desk",
+    "dex_number": "170",
+    "conditions": [
+      "Computer x1",
+      "Science experiment x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Porygon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585543",
+    "image_url": "https://img.game8.co/4434496/fc8c4bcdcb6fb3c4c64bd656eaa418a2.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "public-reading-material",
+    "name": "Public reading material",
+    "dex_number": "171",
+    "conditions": [
+      "Magazine rack x1",
+      "Newspaper x1"
+    ],
+    "pokemon_available": [
+      "Mime Jr.",
+      "Serperior"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585638",
+    "image_url": "https://img.game8.co/4435015/fce555ded6cf7af254a249aca3c58816.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "heart-pounding-surprise-box",
+    "name": "Heart-pounding surprise box",
+    "dex_number": "172",
+    "conditions": [
+      "Spotlight x2",
+      "Boo-in-the-box x1",
+      "Big drum x1"
+    ],
+    "pokemon_available": [
+      "Meowscarada"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585402",
+    "image_url": "https://img.game8.co/4433997/ab1fdad2820ab6282844dd86111a387a.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "prank-button",
+    "name": "Prank button",
+    "dex_number": "173",
+    "conditions": [
+      "Floor switch x1",
+      "Boo-in-the-box x1"
+    ],
+    "pokemon_available": [
+      "Greninja"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585544",
+    "image_url": "https://img.game8.co/4434499/c84e4edac523984da32e2715636f7097.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "picturesque-photo-cutout-board",
+    "name": "Picturesque photo cutout board",
+    "dex_number": "174",
+    "conditions": [
+      "Photo cutout board x1",
+      "Spotlight x2",
+      "High-up location x1"
+    ],
+    "pokemon_available": [
+      "Plusle",
+      "Minun"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585916",
+    "image_url": "https://img.game8.co/4434699/ad127d4bfe2858e225c435f31f88ae11.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tire-park",
+    "name": "Tire park",
+    "dex_number": "175",
+    "conditions": [
+      "Slide x1",
+      "Tire toy x2",
+      "Tires x1"
+    ],
+    "pokemon_available": [
+      "Dedenne"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585545",
+    "image_url": "https://img.game8.co/4434500/216a6a5e453acd2e3cbb989e62b251af.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "nature-s-market",
+    "name": "Nature's market",
+    "dex_number": "176",
+    "conditions": [
+      "Large boulder x1",
+      "Cash register x1",
+      "Large tree (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Raichu"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585403",
+    "image_url": "https://img.game8.co/4434000/73baf600693613a610ab81857d64573c.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "construction-site-generator",
+    "name": "Construction-site generator",
+    "dex_number": "177",
+    "conditions": [
+      "Furnace x1",
+      "Iron scaffold x2",
+      "Iron pipes x1"
+    ],
+    "pokemon_available": [
+      "Conkeldurr"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585404",
+    "image_url": "https://img.game8.co/4434001/bbd92e860b2eca93a273d0cd75130323.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "dojo-training",
+    "name": "Dojo training",
+    "dex_number": "178",
+    "conditions": [
+      "Hanging scroll x2",
+      "Strength rock x2"
+    ],
+    "pokemon_available": [
+      "Poliwrath",
+      "Gallade"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585546",
+    "image_url": "https://img.game8.co/4434512/a8ae651eac46535802e30360322a88e4.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "evil-organiztion-hq",
+    "name": "Evil organiztion HQ",
+    "dex_number": "179",
+    "conditions": [
+      "Team Rocket wall hanging x1",
+      "Luxury sofa x1",
+      "Potted plant (any) x2"
+    ],
+    "pokemon_available": [
+      "Persian"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585405",
+    "image_url": "https://img.game8.co/4434002/dfa59a7bafdf1f14a766f3932e4d4476.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "nine-flames",
+    "name": "Nine flames",
+    "dex_number": "180",
+    "conditions": [
+      "Firepit x9"
+    ],
+    "pokemon_available": [
+      "Ninetales"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585917",
+    "image_url": "https://img.game8.co/4436398/59efb561c8f45591b3e643831655eae1.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "plush-central",
+    "name": "Plush central",
+    "dex_number": "181",
+    "conditions": [
+      "Arcanine doll x1",
+      "Dragonite doll x1",
+      "Pikachu doll x1",
+      "Eevee doll x1"
+    ],
+    "pokemon_available": [
+      "Drifloon",
+      "Drifblim"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585406",
+    "image_url": "https://img.game8.co/4433253/ac430a50516e5e0bf34e84606f6dcefb.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "gamer-s-paradise",
+    "name": "Gamer's paradise",
+    "dex_number": "182",
+    "conditions": [
+      "Gaming bed x1",
+      "Gaming PC x1",
+      "Gaming chair x1",
+      "Gaming fridge x1",
+      "Table x1"
+    ],
+    "pokemon_available": [
+      "Metagross"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586077",
+    "image_url": "https://img.game8.co/4434700/53e92f9bd96028dd990cf0848fdb94c2.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "top-pop",
+    "name": "Top pop",
+    "dex_number": "183",
+    "conditions": [
+      "Pop art bed",
+      "Pop art table x1",
+      "Pop art sofa x1"
+    ],
+    "pokemon_available": [
+      "Typhlosion"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586078",
+    "image_url": "https://img.game8.co/4437286/34e59ab39431c42ae2a7a3c7a8d71439.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "fishing-pond",
+    "name": "Fishing pond",
+    "dex_number": "184",
+    "conditions": [
+      "Fishing rod x1",
+      "Water x1",
+      "Seat (any) x1"
+    ],
+    "pokemon_available": [
+      "Slowbro",
+      "Slowking"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585407",
+    "image_url": "https://img.game8.co/4433214/55f233d516ae0a2a7c590470fbcf7b12.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "ocean-fishing-spot",
+    "name": "Ocean fishing spot",
+    "dex_number": "185",
+    "conditions": [
+      "Fishing rod x1",
+      "Ocean water x1",
+      "Seat (any) x1"
+    ],
+    "pokemon_available": [
+      "Magikarp",
+      "West Sea Gastrodon",
+      "East Sea Gastrodon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585042",
+    "image_url": "https://img.game8.co/4431885/f48c0068f7fecb980fbcc53b18f6efea.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "marsh-fishing-spot",
+    "name": "Marsh fishing spot",
+    "dex_number": "186",
+    "conditions": [
+      "Fishing rod x1",
+      "Muddy Water x1",
+      "Seat (any) x1"
+    ],
+    "pokemon_available": [
+      "Grimer",
+      "Muk",
+      "Clodsire"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585639",
+    "image_url": "https://img.game8.co/4434701/5fac6084cf3ec96973d6e1d96e65e8f4.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "hot-spring-fishing-spot",
+    "name": "Hot-spring fishing spot",
+    "dex_number": "187",
+    "conditions": [
+      "Fishing rod x1",
+      "Hot-spring waterr x1",
+      "Seat x1"
+    ],
+    "pokemon_available": [
+      "Lotad",
+      "Lombre"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586079",
+    "image_url": "https://img.game8.co/4434702/30bd7dd7d96dcdaa21c80916b32882bc.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "magma-fishing-spot",
+    "name": "Magma fishing spot",
+    "dex_number": "188",
+    "conditions": [
+      "Fishing rod x1",
+      "Lava x1",
+      "Seat (any) x1"
+    ],
+    "pokemon_available": [
+      "Arcanine"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585396",
+    "image_url": "https://img.game8.co/4433735/c201522832c83bfc3b844766936219d6.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "amped-rock-stage",
+    "name": "Amped rock stage",
+    "dex_number": "189",
+    "conditions": [
+      "Speaker x2",
+      "Cool electric guitar x1",
+      "Small stage x1",
+      "Standing mic x1"
+    ],
+    "pokemon_available": [
+      "Amped Form Toxtricity"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586080",
+    "image_url": "https://img.game8.co/4437287/17a30a9ffe0d1162a0d36b6d0e4756ca.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "low-key-rock-stage",
+    "name": "Low-key rock stage",
+    "dex_number": "190",
+    "conditions": [
+      "Speaker x2",
+      "Cool bass guitar x1",
+      "Small stage x1",
+      "Standing mic x1"
+    ],
+    "pokemon_available": [
+      "Low Key Form Toxtricity"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586081",
+    "image_url": "https://img.game8.co/4434703/7671d00e128614b98561695c7cebcbdc.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "malicious-knight-s-shrine",
+    "name": "Malicious knight's shrine",
+    "dex_number": "191",
+    "conditions": [
+      "Pedestal/exhibition stand x1",
+      "Malicious Armor x1",
+      "Stepping stones x2",
+      "Firepit x2"
+    ],
+    "pokemon_available": [
+      "Ceruledge"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585918",
+    "image_url": "https://img.game8.co/4434704/bcbe97d4bbee8eb4920e3942f4bc289b.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "auspicious-knight-s-shrine",
+    "name": "Auspicious knight's shrine",
+    "dex_number": "192",
+    "conditions": [
+      "Pedestal/exhibition stand x1",
+      "Stepping stones x2",
+      "Auspicious Armor x1",
+      "Firepit x2"
+    ],
+    "pokemon_available": [
+      "Armarouge"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586082",
+    "image_url": "https://img.game8.co/4437288/2a7dca37fb1566f67f33b55262ce312f.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "wing-fossil-display",
+    "name": "Wing Fossil display",
+    "dex_number": "193",
+    "conditions": [
+      "Pedestal/exhibition stand x1",
+      "Wing Fossil (head) x1",
+      "Wing Fossil (right wing) x1",
+      "Wing Fossil (left wing) x1",
+      "Wing Fossil (body) x1",
+      "Wing Fossil (tail) x1"
+    ],
+    "pokemon_available": [
+      "Aerodactyl"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585547",
+    "image_url": "https://img.game8.co/4434516/d3adaba3eb8256e9819ef67163b62184.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "skull-fossil-display",
+    "name": "Skull Fossil display",
+    "dex_number": "194",
+    "conditions": [
+      "Pedestal/exhibition stand x1",
+      "Skull Fossil x1"
+    ],
+    "pokemon_available": [
+      "Cranidos"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586083",
+    "image_url": "https://img.game8.co/4434705/7ea48bfeec1b68ea14ba2a71ad48fa0b.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "headbutt-fossil-display",
+    "name": "Headbutt Fossil display",
+    "dex_number": "195",
+    "conditions": [
+      "Pedestal/exhibition stand x1",
+      "Headbutt Fossil (head) x1",
+      "Headbutt Fossil (body) x1",
+      "Headbutt Fossil (tail) x1"
+    ],
+    "pokemon_available": [
+      "Rampardos"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585919",
+    "image_url": "https://img.game8.co/4434706/823eca2a31f7bd325d2eac26a88fc1c1.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "armor-fossil-display",
+    "name": "Armor Fossil display",
+    "dex_number": "196",
+    "conditions": [
+      "Pedestal/exhibition stand x1",
+      "Armor Fossil x1"
+    ],
+    "pokemon_available": [
+      "Shieldon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585548",
+    "image_url": "https://img.game8.co/4434707/07455b50e63e85fd23378e1675656d3c.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "shield-fossil-display",
+    "name": "Shield Fossil display",
+    "dex_number": "197",
+    "conditions": [
+      "Pedestal/exhibition stand x2"
+    ],
+    "pokemon_available": [
+      "Bastiodon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585549",
+    "image_url": "https://img.game8.co/4434589/c0742ea93a3764f7bb8d9945c3390bb2.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "jaw-fossil-display",
+    "name": "Jaw Fossil display",
+    "dex_number": "198",
+    "conditions": [
+      "Pedestal/exhibition stand x1",
+      "Jaw Fossil x1"
+    ],
+    "pokemon_available": [
+      "Tyrunt"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585920",
+    "image_url": "https://img.game8.co/4434708/9aeb11f21054fae0e84cee2b9396475a.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "despot-fossil-display",
+    "name": "Despot Fossil display",
+    "dex_number": "199",
+    "conditions": [
+      "Pedestal/exhibition stand x1",
+      "Despot Fossil (head) x1",
+      "Despot Fossil (body) x1",
+      "Despot Fossil (tail) x1",
+      "Despot Fossil (legs) x1"
+    ],
+    "pokemon_available": [
+      "Tyrantrum"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585041",
+    "image_url": "https://img.game8.co/4432472/b931334744b097f13d2de3dd8b1bf4c3.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "sail-fossil-display",
+    "name": "Sail Fossil display",
+    "dex_number": "200",
+    "conditions": [
+      "Pedestal/exhibition stand x1",
+      "Sail Fossil x1"
+    ],
+    "pokemon_available": [
+      "Amaura"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/586084",
+    "image_url": "https://img.game8.co/4434709/63bf819c096741c2b3a2c0a08054f93d.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "tundra-fossil-display",
+    "name": "Tundra Fossil display",
+    "dex_number": "201",
+    "conditions": [
+      "Pedestal/exhibition stand x1",
+      "Tundra Fossil (head) x1",
+      "Tundra Fossil (body) x1",
+      "Tundra Fossil (tail) x1"
+    ],
+    "pokemon_available": [
+      "Aurorus"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585550",
+    "image_url": "https://img.game8.co/4434710/a0075a6a8647ede3e9d7217a866ed8ae.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "boundless-blue-beverage",
+    "name": "Boundless blue beverage",
+    "dex_number": "202",
+    "conditions": [
+      "Soda float x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Vaporeon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585104",
+    "image_url": "https://img.game8.co/4431886/f3e9ffd8d541f4d77db164677fa20fb6.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "electrifying-potatoes",
+    "name": "Electrifying potatoes",
+    "dex_number": "203",
+    "conditions": [
+      "Fried potatoes x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Jolteon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585105",
+    "image_url": "https://img.game8.co/4431890/ce1aa4f04497b3053b50f311bb216df9.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "burning-hot-spice",
+    "name": "Burning-hot spice",
+    "dex_number": "204",
+    "conditions": [
+      "Pizza x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Flareon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585106",
+    "image_url": "https://img.game8.co/4431891/dbe8fdcb94b46151e70c4fab28c53cad.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "elegant-daytime-treats",
+    "name": "Elegant daytime treats",
+    "dex_number": "205",
+    "conditions": [
+      "Afternoon tea set x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Espeon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585107",
+    "image_url": "https://img.game8.co/4431893/e4fd6945a3e04d014e204da819407812.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "dark-chocolate-cookies",
+    "name": "Dark-chocolate cookies",
+    "dex_number": "206",
+    "conditions": [
+      "Chocolate cookies x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Umbreon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585108",
+    "image_url": "https://img.game8.co/4431895/152c22cfdca56d905d26b26486d5c10f.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "leafy-greens-sandwich",
+    "name": "Leafy greens sandwich",
+    "dex_number": "207",
+    "conditions": [
+      "Sandwiches x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Leafeon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585109",
+    "image_url": "https://img.game8.co/4431896/b52d6689c624c2f542b05892595f34df.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "chilly-shaved-ice",
+    "name": "Chilly shaved ice",
+    "dex_number": "208",
+    "conditions": [
+      "Shaved ice x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Glaceon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585110",
+    "image_url": "https://img.game8.co/4431898/d7510df1c38b83d737bade097b4b1206.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "lovely-ribbon-cake",
+    "name": "Lovely ribbon cake",
+    "dex_number": "209",
+    "conditions": [
+      "Ribbon cake x1",
+      "Seat (any) x1",
+      "Table (any) x1"
+    ],
+    "pokemon_available": [
+      "Sylveon"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585111",
+    "image_url": "https://img.game8.co/4431899/974a542495bb112ad39bc6f6ae59bcf0.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "yellow-carpet",
+    "name": "Yellow carpet",
+    "dex_number": "E-001",
+    "conditions": [
+      "Dandy flowers x4"
+    ],
+    "pokemon_available": [
+      "Hoppip",
+      "Skiploom",
+      "Jumpluff"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585409",
+    "image_url": "https://img.game8.co/4434043/7fcfa9737cd02a73284f3d90751f1112.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "field-trip-friends",
+    "name": "Field-trip friends",
+    "dex_number": "E-002",
+    "conditions": [
+      "Flower backpack x1",
+      "Lunch box x1",
+      "Hoppip water bottle x1"
+    ],
+    "pokemon_available": [
+      "Skiploom"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585410",
+    "image_url": "https://img.game8.co/4434044/b59e58885c2601c07514300811f4a6b1.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "dandelion-lunchtime",
+    "name": "Dandelion lunchtime",
+    "dex_number": "E-003",
+    "conditions": [
+      "Dandy flowers x1",
+      "Lunch box x1",
+      "Flower cushion x1",
+      "Flowery table setting x1"
+    ],
+    "pokemon_available": [
+      "Jumpluff"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585411",
+    "image_url": "https://img.game8.co/4434045/25d1e0979bb94e6c1ca1d1889bbc98b3.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  },
+  {
+    "slug": "treasure-hunting-set",
+    "name": "Treasure-hunting set",
+    "dex_number": "E-004",
+    "conditions": [
+      "Adventure kit x1",
+      "Treasure x1",
+      "Map and compass x1"
+    ],
+    "pokemon_available": [
+      "Sableye"
+    ],
+    "detail_url": "https://game8.co/games/Pokemon-Pokopia/archives/585640",
+    "image_url": "https://img.game8.co/4434844/fe1398ce064259067799c3a271cf0b23.png/show",
+    "source_url": "https://game8.co/games/Pokemon-Pokopia/archives/582463",
+    "scraped_at": "2026-03-16T13:56:23.601Z"
+  }
+]

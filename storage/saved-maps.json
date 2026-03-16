@@ -1,5 +1,1895 @@
 [
   {
+    "id": "starter-map",
+    "name": "Sunrise Borough",
+    "width": 100,
+    "height": 100,
+    "tiles": [
+      {
+        "x": 20,
+        "y": 5,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 6,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 7,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 8,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 9,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 10,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 10,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 11,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 11,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 12,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 12,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 13,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 13,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 14,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 14,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 15,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 15,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 16,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 16,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 17,
+        "y": 17,
+        "tileType": "decoration",
+        "decorationType": "tree"
+      },
+      {
+        "x": 18,
+        "y": 17,
+        "tileType": "decoration",
+        "decorationType": "lamp"
+      },
+      {
+        "x": 20,
+        "y": 17,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 17,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 18,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 18,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 19,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 19,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 4,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 5,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 6,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 7,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 8,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 9,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 10,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 11,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 12,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 13,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 14,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 15,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 16,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 17,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 18,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 19,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 21,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 22,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 23,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 24,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 25,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 26,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 27,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 28,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 29,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 30,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 31,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 32,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 33,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 34,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 35,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 36,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 37,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 38,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 39,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 40,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 41,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 42,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 43,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 44,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 45,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 46,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 47,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 48,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 49,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 50,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 51,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 53,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 54,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 55,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 56,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 57,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 58,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 59,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 60,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 61,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 62,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 63,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 64,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 65,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 66,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 67,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 68,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 69,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 70,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 71,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 72,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 73,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 74,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 75,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 76,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 77,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 78,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 79,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 80,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 81,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 82,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 83,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 84,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 85,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 86,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 87,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 88,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 89,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 90,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 91,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 92,
+        "y": 20,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 21,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 21,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 22,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 22,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 23,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 23,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 24,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 24,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 25,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 25,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 26,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 26,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 27,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 27,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 28,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 28,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 73,
+        "y": 28,
+        "tileType": "decoration",
+        "decorationType": "tree"
+      },
+      {
+        "x": 20,
+        "y": 29,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 29,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 30,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 30,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 31,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 31,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 32,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 32,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 33,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 33,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 34,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 34,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 35,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 35,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 36,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 36,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 37,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 37,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 38,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 38,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 39,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 39,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 40,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 40,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 41,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 41,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 42,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 42,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 43,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 43,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 54,
+        "y": 43,
+        "tileType": "decoration",
+        "decorationType": "flower"
+      },
+      {
+        "x": 20,
+        "y": 44,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 44,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 8,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 9,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 10,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 11,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 12,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 13,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 14,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 15,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 16,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 17,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 18,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 19,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 20,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 21,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 22,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 23,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 24,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 25,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 26,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 27,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 28,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 29,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 30,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 31,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 32,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 33,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 34,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 35,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 36,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 37,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 38,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 39,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 40,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 41,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 42,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 43,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 44,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 45,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 46,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 47,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 48,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 49,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 50,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 51,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 52,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 53,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 54,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 55,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 56,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 57,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 58,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 59,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 60,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 61,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 62,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 63,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 64,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 65,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 66,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 67,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 68,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 69,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 70,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 71,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 72,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 73,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 74,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 75,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 76,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 77,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 78,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 79,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 80,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 81,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 82,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 83,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 84,
+        "y": 45,
+        "tileType": "road",
+        "roadType": "path"
+      },
+      {
+        "x": 20,
+        "y": 46,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 46,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 47,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 47,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 48,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 48,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 49,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 49,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 50,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 50,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 51,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 51,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 52,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 52,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 53,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 53,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 54,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 54,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 55,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 55,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 56,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 56,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 57,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 57,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 58,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 58,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 59,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 59,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 60,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 60,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 61,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 61,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 62,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 62,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 63,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 63,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 64,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 64,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 65,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 65,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 66,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 66,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 67,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 67,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 68,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 68,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 69,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 69,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 70,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 52,
+        "y": 70,
+        "tileType": "road",
+        "roadType": "bridge"
+      },
+      {
+        "x": 20,
+        "y": 71,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 72,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 73,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 74,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 75,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 76,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 77,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 78,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 79,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 80,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 81,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 82,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 83,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 84,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 85,
+        "tileType": "road",
+        "roadType": "stone"
+      },
+      {
+        "x": 20,
+        "y": 86,
+        "tileType": "road",
+        "roadType": "stone"
+      }
+    ],
+    "placements": [
+      {
+        "id": "starter-care-center",
+        "buildingId": "pokecenter",
+        "x": 12,
+        "y": 10,
+        "rotation": 0,
+        "label": "Aurora Care Center"
+      },
+      {
+        "id": "starter-workshop",
+        "buildingId": "harbor-workshop",
+        "x": 40,
+        "y": 12,
+        "rotation": 90,
+        "label": "Harbor Forge Workshop"
+      },
+      {
+        "id": "starter-greenhouse",
+        "buildingId": "glass-greenhouse",
+        "x": 68,
+        "y": 26,
+        "rotation": 0,
+        "label": "Glassleaf Conservatory"
+      }
+    ],
+    "createdAt": "2026-03-16T14:17:07.609Z",
+    "updatedAt": "2026-03-16T14:17:07.609Z"
+  },
+  {
     "id": "smoke-map",
     "name": "Smoke Map",
     "width": 10,

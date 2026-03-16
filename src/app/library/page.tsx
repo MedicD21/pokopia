@@ -1,10 +1,14 @@
 import Link from "next/link";
 
+import { ItemLibraryBrowser } from "@/components/library/item-library-browser";
 import { SectionCard } from "@/components/ui/section-card";
 import { sampleBuildings } from "@/data/buildings";
+import { listItemCatalog } from "@/lib/item-catalog";
 import { summarizeMaterials } from "@/lib/materials";
 
-export default function LibraryPage() {
+export default async function LibraryPage() {
+  const itemCatalog = await listItemCatalog();
+
   return (
     <div className="space-y-6">
       <SectionCard
@@ -92,6 +96,7 @@ export default function LibraryPage() {
           );
         })}
       </div>
+      <ItemLibraryBrowser catalog={itemCatalog} />
     </div>
   );
 }
