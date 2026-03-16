@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Canvas, type ThreeEvent, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
@@ -9,9 +8,9 @@ import type { RefObject } from "react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { BlockMaterialDropdown } from "@/components/builder3d/material-dropdown";
+import { SectionCard } from "@/components/ui/section-card";
 import { MaterialsBreakdown } from "@/components/materials/materials-breakdown";
 import { HelperPanel } from "@/components/pokemon/helper-panel";
-import { SectionCard } from "@/components/ui/section-card";
 import { sampleBuildings } from "@/data/buildings";
 import { blockMaterialLookup, blockMaterials } from "@/data/materials";
 import { summarizeMaterials } from "@/lib/materials";
@@ -25,23 +24,6 @@ import { type BuilderMode, useBuilderStore } from "@/store/use-builder-store";
 
 const gridSize = 24;
 const maxBuildHeight = 13;
-const blockColorSwatches = [
-  "#8c99b5",
-  "#b97a45",
-  "#5e6e8a",
-  "#7fd0df",
-  "#d36f4c",
-  "#8f5f3f",
-  "#9ddbf1",
-  "#64798f",
-  "#a1a7b6",
-  "#f0544f",
-  "#f5c15f",
-  "#f6d46b",
-  "#f2a027",
-  "#6fc28e",
-  "#8f74ff",
-];
 
 type CameraPreset = "iso" | "front" | "back" | "left" | "right" | "top";
 type VoxelPoint = { x: number; y: number; z: number };
@@ -54,17 +36,7 @@ const cameraPresets: readonly CameraPreset[] = [
   "top",
 ];
 
-type BuilderMaterialSlotId =
-  | "foundation"
-  | "wall"
-  | "trim"
-  | "roof"
-  | "door"
-  | "window"
-  | "beam"
-  | "pillar"
-  | "light"
-  | "decor";
+type BuilderMaterialSlotId = "block" | "roof" | "door" | "window";
 
 const builderMaterialSlots: ReadonlyArray<{
   id: BuilderMaterialSlotId;
@@ -73,66 +45,59 @@ const builderMaterialSlots: ReadonlyArray<{
   defaultMaterial: BlockMaterialId;
 }> = [
   {
-    id: "foundation",
-    label: "Foundation",
-    description: "Heavy base material for floors and ground structure.",
+    id: "block",
+    label: "Block Type",
+    description:
+      "Main building block list with all solid materials and placeable block-style items.",
     defaultMaterial: "stone",
   },
   {
-    id: "wall",
-    label: "Wall",
-    description: "Main wall block you will place most often.",
-    defaultMaterial: "brick",
-  },
-  {
-    id: "trim",
-    label: "Trim",
-    description: "Accent piece for edges, floors, and frame changes.",
-    defaultMaterial: "wood",
-  },
-  {
     id: "roof",
-    label: "Roof",
-    description: "Top layer block for caps and sloped roofs.",
+    label: "Roof Type",
+    description:
+      "Choose the roof piece your build palette can switch to while editing.",
     defaultMaterial: "roof",
   },
   {
     id: "door",
-    label: "Door",
-    description: "Entry piece for fronts, gates, and larger openings.",
+    label: "Door Type",
+    description: "Pick the door style available to your active build palette.",
     defaultMaterial: "door",
   },
   {
     id: "window",
-    label: "Window",
-    description: "Window piece for light wells and outer walls.",
+    label: "Window Type",
+    description:
+      "Pick the window option available to your active build palette.",
     defaultMaterial: "window",
   },
-  {
-    id: "beam",
-    label: "Beam",
-    description: "Structural support for workshop and roof framing.",
-    defaultMaterial: "beam",
-  },
-  {
-    id: "pillar",
-    label: "Pillar",
-    description: "Vertical support and facade accent piece.",
-    defaultMaterial: "pillar",
-  },
-  {
-    id: "light",
-    label: "Light",
-    description: "Lantern and lit accent placement piece.",
-    defaultMaterial: "light",
-  },
-  {
-    id: "decor",
-    label: "Decor",
-    description: "Signage, trim, and finishing details.",
-    defaultMaterial: "decor",
-  },
 ];
+
+function getPaletteMaterials(slotId: BuilderMaterialSlotId) {
+  switch (slotId) {
+    case "block":
+      return blockMaterials.filter(
+        (m) =>
+          !m.id.startsWith("roof") &&
+          !m.id.startsWith("door") &&
+          !m.id.startsWith("window"),
+      );
+    case "roof":
+      return blockMaterials.filter(
+        (m) => m.id === "roof" || m.id.startsWith("roof-"),
+      );
+    case "door":
+      return blockMaterials.filter(
+        (m) => m.id === "door" || m.id.startsWith("door-"),
+      );
+    case "window":
+      return blockMaterials.filter(
+        (m) => m.id === "window" || m.id.startsWith("window-"),
+      );
+    default:
+      return blockMaterials;
+  }
+}
 
 const toolDefinitions: ReadonlyArray<{
   mode: BuilderMode;
@@ -144,19 +109,22 @@ const toolDefinitions: ReadonlyArray<{
     mode: "hand",
     label: "Hand",
     shortcut: "H",
-    description: "Inspect existing blocks and unlock camera orbit, pan, and zoom.",
+    description:
+      "Inspect existing blocks and unlock camera orbit, pan, and zoom.",
   },
   {
     mode: "add",
     label: "Add",
     shortcut: "A",
-    description: "Place new blocks with the active material on the current layer.",
+    description:
+      "Place new blocks with the active material on the current layer.",
   },
   {
     mode: "paint",
     label: "Paint",
     shortcut: "P",
-    description: "Recolor or rematerial existing blocks without changing their position.",
+    description:
+      "Recolor or rematerial existing blocks without changing their position.",
   },
   {
     mode: "remove",
@@ -174,13 +142,15 @@ const toolDefinitions: ReadonlyArray<{
     mode: "wall",
     label: "Wall",
     shortcut: "W",
-    description: "Click and drag a wall line, then stack it to the chosen height automatically.",
+    description:
+      "Click and drag a wall line, then stack it to the chosen height automatically.",
   },
   {
     mode: "eyedropper",
     label: "Eyedropper",
     shortcut: "E",
-    description: "Sample a placed block's material and color back into the active brush.",
+    description:
+      "Sample a placed block's material and color back into the active brush.",
   },
 ];
 
@@ -296,6 +266,21 @@ function ToolIcon({
   }
 }
 
+function DisclosureChevron({ open }: { open: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      className={`h-4 w-4 transition ${open ? "rotate-180" : ""}`}
+      aria-hidden="true"
+    >
+      <path d="m5 7.5 5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function ToolbarToolButton({
   active,
   description,
@@ -317,14 +302,17 @@ function ToolbarToolButton({
       onClick={onClick}
       title={`${label} (${shortcut})`}
       aria-label={`${label} tool (${shortcut})`}
-      className={`group relative flex h-16 w-16 items-center justify-center rounded-[22px] border transition ${
+      className={`group flex items-center gap-2.5 rounded-2xl border px-3 py-2 transition ${
         active
-          ? "border-[color:var(--accent)]/70 bg-[color:var(--accent)]/16 text-[color:var(--foreground)] shadow-[0_12px_24px_rgba(0,0,0,0.18)]"
+          ? "border-[color:var(--accent)]/70 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
           : "border-[color:var(--line)] bg-[color:var(--surface)] text-[color:var(--foreground)] hover:border-[color:var(--accent)]/45 hover:bg-[color:var(--accent)]/8"
       }`}
     >
-      <ToolIcon mode={mode} className="h-6 w-6" />
-      <span className="absolute bottom-1.5 right-1.5 rounded-md bg-black/25 px-1.5 py-0.5 text-[10px] font-bold leading-none text-[color:var(--muted)]">
+      <ToolIcon mode={mode} className="h-4 w-4 shrink-0" />
+      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--foreground)]">
+        {label}
+      </span>
+      <span className="ml-auto rounded-full bg-[color:var(--surface-strong)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[color:var(--muted)]">
         {shortcut}
       </span>
       <span className="sr-only">
@@ -407,7 +395,10 @@ function buildWallPreviewBlocks(
   }
 
   const baseY = clamp(start.y, 0, maxBuildHeight - 1);
-  const cappedHeight = Math.max(1, Math.min(maxBuildHeight - baseY, Math.round(height)));
+  const cappedHeight = Math.max(
+    1,
+    Math.min(maxBuildHeight - baseY, Math.round(height)),
+  );
   const topY = baseY + cappedHeight - 1;
 
   return getWallLinePoints(start, end).flatMap((point) => {
@@ -555,24 +546,28 @@ function BlockInstances({
     mode: BuilderMode,
   ) => void;
 }) {
-  const blocksByColor = blocks.reduce<Map<string, VoxelBlock[]>>((lookup, block) => {
-    const resolvedColor = block.color || blockMaterialLookup[block.material].color;
-    const existing = lookup.get(resolvedColor);
+  const blocksByColor = blocks.reduce<Map<string, VoxelBlock[]>>(
+    (lookup, block) => {
+      const resolvedColor =
+        block.color || blockMaterialLookup[block.material].color;
+      const existing = lookup.get(resolvedColor);
 
-    if (existing) {
-      existing.push(block);
+      if (existing) {
+        existing.push(block);
+        return lookup;
+      }
+
+      lookup.set(resolvedColor, [block]);
       return lookup;
-    }
-
-    lookup.set(resolvedColor, [block]);
-    return lookup;
-  }, new Map<string, VoxelBlock[]>());
+    },
+    new Map<string, VoxelBlock[]>(),
+  );
 
   return (
     <>
       {[...blocksByColor.entries()].map(([color, colorBlocks]) => (
         <ColorBlockInstances
-          key={`${color}:${colorBlocks.length}`}
+          key={color}
           blocks={colorBlocks}
           color={color}
           mode={mode}
@@ -691,11 +686,31 @@ function CameraRig({
     const viewHeight = Math.max(2.4, centerY + heightSpan * 0.12);
 
     const presets: Record<CameraPreset, [number, number, number]> = {
-      iso: [centerX + diagonalDistance, viewHeight + verticalLift, centerZ + diagonalDistance],
-      front: [centerX, viewHeight + verticalLift * 0.4, centerZ + forwardDistance],
-      back: [centerX, viewHeight + verticalLift * 0.4, centerZ - forwardDistance],
-      left: [centerX - forwardDistance, viewHeight + verticalLift * 0.4, centerZ],
-      right: [centerX + forwardDistance, viewHeight + verticalLift * 0.4, centerZ],
+      iso: [
+        centerX + diagonalDistance,
+        viewHeight + verticalLift,
+        centerZ + diagonalDistance,
+      ],
+      front: [
+        centerX,
+        viewHeight + verticalLift * 0.4,
+        centerZ + forwardDistance,
+      ],
+      back: [
+        centerX,
+        viewHeight + verticalLift * 0.4,
+        centerZ - forwardDistance,
+      ],
+      left: [
+        centerX - forwardDistance,
+        viewHeight + verticalLift * 0.4,
+        centerZ,
+      ],
+      right: [
+        centerX + forwardDistance,
+        viewHeight + verticalLift * 0.4,
+        centerZ,
+      ],
       top: [centerX, viewHeight + Math.max(12, heightSpan * 1.85 + 5), centerZ],
     };
 
@@ -861,7 +876,11 @@ function BuildScene({
           <meshBasicMaterial transparent opacity={0} depthWrite={false} />
         </mesh>
       ) : null}
-      <BlockInstances blocks={blocks} mode={mode} onInteract={onBlockInteract} />
+      <BlockInstances
+        blocks={blocks}
+        mode={mode}
+        onInteract={onBlockInteract}
+      />
       <PreviewBlocks color={activeBlockColor} points={wallPreviewBlocks} />
       <SelectedBlockOutline block={selectedBlock} />
       <BoxStartMarker point={boxStart} />
@@ -887,9 +906,12 @@ export function VoxelBuilder() {
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>("iso");
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [boxStart, setBoxStart] = useState<VoxelPoint | null>(null);
-  const [wallPreviewStart, setWallPreviewStart] = useState<VoxelPoint | null>(null);
+  const [wallPreviewStart, setWallPreviewStart] = useState<VoxelPoint | null>(
+    null,
+  );
   const [wallPreviewEnd, setWallPreviewEnd] = useState<VoxelPoint | null>(null);
   const [wallHeight, setWallHeight] = useState(4);
+  const [paletteExpanded, setPaletteExpanded] = useState(false);
   const [builderPalette, setBuilderPalette] = useState<
     Record<BuilderMaterialSlotId, BlockMaterialId>
   >(() =>
@@ -902,7 +924,6 @@ export function VoxelBuilder() {
     ),
   );
   const name = useBuilderStore((state) => state.name);
-  const description = useBuilderStore((state) => state.description);
   const loadedTemplateId = useBuilderStore((state) => state.loadedTemplateId);
   const blocks = useBuilderStore((state) => state.blocks);
   const activeMaterial = useBuilderStore((state) => state.activeMaterial);
@@ -910,7 +931,6 @@ export function VoxelBuilder() {
   const activeLayer = useBuilderStore((state) => state.activeLayer);
   const mode = useBuilderStore((state) => state.mode);
   const setName = useBuilderStore((state) => state.setName);
-  const setDescription = useBuilderStore((state) => state.setDescription);
   const setActiveMaterial = useBuilderStore((state) => state.setActiveMaterial);
   const setActiveColor = useBuilderStore((state) => state.setActiveColor);
   const setActiveLayer = useBuilderStore((state) => state.setActiveLayer);
@@ -921,21 +941,33 @@ export function VoxelBuilder() {
   const paintBlock = useBuilderStore((state) => state.paintBlock);
   const fillBox = useBuilderStore((state) => state.fillBox);
   const buildWall = useBuilderStore((state) => state.buildWall);
-  const updateBlockMaterial = useBuilderStore((state) => state.updateBlockMaterial);
-  const updateBlockColor = useBuilderStore((state) => state.updateBlockColor);
-  const moveBlock = useBuilderStore((state) => state.moveBlock);
-  const cloneBlock = useBuilderStore((state) => state.cloneBlock);
   const clearLayer = useBuilderStore((state) => state.clearLayer);
   const clear = useBuilderStore((state) => state.clear);
   const exportBuilding = useBuilderStore((state) => state.exportBuilding);
   const summary = summarizeMaterials(blocks);
   const blueprint = exportBuilding();
   const previewBlueprint = buildPreviewBlueprint(blueprint);
-  const selectedBlock = blocks.find((block) => block.id === selectedBlockId) ?? null;
+  const selectedBlock =
+    blocks.find((block) => block.id === selectedBlockId) ?? null;
   const maxWallHeight = Math.max(1, maxBuildHeight - activeLayer);
   const effectiveWallHeight = Math.min(wallHeight, maxWallHeight);
   const activeTool =
     toolDefinitions.find((tool) => tool.mode === mode) ?? toolDefinitions[0];
+  const activePaletteMaterials = builderMaterialSlots.reduce<
+    typeof blockMaterials
+  >((materials, slot) => {
+    const materialId = builderPalette[slot.id];
+    const material = blockMaterialLookup[materialId];
+
+    if (!materials.some((entry) => entry.id === material.id)) {
+      materials.push(material);
+    }
+
+    return materials;
+  }, []);
+  const activePaletteMaterialIds = activePaletteMaterials.map(
+    (material) => material.id,
+  );
 
   function resetTransientToolState() {
     setBoxStart(null);
@@ -949,21 +981,24 @@ export function VoxelBuilder() {
     resetTransientToolState();
   }
 
-  function updateBuilderPalette(slotId: BuilderMaterialSlotId, material: BlockMaterialId) {
+  function updateBuilderPalette(
+    slotId: BuilderMaterialSlotId,
+    material: BlockMaterialId,
+  ) {
     setBuilderPalette((current) => ({
       ...current,
       [slotId]: material,
     }));
   }
 
-  function applyPaletteMaterial(slotId: BuilderMaterialSlotId) {
-    const material = builderPalette[slotId];
-    setActiveMaterial(material);
-  }
-
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.metaKey || event.ctrlKey || event.altKey || isTypingTarget(event.target)) {
+      if (
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        isTypingTarget(event.target)
+      ) {
         return;
       }
 
@@ -984,6 +1019,15 @@ export function VoxelBuilder() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [setMode]);
+
+  useEffect(() => {
+    if (
+      activePaletteMaterialIds.length > 0 &&
+      !activePaletteMaterialIds.includes(activeMaterial)
+    ) {
+      setActiveMaterial(activePaletteMaterialIds[0]);
+    }
+  }, [activeMaterial, activePaletteMaterialIds, setActiveMaterial]);
 
   function commitBoxPoint(point: VoxelPoint) {
     if (!boxStart) {
@@ -1083,43 +1127,35 @@ export function VoxelBuilder() {
   }
 
   async function handleSaveBuilding() {
-    const response = await fetch("/api/buildings/save", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: blueprint.name,
-        description: blueprint.description,
-        data: blueprint,
-      }),
-    });
-    const payload = (await response.json()) as {
-      storageMode?: StorageMode;
-      error?: string;
-    };
+    try {
+      const response = await fetch("/api/buildings/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: blueprint.name,
+          description: blueprint.description,
+          data: blueprint,
+        }),
+      });
+      const payload = (await response.json()) as {
+        storageMode?: StorageMode;
+        error?: string;
+      };
 
-    if (response.ok) {
-      setSaveMessage(
-        payload.storageMode === "database"
-          ? "Blueprint saved to PostgreSQL through Prisma."
-          : "Blueprint saved to local fallback storage.",
-      );
-      return;
-    }
+      if (response.ok) {
+        setSaveMessage(
+          payload.storageMode === "database"
+            ? "Blueprint saved to PostgreSQL through Prisma."
+            : "Blueprint saved to local fallback storage.",
+        );
+        return;
+      }
 
-    setSaveMessage(payload.error ?? "Unable to save building right now.");
-  }
-
-  function moveSelected(dx: number, dy: number, dz: number) {
-    if (!selectedBlock) {
-      return;
-    }
-
-    const nextId = moveBlock(selectedBlock.x, selectedBlock.y, selectedBlock.z, dx, dy, dz);
-
-    if (nextId) {
-      setSelectedBlockId(nextId);
+      setSaveMessage(payload.error ?? "Unable to save building right now.");
+    } catch {
+      setSaveMessage("Save failed — check your connection and try again.");
     }
   }
 
@@ -1158,603 +1194,336 @@ export function VoxelBuilder() {
     setWallPreviewEnd(null);
   }
 
-  function cloneSelected(dx: number, dy: number, dz: number) {
-    if (!selectedBlock) {
-      return;
-    }
-
-    const nextId = cloneBlock(selectedBlock.x, selectedBlock.y, selectedBlock.z, dx, dy, dz);
-
-    if (nextId) {
-      setSelectedBlockId(nextId);
-    }
-  }
-
   return (
     <div className="space-y-5">
-      <SectionCard
-        eyebrow="Voxel Scene"
-        title="3D Builder"
-        description="Build setup, tools, and the live voxel scene now share one workspace so you can edit without side-panel scrolling. Press H, A, P, X, B, W, and E to switch tools quickly."
-        action={
-          <Link
-            href="/ai-builder"
-            className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
-          >
-            Open AI Builder
-          </Link>
-        }
-        className="flex min-h-[calc(100vh-5.75rem)] flex-col"
-      >
-        <div className="mb-4 rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface)]/88 p-4">
-          <div className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)]">
-            <div className="space-y-4">
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3">
-                  <p className="text-xs uppercase tracking-[0.22em] text-[color:var(--accent-2)]">
-                    Blocks
-                  </p>
-                  <p className="mt-2 font-display text-2xl text-[color:var(--foreground)]">
-                    {summary.totalBlocks}
-                  </p>
-                </div>
-                <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3">
-                  <p className="text-xs uppercase tracking-[0.22em] text-[color:var(--accent-2)]">
-                    Layer
-                  </p>
-                  <p className="mt-2 font-display text-2xl text-[color:var(--foreground)]">
-                    Y {activeLayer}
-                  </p>
-                </div>
-                <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3">
-                  <p className="text-xs uppercase tracking-[0.22em] text-[color:var(--accent-2)]">
-                    Material
-                  </p>
-                  <p className="mt-2 font-display text-lg text-[color:var(--foreground)]">
-                    {blockMaterialLookup[activeMaterial].displayName}
-                  </p>
-                </div>
-                <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3">
-                  <p className="text-xs uppercase tracking-[0.22em] text-[color:var(--accent-2)]">
-                    Color
-                  </p>
-                  <div className="mt-2 flex items-center gap-2 text-sm font-semibold text-[color:var(--foreground)]">
-                    <span
-                      className="h-4 w-4 rounded-full border border-black/20"
-                      style={{ backgroundColor: activeColor }}
-                    />
-                    {activeColor.toUpperCase()}
-                  </div>
-                </div>
+      <section className="flex h-[auto] w-[auto] flex-col rounded-[28px] border border-[color:var(--line)] bg-[color:var(--card)]/95 p-3 shadow-[0_20px_60px_rgba(0,0,0,0.34)] backdrop-blur">
+        {/* Toolbar row */}
+        <div className="mb-3 rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface)]/88 px-4 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[color:var(--surface-strong)] text-[color:var(--foreground)]">
+                <ToolIcon mode={activeTool.mode} className="h-4 w-4" />
               </div>
-              <div className="grid gap-3 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-                <label className="block space-y-2">
-                  <span className="text-sm font-semibold text-[color:var(--muted)]">
-                    Template
-                  </span>
-                  <select
-                    value={
-                      sampleBuildings.some((building) => building.id === loadedTemplateId)
-                        ? loadedTemplateId
-                        : ""
-                    }
-                    onChange={(event) => {
-                      loadTemplate(event.target.value);
-                      setSelectedBlockId(null);
-                      resetTransientToolState();
-                    }}
-                    className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
-                  >
-                    {sampleBuildings.map((building) => (
-                      <option key={building.id} value={building.id}>
-                        {building.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="block space-y-2">
-                  <span className="text-sm font-semibold text-[color:var(--muted)]">
-                    Building name
-                  </span>
-                  <input
-                    value={name}
-                    onChange={(event) => setName(event.target.value)}
-                    className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
-                  />
-                </label>
+              <div>
+                <p className="text-sm font-semibold text-[color:var(--foreground)]">
+                  {activeTool.label}
+                </p>
+                <p className="text-xs leading-4 text-[color:var(--muted)]">
+                  {activeTool.description}
+                </p>
               </div>
-              <label className="block space-y-2">
-                <span className="text-sm font-semibold text-[color:var(--muted)]">
-                  Description
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
+                Camera:
+              </span>
+              {cameraPresets.map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => setCameraPreset(preset)}
+                  className={`rounded-xl px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.16em] transition ${
+                    cameraPreset === preset
+                      ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
+                      : "bg-[color:var(--surface-strong)] text-[color:var(--foreground)] hover:bg-[color:var(--accent)]/8"
+                  }`}
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {toolDefinitions.map((tool) => (
+              <ToolbarToolButton
+                key={tool.mode}
+                active={mode === tool.mode}
+                description={tool.description}
+                label={tool.label}
+                mode={tool.mode}
+                onClick={() => selectMode(tool.mode)}
+                shortcut={tool.shortcut}
+              />
+            ))}
+            {mode === "wall" ? (
+              <div className="ml-2 flex items-center gap-3 rounded-2xl bg-[color:var(--surface-strong)] px-3 py-1.5">
+                <span className="text-xs font-semibold text-[color:var(--muted)]">
+                  Height
                 </span>
-                <textarea
-                  value={description}
-                  onChange={(event) => setDescription(event.target.value)}
-                  rows={2}
-                  className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
-                />
-              </label>
-              <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-[color:var(--muted)]">
-                    Active layer
-                  </span>
-                  <span className="rounded-full bg-[color:var(--accent)]/14 px-3 py-1 text-sm font-semibold">
-                    Y {activeLayer}
-                  </span>
-                </div>
+                <span className="rounded-full bg-[color:var(--accent)]/14 px-2 py-0.5 text-xs font-semibold text-[color:var(--foreground)]">
+                  {effectiveWallHeight}
+                </span>
                 <input
                   type="range"
-                  min={0}
-                  max={12}
-                  value={activeLayer}
-                  onChange={(event) => setActiveLayer(Number(event.target.value))}
-                  className="mt-3 w-full accent-[color:var(--accent)]"
+                  min={1}
+                  max={maxWallHeight}
+                  value={effectiveWallHeight}
+                  onChange={(event) =>
+                    setWallHeight(Number(event.target.value))
+                  }
+                  className="w-24 accent-[color:var(--accent)]"
                 />
               </div>
-              <div className="grid gap-3 sm:grid-cols-3">
-                <button
-                  type="button"
-                  onClick={handleSaveBuilding}
-                  className="rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
-                >
-                  Save blueprint
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    clear();
-                    setSelectedBlockId(null);
-                    resetTransientToolState();
-                  }}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
-                >
-                  Clear scene
-                </button>
-                <button
-                  type="button"
-                  onClick={() => clearLayer(activeLayer)}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
-                >
-                  Clear layer
-                </button>
+            ) : mode === "box" && boxStart ? (
+              <span className="ml-2 self-center text-xs text-[color:var(--muted)]">
+                Corner locked at {boxStart.x}, {boxStart.y}, {boxStart.z} —
+                click second point
+              </span>
+            ) : null}
+          </div>
+        </div>
+
+        {/* Canvas + Sidebar */}
+        <div className="flex min-h-0 flex-1 gap-3">
+          {/* 3D Canvas */}
+          <div className="min-h-[600px] flex-1 overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-[#09111f]">
+            <BuildScene
+              activeBlockColor={activeColor}
+              activeLayer={activeLayer}
+              blocks={blocks}
+              boxStart={boxStart}
+              cameraPreset={cameraPreset}
+              mode={mode}
+              onBlockInteract={handleBlockInteraction}
+              onSelectBlock={setSelectedBlockId}
+              onSurfaceInteract={handleSurfaceAction}
+              onWallDragEnd={handleWallDragEnd}
+              onWallDragMove={handleWallDragMove}
+              onWallDragStart={handleWallDragStart}
+              selectedBlock={selectedBlock}
+              wallHeight={effectiveWallHeight}
+              wallPreviewEnd={wallPreviewEnd}
+              wallPreviewStart={wallPreviewStart}
+            />
+          </div>
+
+          {/* Right sidebar */}
+          <div className="flex w-64 shrink-0 flex-col gap-3 overflow-y-auto">
+            {/* Stats strip */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-2xl bg-[color:var(--surface-strong)] px-3 py-2.5">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--accent-2)]">
+                  Blocks
+                </p>
+                <p className="mt-0.5 font-display text-xl text-[color:var(--foreground)]">
+                  {summary.totalBlocks}
+                </p>
               </div>
-              {saveMessage ? (
-                <p className="text-sm leading-6 text-[color:var(--muted)]">{saveMessage}</p>
-              ) : null}
+              <div className="rounded-2xl bg-[color:var(--surface-strong)] px-3 py-2.5">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--accent-2)]">
+                  Layer
+                </p>
+                <p className="mt-0.5 font-display text-xl text-[color:var(--foreground)]">
+                  Y {activeLayer}
+                </p>
+              </div>
             </div>
-            <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_280px]">
-              <div className="space-y-4">
-                <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
-                  <BlockMaterialDropdown
-                    label="Active block type"
-                    value={activeMaterial}
-                    onChange={setActiveMaterial}
-                    description="Pick the current block/item to place. The builder still renders it as a solid color based on the selected material."
-                  />
-                </div>
-                <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
-                    Build palette
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">
-                    These manual build slots mirror the AI builder categories so you can keep a full set of building parts ready while working in 3D.
-                  </p>
-                  <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                    {builderMaterialSlots.map((slot) => (
-                      <div
-                        key={slot.id}
-                        className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-3"
-                      >
-                        <div className="mb-3 flex items-start justify-between gap-3">
-                          <div>
-                            <p className="text-sm font-semibold text-[color:var(--foreground)]">
-                              {slot.label}
-                            </p>
-                            <p className="mt-1 text-xs leading-5 text-[color:var(--muted)]">
-                              {slot.description}
-                            </p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => applyPaletteMaterial(slot.id)}
-                            className={`rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] ${
-                              activeMaterial === builderPalette[slot.id]
-                                ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
-                                : "bg-[color:var(--surface-strong)] text-[color:var(--foreground)]"
-                            }`}
-                          >
-                            Use
-                          </button>
-                        </div>
-                        <BlockMaterialDropdown
-                          label={`${slot.label} item`}
-                          value={builderPalette[slot.id]}
-                          onChange={(material) => {
-                            updateBuilderPalette(slot.id, material);
-                            setActiveMaterial(material);
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
+
+            {/* Active layer slider */}
+            <div className="rounded-2xl bg-[color:var(--surface-strong)] px-3 py-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-[color:var(--muted)]">
+                  Active layer
+                </span>
+                <span className="rounded-full bg-[color:var(--accent)]/14 px-2.5 py-0.5 text-xs font-semibold text-[color:var(--foreground)]">
+                  Y {activeLayer}
+                </span>
               </div>
-              <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="text-sm font-semibold text-[color:var(--muted)]">
-                    Block color
-                  </span>
-                  <div className="flex items-center gap-2 rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold text-[color:var(--foreground)]">
-                    <span
-                      className="h-4 w-4 rounded-full border border-black/20"
-                      style={{ backgroundColor: activeColor }}
-                    />
+              <input
+                type="range"
+                min={0}
+                max={12}
+                value={activeLayer}
+                onChange={(event) => setActiveLayer(Number(event.target.value))}
+                className="mt-2 w-full accent-[color:var(--accent)]"
+              />
+            </div>
+
+            {/* Block color */}
+            <div className="rounded-2xl bg-[color:var(--surface-strong)] px-3 py-3">
+              <label className="flex items-center justify-between gap-2">
+                <span className="text-xs font-semibold text-[color:var(--muted)]">
+                  Block color
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className="h-4 w-4 rounded-full border border-black/20"
+                    style={{ backgroundColor: activeColor }}
+                  />
+                  <span className="text-[10px] font-semibold text-[color:var(--foreground)]">
                     {activeColor.toUpperCase()}
-                  </div>
-                </div>
-                <div className="mt-4 grid grid-cols-5 gap-2">
-                  {blockColorSwatches.map((swatch) => (
-                    <button
-                      key={swatch}
-                      type="button"
-                      onClick={() => setActiveColor(swatch)}
-                      className={`h-10 rounded-2xl border ${
-                        activeColor === swatch
-                          ? "border-[color:var(--foreground)] ring-2 ring-[color:var(--foreground)]/30"
-                          : "border-[color:var(--line)]"
-                      }`}
-                      style={{ backgroundColor: swatch }}
-                      aria-label={`Select block color ${swatch}`}
-                    />
-                  ))}
-                </div>
-                <label className="mt-4 flex items-center justify-between gap-4 rounded-2xl bg-[color:var(--surface)] px-4 py-3">
-                  <span className="text-sm font-semibold text-[color:var(--muted)]">
-                    Custom hex
                   </span>
                   <input
                     type="color"
                     value={activeColor}
                     onChange={(event) => setActiveColor(event.target.value)}
-                    className="h-10 w-16 cursor-pointer rounded-xl border border-[color:var(--line)] bg-transparent"
+                    className="h-7 w-10 cursor-pointer rounded-lg border border-[color:var(--line)] bg-transparent"
                   />
-                </label>
-              </div>
+                </div>
+              </label>
             </div>
-          </div>
-        </div>
-        <div className="mb-3 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--muted)]">
-          <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
-            Camera: hand mode only
-          </span>
-          <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
-            Hand: inspect + orbit
-          </span>
-          <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
-            Wall: click + drag
-          </span>
-          <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
-            Grid: bold every 10 tiles
-          </span>
-        </div>
-        <div className="mb-4 rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface)]/88 p-4">
-          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
-            <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
-                Active tool
-              </p>
-              <div className="mt-3 flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--surface)] text-[color:var(--foreground)]">
-                  <ToolIcon mode={activeTool.mode} className="h-6 w-6" />
-                </div>
-                <div className="space-y-2">
-                  <p className="font-display text-2xl text-[color:var(--foreground)]">
-                    {activeTool.label}
-                  </p>
-                  <p className="text-sm leading-6 text-[color:var(--muted)]">
-                    {activeTool.description}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4 flex flex-wrap gap-3">
-                {toolDefinitions.map((tool) => (
-                  <ToolbarToolButton
-                    key={tool.mode}
-                    active={mode === tool.mode}
-                    description={tool.description}
-                    label={tool.label}
-                    mode={tool.mode}
-                    onClick={() => selectMode(tool.mode)}
-                    shortcut={tool.shortcut}
-                  />
-                ))}
-              </div>
-              <div className="mt-4 rounded-2xl bg-[color:var(--surface)] px-4 py-4">
-                <div className="flex items-center justify-between gap-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
-                    Camera views
-                  </p>
-                  <span className="rounded-full bg-[color:var(--surface-strong)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
-                    Hand mode to orbit
-                  </span>
-                </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {cameraPresets.map((preset) => (
-                    <button
-                      key={preset}
-                      type="button"
-                      onClick={() => setCameraPreset(preset)}
-                      className={`rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] ${
-                        cameraPreset === preset
-                          ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
-                          : "bg-[color:var(--surface-strong)] text-[color:var(--foreground)]"
-                      }`}
+
+            {/* Active material */}
+            <div className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-3 py-3">
+              <BlockMaterialDropdown
+                label="Active block type"
+                value={activeMaterial}
+                onChange={setActiveMaterial}
+                description="Place from the materials currently chosen in your Build Palette."
+                materials={activePaletteMaterials}
+              />
+            </div>
+
+            {/* Build palette (collapsible) */}
+            <div className="rounded-2xl bg-[color:var(--surface-strong)] px-3 py-3">
+              <button
+                type="button"
+                onClick={() => setPaletteExpanded((current) => !current)}
+                className="flex w-full items-center justify-between gap-2 text-left"
+                aria-expanded={paletteExpanded}
+              >
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--accent-2)]">
+                  Build palette
+                </span>
+                <DisclosureChevron open={paletteExpanded} />
+              </button>
+              {paletteExpanded ? (
+                <div className="mt-3 grid gap-3">
+                  {builderMaterialSlots.map((slot) => (
+                    <div
+                      key={slot.id}
+                      className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-2"
                     >
-                      {preset}
-                    </button>
+                      <BlockMaterialDropdown
+                        label={slot.label}
+                        value={builderPalette[slot.id]}
+                        onChange={(material) => {
+                          updateBuilderPalette(slot.id, material);
+                          setActiveMaterial(material);
+                        }}
+                        description={slot.description}
+                        materials={getPaletteMaterials(slot.id)}
+                      />
+                    </div>
                   ))}
                 </div>
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {toolDefinitions.map((tool) => (
-                  <span
-                    key={tool.mode}
-                    className="rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]"
-                  >
-                    {tool.shortcut} {tool.label}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
-              {mode === "wall" ? (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-[color:var(--muted)]">
-                      Wall height
-                    </span>
-                    <span className="rounded-full bg-[color:var(--accent)]/14 px-3 py-1 text-sm font-semibold text-[color:var(--foreground)]">
-                      {effectiveWallHeight} high
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={1}
-                    max={maxWallHeight}
-                    value={effectiveWallHeight}
-                    onChange={(event) => setWallHeight(Number(event.target.value))}
-                    className="w-full accent-[color:var(--accent)]"
-                  />
-                  <p className="text-sm leading-6 text-[color:var(--muted)]">
-                    Click and drag across the grid to raise a wall path from the active layer through all {effectiveWallHeight} levels automatically.
-                  </p>
-                </div>
-              ) : mode === "box" ? (
-                <div className="space-y-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
-                    Box tool
-                  </p>
-                  <p className="text-sm leading-6 text-[color:var(--muted)]">
-                    {boxStart
-                      ? `Box start locked at ${boxStart.x}, ${boxStart.y}, ${boxStart.z}. Click a second point to fill the full volume.`
-                      : "Click one corner, then a second point to fill a complete box volume with the active material."}
-                  </p>
-                </div>
               ) : (
-                <div className="space-y-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
-                    Builder state
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
-                      Layer Y {activeLayer}
-                    </span>
-                    <span className="rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
-                      Material {blockMaterialLookup[activeMaterial].displayName}
-                    </span>
-                  </div>
-                  <p className="text-sm leading-6 text-[color:var(--muted)]">
-                    {mode === "hand"
-                      ? "Hand mode unlocks orbit controls so you can inspect every side before switching back to a placement tool."
-                      : "Placement tools keep the camera locked to prevent the scene from drifting while you draw walls, add blocks, or sample materials."}
-                  </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {builderMaterialSlots.map((slot) => {
+                    const material =
+                      blockMaterialLookup[builderPalette[slot.id]];
+                    return (
+                      <span
+                        key={slot.id}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--surface)] px-2 py-1 text-[10px] font-semibold text-[color:var(--foreground)]"
+                      >
+                        <span
+                          className="h-2.5 w-2.5 rounded-full border border-black/20"
+                          style={{ backgroundColor: material.color }}
+                        />
+                        {slot.label.replace(" Type", "")}
+                      </span>
+                    );
+                  })}
                 </div>
               )}
             </div>
-          </div>
-        </div>
-        <div className="min-h-[clamp(560px,72vh,940px)] flex-1 overflow-hidden rounded-[24px] border border-[color:var(--line)]">
-          <BuildScene
-            activeBlockColor={activeColor}
-            activeLayer={activeLayer}
-            blocks={blocks}
-            boxStart={boxStart}
-            cameraPreset={cameraPreset}
-            mode={mode}
-            onBlockInteract={handleBlockInteraction}
-            onSelectBlock={setSelectedBlockId}
-            onSurfaceInteract={handleSurfaceAction}
-            onWallDragEnd={handleWallDragEnd}
-            onWallDragMove={handleWallDragMove}
-            onWallDragStart={handleWallDragStart}
-            selectedBlock={selectedBlock}
-            wallHeight={effectiveWallHeight}
-            wallPreviewEnd={wallPreviewEnd}
-            wallPreviewStart={wallPreviewStart}
-          />
-        </div>
-      </SectionCard>
 
-      <div className="grid gap-5 xl:grid-cols-2 2xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)_360px]">
-        <SectionCard
-          title="Block Inspector"
-          description="Selected blocks can be recolored, moved in six directions, or cloned to speed up structural edits."
-        >
-          {selectedBlock ? (
-            <div className="space-y-4">
-              <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4">
-                <p className="text-xs uppercase tracking-[0.26em] text-[color:var(--accent-2)]">
-                  Selected Block
-                </p>
-                <p className="mt-2 font-display text-2xl text-[color:var(--foreground)]">
-                  {selectedBlock.x}, {selectedBlock.y}, {selectedBlock.z}
-                </p>
-                <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">
-                  Current material: {blockMaterialLookup[selectedBlock.material].displayName}
-                </p>
-              </div>
-              <label className="block space-y-2">
-                <span className="text-sm font-semibold text-[color:var(--muted)]">
-                  Change material
+            {/* Template + name */}
+            <div className="rounded-2xl bg-[color:var(--surface-strong)] px-3 py-3 space-y-2">
+              <label className="block space-y-1">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
+                  Template
                 </span>
                 <select
-                  value={selectedBlock.material}
+                  value={
+                    sampleBuildings.some(
+                      (building) => building.id === loadedTemplateId,
+                    )
+                      ? loadedTemplateId
+                      : ""
+                  }
                   onChange={(event) => {
-                    const material = event.target.value as keyof typeof blockMaterialLookup;
-                    updateBlockMaterial(
-                      selectedBlock.x,
-                      selectedBlock.y,
-                      selectedBlock.z,
-                      material,
-                    );
-                    setActiveMaterial(material);
-                    setActiveColor(selectedBlock.color);
+                    loadTemplate(event.target.value);
+                    setSelectedBlockId(null);
+                    resetTransientToolState();
                   }}
-                  className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
+                  className="w-full rounded-xl border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-2 text-xs outline-none"
                 >
-                  {blockMaterials.map((material) => (
-                    <option key={material.id} value={material.id}>
-                      {material.displayName}
+                  {sampleBuildings.map((building) => (
+                    <option key={building.id} value={building.id}>
+                      {building.name}
                     </option>
                   ))}
                 </select>
               </label>
-              <label className="block space-y-2">
-                <span className="text-sm font-semibold text-[color:var(--muted)]">
-                  Change color
+              <label className="block space-y-1">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
+                  Building name
                 </span>
-                <div className="flex items-center gap-3 rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3">
-                  <input
-                    type="color"
-                    value={selectedBlock.color}
-                    onChange={(event) => {
-                      updateBlockColor(
-                        selectedBlock.x,
-                        selectedBlock.y,
-                        selectedBlock.z,
-                        event.target.value,
-                      );
-                      setActiveColor(event.target.value);
-                    }}
-                    className="h-10 w-16 cursor-pointer rounded-xl border border-[color:var(--line)] bg-transparent"
-                  />
-                  <span className="text-sm font-semibold text-[color:var(--foreground)]">
-                    {selectedBlock.color.toUpperCase()}
-                  </span>
-                </div>
+                <input
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  className="w-full rounded-xl border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-2 text-xs outline-none"
+                />
               </label>
-              <div className="grid grid-cols-3 gap-3">
-                <button
-                  type="button"
-                  onClick={() => moveSelected(0, 1, 0)}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
-                >
-                  Up
-                </button>
-                <button
-                  type="button"
-                  onClick={() => moveSelected(0, 0, -1)}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
-                >
-                  North
-                </button>
-                <button
-                  type="button"
-                  onClick={() => moveSelected(0, -1, 0)}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
-                >
-                  Down
-                </button>
-                <button
-                  type="button"
-                  onClick={() => moveSelected(-1, 0, 0)}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
-                >
-                  West
-                </button>
-                <button
-                  type="button"
-                  onClick={() => moveSelected(1, 0, 0)}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
-                >
-                  East
-                </button>
-                <button
-                  type="button"
-                  onClick={() => moveSelected(0, 0, 1)}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
-                >
-                  South
-                </button>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                <button
-                  type="button"
-                  onClick={() => cloneSelected(1, 0, 0)}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
-                >
-                  Clone +X
-                </button>
-                <button
-                  type="button"
-                  onClick={() => cloneSelected(0, 1, 0)}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
-                >
-                  Clone +Y
-                </button>
-                <button
-                  type="button"
-                  onClick={() => cloneSelected(0, 0, 1)}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
-                >
-                  Clone +Z
-                </button>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveMaterial(selectedBlock.material);
-                    setActiveColor(selectedBlock.color);
-                  }}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
-                >
-                  Match brush
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    removeBlock(selectedBlock.x, selectedBlock.y, selectedBlock.z);
-                    setSelectedBlockId(null);
-                  }}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
-                >
-                  Delete block
-                </button>
-              </div>
             </div>
-          ) : (
-            <p className="text-sm leading-6 text-[color:var(--muted)]">
-              Nothing selected yet. Use the hand tool or eyedropper to inspect the current structure.
-            </p>
-          )}
-        </SectionCard>
 
+            {/* Save / clear */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  clear();
+                  setSelectedBlockId(null);
+                  resetTransientToolState();
+                }}
+                className="col-span-2 rounded-2xl border border-[color:var(--foreground)]/20 bg-[color:var(--surface-strong)] px-3 py-2.5 text-xs font-semibold text-[color:var(--foreground)]"
+              >
+                + New
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveBuilding}
+                className="rounded-2xl border border-[color:var(--foreground)]/30 bg-[color:var(--accent)]/16 px-3 py-2.5 text-xs font-semibold text-[color:var(--foreground)]"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  clear();
+                  setSelectedBlockId(null);
+                  resetTransientToolState();
+                }}
+                className="rounded-2xl bg-[color:var(--surface-strong)] px-3 py-2.5 text-xs font-semibold text-[color:var(--foreground)]"
+              >
+                Clear scene
+              </button>
+              <button
+                type="button"
+                onClick={() => clearLayer(activeLayer)}
+                className="col-span-2 rounded-2xl bg-[color:var(--surface-strong)] px-3 py-2.5 text-xs font-semibold text-[color:var(--foreground)]"
+              >
+                Clear layer Y {activeLayer}
+              </button>
+            </div>
+            {saveMessage ? (
+              <p className="text-xs leading-5 text-[color:var(--muted)]">
+                {saveMessage}
+              </p>
+            ) : null}
+          </div>
+        </div>
+      </section>
+
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.45fr)_360px]">
         <MaterialsBreakdown
           title="Live Materials"
+          description="Every material currently used in the build is tracked here in a wider two-column checklist."
           materials={summary.materials}
           totalBlocks={summary.totalBlocks}
+          listClassName="grid gap-3 xl:grid-cols-2"
         />
 
         <div className="space-y-5">

@@ -23,13 +23,42 @@ export type BlockMaterialId =
   | "metal"
   | "glass"
   | "brick"
-  | "door"
-  | "window"
   | "beam"
   | "pillar"
-  | "roof"
   | "light"
-  | "decor";
+  | "decor"
+  // roof variants
+  | "roof"
+  | "roof-stone"
+  | "roof-tent"
+  | "roof-flat-brick"
+  | "roof-flat-stone"
+  | "roof-flat-tent"
+  | "roof-flat-tiled"
+  | "roof-pitched-brick"
+  | "roof-brick-hipped"
+  | "roof-tent-hipped"
+  | "roof-tiled-hipped"
+  | "roof-dormered"
+  // door variants
+  | "door"
+  | "door-simple"
+  | "door-rustic"
+  | "door-modern"
+  | "door-stylish"
+  | "door-iron"
+  | "door-automatic"
+  | "door-swinging"
+  | "door-brainy"
+  | "door-boat"
+  // window variants
+  | "window"
+  | "window-pane"
+  | "window-sash"
+  | "window-hatch"
+  | "window-skylight"
+  | "window-stained"
+  | "window-shutter";
 
 export type RoadType = "dirt" | "stone" | "wood" | "bridge" | "path";
 export type Rotation = 0 | 90 | 180 | 270;
@@ -158,6 +187,9 @@ export interface ItemCatalogEntry {
   description: string;
   tag: string | null;
   tagDetailUrl: string | null;
+  collectionLabel: string | null;
+  typeLabel: string | null;
+  labels: string[];
   primaryImageUrl: string | null;
   serebiiImageUrl: string | null;
   locationSummary: string;

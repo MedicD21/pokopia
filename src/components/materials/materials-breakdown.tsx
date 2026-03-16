@@ -8,6 +8,8 @@ interface MaterialsBreakdownProps {
   description?: string;
   materials: MaterialCount[];
   totalBlocks: number;
+  className?: string;
+  listClassName?: string;
 }
 
 export function MaterialsBreakdown({
@@ -15,9 +17,11 @@ export function MaterialsBreakdown({
   materials,
   title = "Materials List",
   totalBlocks,
+  className,
+  listClassName,
 }: MaterialsBreakdownProps) {
   return (
-    <SectionCard title={title} description={description}>
+    <SectionCard title={title} description={description} className={className}>
       <div className="mb-4 flex items-center justify-between rounded-2xl bg-[color:var(--surface)] px-4 py-3">
         <p className="text-sm font-semibold text-[color:var(--muted)]">
           Total tracked blocks
@@ -26,7 +30,7 @@ export function MaterialsBreakdown({
           {totalBlocks}
         </p>
       </div>
-      <div className="space-y-3">
+      <div className={listClassName ?? "space-y-3"}>
         {materials.map((material) => (
           <div
             key={material.materialId}

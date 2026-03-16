@@ -496,7 +496,7 @@ export function PlannerCanvas() {
         const maxLabelWidth = Math.max(boxWidth - 8, 24);
 
         context.fillStyle = "#ffffff";
-        context.font = "600 10px var(--font-mono)";
+        context.font = "600 10px 'IBM Plex Mono', monospace";
         context.lineWidth = 3;
         context.strokeStyle = "rgba(9, 17, 31, 0.9)";
         context.strokeText(placement.label, labelX, labelY, maxLabelWidth);
@@ -758,28 +758,32 @@ export function PlannerCanvas() {
   }
 
   async function handleSaveMap() {
-    const response = await fetch("/api/maps/save", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(exportMap()),
-    });
-    const payload = (await response.json()) as {
-      storageMode?: StorageMode;
-      error?: string;
-    };
+    try {
+      const response = await fetch("/api/maps/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(exportMap()),
+      });
+      const payload = (await response.json()) as {
+        storageMode?: StorageMode;
+        error?: string;
+      };
 
-    if (response.ok) {
-      setSaveMessage(
-        payload.storageMode === "database"
-          ? "Map saved to PostgreSQL through Prisma."
-          : "Map snapshot saved to local fallback storage.",
-      );
-      return;
+      if (response.ok) {
+        setSaveMessage(
+          payload.storageMode === "database"
+            ? "Map saved to PostgreSQL through Prisma."
+            : "Map snapshot saved to local fallback storage.",
+        );
+        return;
+      }
+
+      setSaveMessage(payload.error ?? "Unable to save map right now.");
+    } catch {
+      setSaveMessage("Save failed — check your connection and try again.");
     }
-
-    setSaveMessage(payload.error ?? "Unable to save map right now.");
   }
 
   return (
@@ -922,7 +926,7 @@ export function PlannerCanvas() {
         >
           <div className="space-y-4">
             <label className="block space-y-2">
-              <span className="text-sm font-semibold text-[color: white]">
+              <span className="text-sm font-semibold text-[color:var(--foreground)]">
                 Town name
               </span>
               <input
@@ -1055,6 +1059,13 @@ export function PlannerCanvas() {
               </label>
             ) : null}
             <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={resetMap}
+                className="col-span-2 rounded-2xl border border-[color:var(--foreground)]/20 bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
+              >
+                + New
+              </button>
               <button
                 type="button"
                 onClick={handleSaveMap}

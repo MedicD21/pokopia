@@ -1,66 +1,50 @@
 import Link from "next/link";
 
 import { SectionCard } from "@/components/ui/section-card";
-import { MetricPill } from "@/components/ui/metric-pill";
-import { sampleBuildings } from "@/data/buildings";
-import { blockMaterials } from "@/data/materials";
-import { pokemonHelpers } from "@/data/pokemon-helpers";
 import { navigationItems } from "@/lib/navigation";
 
 export default function HomePage() {
-  const totalBlocks = sampleBuildings.reduce(
-    (sum, building) => sum + building.blocks.length,
-    0,
-  );
-
   return (
-    <><div className="space-y-6">
-      <section className="grid gap-6">
-        <SectionCard
-          eyebrow="Creative Planner"
-          title="Build an entire Pokopia town from street grid to roof tile."
-          description="This foundation app already connects a grid-based map planner, a voxel builder, materials calculations, API routes, starter data, and a mocked screenshot-import flow."
-          action={<div className="flex flex-wrap gap-3">
-            <Link
-              href="/builder"
-              className="rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
-            >
-              Open builder
-            </Link>
+    <div className="space-y-8">
+      <section className="relative overflow-hidden rounded-[36px] border border-[color:var(--line)] bg-[linear-gradient(135deg,rgba(18,31,52,0.95),rgba(8,17,31,0.92))] px-6 py-8 shadow-[0_22px_60px_rgba(0,0,0,0.34)] sm:px-8 sm:py-10">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(242,160,39,0.16),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(125,166,255,0.12),transparent_36%)]" />
+        <div className="relative max-w-4xl space-y-5">
+          <div className="space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[color:var(--accent-2)]">
+              Pokopia Planner
+            </p>
+            <h1 className="max-w-4xl font-display text-4xl leading-tight text-[color:var(--foreground)] sm:text-5xl">
+              Design towns, draft buildings, and plan materials in one place.
+            </h1>
+            <p className="max-w-3xl text-base leading-7 text-[color:var(--muted)]">
+              Jump straight into the map planner, 3D voxel builder, AI draft builder,
+              materials lookup, and item library without the extra homepage cards.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
             <Link
               href="/map"
+              className="rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
+            >
+              Open map planner
+            </Link>
+            <Link
+              href="/builder"
               className="rounded-2xl bg-[color:var(--surface-strong)] px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
             >
-              Open map
+              Open 3D builder
             </Link>
-          </div>} children={undefined}        >
-          {/* Content area for highlight section */}
-        </SectionCard>
-      <SectionCard
-        eyebrow="Current Scope"
-        title="Phase One Vertical Slice"
-        description="The app is live enough to explore core workflows before we swap the bootstrap storage layer for full Prisma-backed persistence."
-      >
-        <div className="space-y-3 text-sm leading-6 text-[color:var(--muted)]">
-          <p>
-            Interactive 2D town planner with roads, decorations, placements,
-            rotate, move, and save.
-          </p>
-          <p>
-            Interactive 3D builder with instanced voxel rendering, painting,
-            layer editing, and export-ready JSON.
-          </p>
-          <p>
-            Materials and helper recommendations wired into reusable utilities
-            and API routes.
-          </p>
-          <p>
-            Screenshot upload route that returns an editable approximation for
-            the builder pipeline.
-          </p>
+            <Link
+              href="/ai-builder"
+              className="rounded-2xl bg-[color:var(--surface)] px-5 py-3 text-sm font-semibold text-[color:var(--foreground)]"
+            >
+              Open AI builder
+            </Link>
+          </div>
         </div>
-      </SectionCard>
-    </section><section className="grid gap-6 lg:grid-cols-3">
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-3">
         {navigationItems
           .filter((item) => item.href !== "/home")
           .map((item) => (
@@ -68,12 +52,14 @@ export default function HomePage() {
               key={item.href}
               title={item.label}
               description={item.summary}
-              action={<Link
-                href={item.href}
-                className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
-              >
-                Open
-              </Link>}
+              action={
+                <Link
+                  href={item.href}
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
+                >
+                  Open
+                </Link>
+              }
             >
               <p className="text-sm leading-6 text-[color:var(--muted)]">
                 {item.href === "/map"
@@ -90,7 +76,7 @@ export default function HomePage() {
               </p>
             </SectionCard>
           ))}
-      </section></>
+      </section>
     </div>
   );
 }

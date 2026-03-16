@@ -9,7 +9,7 @@ import { SiteNav } from "@/components/layout/site-nav";
 
 export function SiteShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const editorMode = pathname === "/map" || pathname === "/builder";
+  const editorMode = pathname === "/map" || pathname === "/builder" || pathname === "/ai-builder";
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -29,16 +29,15 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div className="space-y-2">
               <Link href="/home" className="inline-flex items-center gap-4">
-                <span className="relative flex h-16 w-16 items-center justify-center rounded-full border border-[color:var(--foreground)]/45 bg-[radial-gradient(circle_at_35%_30%,rgba(242,160,39,0.28),rgba(17,27,44,0.94)_72%)] shadow-[0_16px_34px_rgba(0,0,0,0.32)]">
-                  <span className="absolute inset-[6px] rounded-full border border-[color:var(--foreground)]/18 bg-[color:var(--surface)]/95" />
+                <span className="relative flex h-20 w-20 items-center justify-center rounded-full border border-[color:var(--foreground)]/26 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(17,27,44,0.2))] p-[3px] shadow-[0_18px_36px_rgba(0,0,0,0.34)] sm:h-24 sm:w-24">
                   <Image
-                    src="/branding/pokopia-logo.png"
+                    src="/branding/logo-20260316.png"
                     alt="Pokopia Planner logo"
                     width={512}
                     height={512}
-                    sizes="64px"
+                    sizes="(min-width: 640px) 96px, 80px"
                     priority
-                    className="relative z-10 h-11 w-11 object-contain"
+                    className="relative z-10 h-full w-full rounded-full object-contain"
                   />
                 </span>
                 <span className="flex flex-col">

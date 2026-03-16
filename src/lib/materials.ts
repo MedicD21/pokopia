@@ -1,4 +1,4 @@
-import { blockMaterialLookup } from "@/data/materials";
+import { blockMaterialLookup, blockMaterials } from "@/data/materials";
 import { pokemonHelpers } from "@/data/pokemon-helpers";
 import type {
   BlockMaterialId,
@@ -11,25 +11,16 @@ import type {
 } from "@/lib/types";
 
 export function countBlocksByMaterial(blocks: VoxelBlock[]) {
+  const initial = blockMaterials.reduce<Record<BlockMaterialId, number>>(
+    (acc, m) => { acc[m.id] = 0; return acc; },
+    {} as Record<BlockMaterialId, number>,
+  );
   return blocks.reduce<Record<BlockMaterialId, number>>(
     (counts, block) => {
-      counts[block.material] += 1;
+      counts[block.material] = (counts[block.material] ?? 0) + 1;
       return counts;
     },
-    {
-      stone: 0,
-      wood: 0,
-      metal: 0,
-      glass: 0,
-      brick: 0,
-      door: 0,
-      window: 0,
-      beam: 0,
-      pillar: 0,
-      roof: 0,
-      light: 0,
-      decor: 0,
-    },
+    initial,
   );
 }
 
