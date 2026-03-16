@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  outputFileTracingIncludes: {
+    "/*": ["./storage/**/*"],
+    "/api/**/*": ["./storage/**/*"],
+  },
   turbopack: {
     root: rootDir,
   },

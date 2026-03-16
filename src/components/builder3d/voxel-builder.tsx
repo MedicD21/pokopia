@@ -358,9 +358,9 @@ function deriveSceneFocus(blocks: VoxelBlock[]) {
   if (blocks.length === 0) {
     return {
       centerX: gridSize / 2,
-      centerY: 1.75,
+      centerY: 2.2,
       centerZ: gridSize / 2,
-      footprintSpan: 8,
+      footprintSpan: 7,
       heightSpan: 4,
     };
   }
@@ -387,9 +387,9 @@ function deriveSceneFocus(blocks: VoxelBlock[]) {
 
   return {
     centerX: (minX + maxX + 1) / 2,
-    centerY: minY + Math.max(1.25, height * 0.42),
+    centerY: (minY + maxY + 1) / 2,
     centerZ: (minZ + maxZ + 1) / 2,
-    footprintSpan: Math.max(width, depth, 6),
+    footprintSpan: Math.max(width, depth, 5),
     heightSpan: Math.max(height, 3),
   };
 }
@@ -603,24 +603,25 @@ function CameraRig({
   const { camera } = useThree();
 
   useEffect(() => {
-    const diagonalDistance = footprintSpan * 1.1 + 4;
-    const forwardDistance = footprintSpan * 1.35 + 4;
-    const verticalLift = Math.max(4.5, heightSpan * 0.9 + 2.5);
-    const viewHeight = Math.max(2, centerY);
+    const diagonalDistance = footprintSpan * 0.9 + 2.8;
+    const forwardDistance = footprintSpan * 1.08 + 3.2;
+    const verticalLift = Math.max(3.9, heightSpan * 0.76 + 1.9);
+    const focusY = centerY + Math.max(0.25, heightSpan * 0.08);
+    const viewHeight = Math.max(2.4, centerY + heightSpan * 0.12);
 
     const presets: Record<CameraPreset, [number, number, number]> = {
       iso: [centerX + diagonalDistance, viewHeight + verticalLift, centerZ + diagonalDistance],
-      front: [centerX, viewHeight + verticalLift * 0.45, centerZ + forwardDistance],
-      back: [centerX, viewHeight + verticalLift * 0.45, centerZ - forwardDistance],
-      left: [centerX - forwardDistance, viewHeight + verticalLift * 0.45, centerZ],
-      right: [centerX + forwardDistance, viewHeight + verticalLift * 0.45, centerZ],
-      top: [centerX, viewHeight + Math.max(14, heightSpan * 2.1 + 6), centerZ],
+      front: [centerX, viewHeight + verticalLift * 0.4, centerZ + forwardDistance],
+      back: [centerX, viewHeight + verticalLift * 0.4, centerZ - forwardDistance],
+      left: [centerX - forwardDistance, viewHeight + verticalLift * 0.4, centerZ],
+      right: [centerX + forwardDistance, viewHeight + verticalLift * 0.4, centerZ],
+      top: [centerX, viewHeight + Math.max(12, heightSpan * 1.85 + 5), centerZ],
     };
 
     const [x, y, z] = presets[preset];
     camera.position.set(x, y, z);
-    camera.lookAt(centerX, centerY, centerZ);
-    controlsRef.current?.target.set(centerX, centerY, centerZ);
+    camera.lookAt(centerX, focusY, centerZ);
+    controlsRef.current?.target.set(centerX, focusY, centerZ);
     controlsRef.current?.update();
   }, [
     camera,
@@ -1067,16 +1068,35 @@ export function VoxelBuilder() {
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)] 2xl:grid-cols-[340px_minmax(0,1fr)]">
-        <div className="xl:sticky xl:top-28 xl:max-h-[calc(100vh-7.5rem)] xl:overflow-y-auto">
-          <SectionCard
-            eyebrow="Phase 2"
-            title="Build Setup"
-            description="Choose a template, tune the active layer, pick materials, and manage the current scene. Editing tools now live above the voxel scene."
-          >
+      <SectionCard
+        eyebrow="Voxel Scene"
+        title="3D Builder"
+        description="Build setup, tools, and the live voxel scene now share one workspace so you can edit without side-panel scrolling. Press H, A, P, X, B, W, and E to switch tools quickly."
+        action={
+          <div className="flex flex-wrap gap-2">
+            {(["iso", "front", "back", "left", "right", "top"] as const).map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => setCameraPreset(preset)}
+                className={`rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] ${
+                  cameraPreset === preset
+                    ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
+                    : "bg-[color:var(--surface-strong)] text-[color:var(--foreground)]"
+                }`}
+              >
+                {preset}
+              </button>
+            ))}
+          </div>
+        }
+      className="flex min-h-[calc(100vh-5.75rem)] flex-col"
+      >
+        <div className="mb-4 rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface)]/88 p-4">
+          <div className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)]">
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-3">
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3">
                   <p className="text-xs uppercase tracking-[0.22em] text-[color:var(--accent-2)]">
                     Blocks
                   </p>
@@ -1084,7 +1104,7 @@ export function VoxelBuilder() {
                     {summary.totalBlocks}
                   </p>
                 </div>
-                <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-3">
+                <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3">
                   <p className="text-xs uppercase tracking-[0.22em] text-[color:var(--accent-2)]">
                     Layer
                   </p>
@@ -1092,41 +1112,63 @@ export function VoxelBuilder() {
                     Y {activeLayer}
                   </p>
                 </div>
+                <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3">
+                  <p className="text-xs uppercase tracking-[0.22em] text-[color:var(--accent-2)]">
+                    Material
+                  </p>
+                  <p className="mt-2 font-display text-lg text-[color:var(--foreground)]">
+                    {blockMaterialLookup[activeMaterial].displayName}
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3">
+                  <p className="text-xs uppercase tracking-[0.22em] text-[color:var(--accent-2)]">
+                    Color
+                  </p>
+                  <div className="mt-2 flex items-center gap-2 text-sm font-semibold text-[color:var(--foreground)]">
+                    <span
+                      className="h-4 w-4 rounded-full border border-black/20"
+                      style={{ backgroundColor: activeColor }}
+                    />
+                    {activeColor.toUpperCase()}
+                  </div>
+                </div>
               </div>
-              <label className="block space-y-2">
-                <span className="text-sm font-semibold text-[color:var(--muted)]">
-                  Template
-                </span>
-                <select
-                  value={
-                    sampleBuildings.some((building) => building.id === loadedTemplateId)
-                      ? loadedTemplateId
-                      : ""
-                  }
-                  onChange={(event) => {
-                    loadTemplate(event.target.value);
-                    setSelectedBlockId(null);
-                    resetTransientToolState();
-                  }}
-                  className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
-                >
-                  {sampleBuildings.map((building) => (
-                    <option key={building.id} value={building.id}>
-                      {building.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="block space-y-2">
-                <span className="text-sm font-semibold text-[color:var(--muted)]">
-                  Building name
-                </span>
-                <input
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
-                />
-              </label>
+              <div className="grid gap-3 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+                <label className="block space-y-2">
+                  <span className="text-sm font-semibold text-[color:var(--muted)]">
+                    Template
+                  </span>
+                  <select
+                    value={
+                      sampleBuildings.some((building) => building.id === loadedTemplateId)
+                        ? loadedTemplateId
+                        : ""
+                    }
+                    onChange={(event) => {
+                      loadTemplate(event.target.value);
+                      setSelectedBlockId(null);
+                      resetTransientToolState();
+                    }}
+                    className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
+                  >
+                    {sampleBuildings.map((building) => (
+                      <option key={building.id} value={building.id}>
+                        {building.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="block space-y-2">
+                  <span className="text-sm font-semibold text-[color:var(--muted)]">
+                    Building name
+                  </span>
+                  <input
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
+                  />
+                </label>
+              </div>
               <label className="block space-y-2">
                 <span className="text-sm font-semibold text-[color:var(--muted)]">
                   Description
@@ -1134,11 +1176,11 @@ export function VoxelBuilder() {
                 <textarea
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
-                  rows={3}
+                  rows={2}
                   className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
                 />
               </label>
-              <div className="space-y-2">
+              <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-[color:var(--muted)]">
                     Active layer
@@ -1153,85 +1195,10 @@ export function VoxelBuilder() {
                   max={12}
                   value={activeLayer}
                   onChange={(event) => setActiveLayer(Number(event.target.value))}
-                  className="w-full accent-[color:var(--accent)]"
+                  className="mt-3 w-full accent-[color:var(--accent)]"
                 />
               </div>
-              <div className="space-y-4">
-                {materialSections.map((section) => (
-                  <div key={section.title} className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
-                      {section.title}
-                    </p>
-                    <div className="grid grid-cols-2 gap-3">
-                      {section.items.map((materialId) => {
-                        const material = blockMaterialLookup[materialId];
-
-                        return (
-                          <button
-                            key={material.id}
-                            type="button"
-                            onClick={() => setActiveMaterial(material.id)}
-                            className={`flex items-center gap-3 rounded-2xl px-3 py-3 text-left text-sm font-semibold ${
-                              activeMaterial === material.id
-                                ? "bg-[color:var(--accent-2)]/18 text-[color:var(--foreground)]"
-                                : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
-                            }`}
-                            title={material.displayName}
-                          >
-                            <span
-                              className="h-4 w-4 shrink-0 rounded-full border border-black/10"
-                              style={{ backgroundColor: material.color }}
-                            />
-                            <span className="leading-5">{material.displayName}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="space-y-3 rounded-2xl bg-[color:var(--surface)] px-4 py-4">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="text-sm font-semibold text-[color:var(--muted)]">
-                    Block color
-                  </span>
-                  <div className="flex items-center gap-3 rounded-full bg-[color:var(--surface-strong)] px-3 py-2 text-sm font-semibold text-[color:var(--foreground)]">
-                    <span
-                      className="h-4 w-4 rounded-full border border-black/20"
-                      style={{ backgroundColor: activeColor }}
-                    />
-                    {activeColor.toUpperCase()}
-                  </div>
-                </div>
-                <div className="grid grid-cols-5 gap-2">
-                  {blockColorSwatches.map((swatch) => (
-                    <button
-                      key={swatch}
-                      type="button"
-                      onClick={() => setActiveColor(swatch)}
-                      className={`h-10 rounded-2xl border ${
-                        activeColor === swatch
-                          ? "border-[color:var(--foreground)] ring-2 ring-[color:var(--foreground)]/30"
-                          : "border-[color:var(--line)]"
-                      }`}
-                      style={{ backgroundColor: swatch }}
-                      aria-label={`Select block color ${swatch}`}
-                    />
-                  ))}
-                </div>
-                <label className="flex items-center justify-between gap-4 rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3">
-                  <span className="text-sm font-semibold text-[color:var(--muted)]">
-                    Custom hex
-                  </span>
-                  <input
-                    type="color"
-                    value={activeColor}
-                    onChange={(event) => setActiveColor(event.target.value)}
-                    className="h-10 w-16 cursor-pointer rounded-xl border border-[color:var(--line)] bg-transparent"
-                  />
-                </label>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-3 sm:grid-cols-3">
                 <button
                   type="button"
                   onClick={handleSaveBuilding}
@@ -1250,190 +1217,235 @@ export function VoxelBuilder() {
                 >
                   Clear scene
                 </button>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => clearLayer(activeLayer)}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
                 >
                   Clear layer
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setCameraPreset("top")}
-                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
-                >
-                  Top view
                 </button>
               </div>
               {saveMessage ? (
                 <p className="text-sm leading-6 text-[color:var(--muted)]">{saveMessage}</p>
               ) : null}
             </div>
-          </SectionCard>
-        </div>
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_280px]">
+              <div className="space-y-4">
+                {materialSections.map((section) => (
+                  <div
+                    key={section.title}
+                    className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4"
+                  >
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
+                      {section.title}
+                    </p>
+                    <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                      {section.items.map((materialId) => {
+                        const material = blockMaterialLookup[materialId];
 
-        <SectionCard
-          eyebrow="Voxel Scene"
-          title="3D Builder"
-          description="Use the tool strip just above the voxel scene or press H, A, P, X, B, W, and E to switch tools. Hand mode unlocks camera orbit, while placement tools stay locked for precision."
-          action={
-            <div className="flex flex-wrap gap-2">
-              {(["iso", "front", "back", "left", "right", "top"] as const).map((preset) => (
-                <button
-                  key={preset}
-                  type="button"
-                  onClick={() => setCameraPreset(preset)}
-                  className={`rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] ${
-                    cameraPreset === preset
-                      ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
-                      : "bg-[color:var(--surface-strong)] text-[color:var(--foreground)]"
-                  }`}
-                >
-                  {preset}
-                </button>
-              ))}
-            </div>
-          }
-          className="flex min-h-[600px] flex-col xl:min-h-[calc(100vh-9rem)]"
-        >
-          <div className="mb-3 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--muted)]">
-            <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
-              Camera: hand mode only
-            </span>
-            <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
-              Hand: inspect + orbit
-            </span>
-            <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
-              Wall: click + drag
-            </span>
-            <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
-              Grid: bold every 10 tiles
-            </span>
-          </div>
-          <div className="mb-4 rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface)]/88 p-4">
-            <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
+                        return (
+                          <button
+                            key={material.id}
+                            type="button"
+                            onClick={() => setActiveMaterial(material.id)}
+                            className={`flex items-center gap-2 rounded-2xl px-3 py-3 text-left text-xs font-semibold leading-5 ${
+                              activeMaterial === material.id
+                                ? "bg-[color:var(--accent-2)]/18 text-[color:var(--foreground)]"
+                                : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+                            }`}
+                            title={material.displayName}
+                          >
+                            <span
+                              className="h-3.5 w-3.5 shrink-0 rounded-full border border-black/10"
+                              style={{ backgroundColor: material.color }}
+                            />
+                            <span>{material.displayName}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
               <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
-                  Active tool
-                </p>
-                <div className="mt-3 flex items-start gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--surface)] text-[color:var(--foreground)]">
-                    <ToolIcon mode={activeTool.mode} className="h-6 w-6" />
-                  </div>
-                  <div className="space-y-2">
-                    <p className="font-display text-2xl text-[color:var(--foreground)]">
-                      {activeTool.label}
-                    </p>
-                    <p className="text-sm leading-6 text-[color:var(--muted)]">
-                      {activeTool.description}
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-4 flex flex-wrap gap-3">
-                  {toolDefinitions.map((tool) => (
-                    <ToolbarToolButton
-                      key={tool.mode}
-                      active={mode === tool.mode}
-                      description={tool.description}
-                      label={tool.label}
-                      mode={tool.mode}
-                      onClick={() => selectMode(tool.mode)}
-                      shortcut={tool.shortcut}
-                    />
-                  ))}
-                </div>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {toolDefinitions.map((tool) => (
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-sm font-semibold text-[color:var(--muted)]">
+                    Block color
+                  </span>
+                  <div className="flex items-center gap-2 rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold text-[color:var(--foreground)]">
                     <span
-                      key={tool.mode}
-                      className="rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]"
-                    >
-                      {tool.shortcut} {tool.label}
-                    </span>
+                      className="h-4 w-4 rounded-full border border-black/20"
+                      style={{ backgroundColor: activeColor }}
+                    />
+                    {activeColor.toUpperCase()}
+                  </div>
+                </div>
+                <div className="mt-4 grid grid-cols-5 gap-2">
+                  {blockColorSwatches.map((swatch) => (
+                    <button
+                      key={swatch}
+                      type="button"
+                      onClick={() => setActiveColor(swatch)}
+                      className={`h-10 rounded-2xl border ${
+                        activeColor === swatch
+                          ? "border-[color:var(--foreground)] ring-2 ring-[color:var(--foreground)]/30"
+                          : "border-[color:var(--line)]"
+                      }`}
+                      style={{ backgroundColor: swatch }}
+                      aria-label={`Select block color ${swatch}`}
+                    />
                   ))}
                 </div>
-              </div>
-              <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
-                {mode === "wall" ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-[color:var(--muted)]">
-                        Wall height
-                      </span>
-                      <span className="rounded-full bg-[color:var(--accent)]/14 px-3 py-1 text-sm font-semibold text-[color:var(--foreground)]">
-                        {effectiveWallHeight} high
-                      </span>
-                    </div>
-                    <input
-                      type="range"
-                      min={1}
-                      max={maxWallHeight}
-                      value={effectiveWallHeight}
-                      onChange={(event) => setWallHeight(Number(event.target.value))}
-                      className="w-full accent-[color:var(--accent)]"
-                    />
-                    <p className="text-sm leading-6 text-[color:var(--muted)]">
-                      Click and drag across the grid to raise a wall path from the active layer through all {effectiveWallHeight} levels automatically.
-                    </p>
-                  </div>
-                ) : mode === "box" ? (
-                  <div className="space-y-3">
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
-                      Box tool
-                    </p>
-                    <p className="text-sm leading-6 text-[color:var(--muted)]">
-                      {boxStart
-                        ? `Box start locked at ${boxStart.x}, ${boxStart.y}, ${boxStart.z}. Click a second point to fill the full volume.`
-                        : "Click one corner, then a second point to fill a complete box volume with the active material."}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
-                      Builder state
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
-                        Layer Y {activeLayer}
-                      </span>
-                      <span className="rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
-                        Material {blockMaterialLookup[activeMaterial].displayName}
-                      </span>
-                    </div>
-                    <p className="text-sm leading-6 text-[color:var(--muted)]">
-                      {mode === "hand"
-                        ? "Hand mode unlocks orbit controls so you can inspect every side before switching back to a placement tool."
-                        : "Placement tools keep the camera locked to prevent the scene from drifting while you draw walls, add blocks, or sample materials."}
-                    </p>
-                  </div>
-                )}
+                <label className="mt-4 flex items-center justify-between gap-4 rounded-2xl bg-[color:var(--surface)] px-4 py-3">
+                  <span className="text-sm font-semibold text-[color:var(--muted)]">
+                    Custom hex
+                  </span>
+                  <input
+                    type="color"
+                    value={activeColor}
+                    onChange={(event) => setActiveColor(event.target.value)}
+                    className="h-10 w-16 cursor-pointer rounded-xl border border-[color:var(--line)] bg-transparent"
+                  />
+                </label>
               </div>
             </div>
           </div>
-          <div className="min-h-[clamp(480px,70vh,860px)] flex-1 overflow-hidden rounded-[24px] border border-[color:var(--line)]">
-            <BuildScene
-              activeBlockColor={activeColor}
-              activeLayer={activeLayer}
-              blocks={blocks}
-              boxStart={boxStart}
-              cameraPreset={cameraPreset}
-              mode={mode}
-              onBlockInteract={handleBlockInteraction}
-              onSelectBlock={setSelectedBlockId}
-              onSurfaceInteract={handleSurfaceAction}
-              onWallDragEnd={handleWallDragEnd}
-              onWallDragMove={handleWallDragMove}
-              onWallDragStart={handleWallDragStart}
-              selectedBlock={selectedBlock}
-              wallHeight={effectiveWallHeight}
-              wallPreviewEnd={wallPreviewEnd}
-              wallPreviewStart={wallPreviewStart}
-            />
+        </div>
+        <div className="mb-3 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--muted)]">
+          <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
+            Camera: hand mode only
+          </span>
+          <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
+            Hand: inspect + orbit
+          </span>
+          <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
+            Wall: click + drag
+          </span>
+          <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
+            Grid: bold every 10 tiles
+          </span>
+        </div>
+        <div className="mb-4 rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface)]/88 p-4">
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
+            <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
+                Active tool
+              </p>
+              <div className="mt-3 flex items-start gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[color:var(--surface)] text-[color:var(--foreground)]">
+                  <ToolIcon mode={activeTool.mode} className="h-6 w-6" />
+                </div>
+                <div className="space-y-2">
+                  <p className="font-display text-2xl text-[color:var(--foreground)]">
+                    {activeTool.label}
+                  </p>
+                  <p className="text-sm leading-6 text-[color:var(--muted)]">
+                    {activeTool.description}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-3">
+                {toolDefinitions.map((tool) => (
+                  <ToolbarToolButton
+                    key={tool.mode}
+                    active={mode === tool.mode}
+                    description={tool.description}
+                    label={tool.label}
+                    mode={tool.mode}
+                    onClick={() => selectMode(tool.mode)}
+                    shortcut={tool.shortcut}
+                  />
+                ))}
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {toolDefinitions.map((tool) => (
+                  <span
+                    key={tool.mode}
+                    className="rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]"
+                  >
+                    {tool.shortcut} {tool.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
+              {mode === "wall" ? (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-semibold text-[color:var(--muted)]">
+                      Wall height
+                    </span>
+                    <span className="rounded-full bg-[color:var(--accent)]/14 px-3 py-1 text-sm font-semibold text-[color:var(--foreground)]">
+                      {effectiveWallHeight} high
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={1}
+                    max={maxWallHeight}
+                    value={effectiveWallHeight}
+                    onChange={(event) => setWallHeight(Number(event.target.value))}
+                    className="w-full accent-[color:var(--accent)]"
+                  />
+                  <p className="text-sm leading-6 text-[color:var(--muted)]">
+                    Click and drag across the grid to raise a wall path from the active layer through all {effectiveWallHeight} levels automatically.
+                  </p>
+                </div>
+              ) : mode === "box" ? (
+                <div className="space-y-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
+                    Box tool
+                  </p>
+                  <p className="text-sm leading-6 text-[color:var(--muted)]">
+                    {boxStart
+                      ? `Box start locked at ${boxStart.x}, ${boxStart.y}, ${boxStart.z}. Click a second point to fill the full volume.`
+                      : "Click one corner, then a second point to fill a complete box volume with the active material."}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
+                    Builder state
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
+                      Layer Y {activeLayer}
+                    </span>
+                    <span className="rounded-full bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
+                      Material {blockMaterialLookup[activeMaterial].displayName}
+                    </span>
+                  </div>
+                  <p className="text-sm leading-6 text-[color:var(--muted)]">
+                    {mode === "hand"
+                      ? "Hand mode unlocks orbit controls so you can inspect every side before switching back to a placement tool."
+                      : "Placement tools keep the camera locked to prevent the scene from drifting while you draw walls, add blocks, or sample materials."}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
-        </SectionCard>
-      </div>
+        </div>
+        <div className="min-h-[clamp(560px,72vh,940px)] flex-1 overflow-hidden rounded-[24px] border border-[color:var(--line)]">
+          <BuildScene
+            activeBlockColor={activeColor}
+            activeLayer={activeLayer}
+            blocks={blocks}
+            boxStart={boxStart}
+            cameraPreset={cameraPreset}
+            mode={mode}
+            onBlockInteract={handleBlockInteraction}
+            onSelectBlock={setSelectedBlockId}
+            onSurfaceInteract={handleSurfaceAction}
+            onWallDragEnd={handleWallDragEnd}
+            onWallDragMove={handleWallDragMove}
+            onWallDragStart={handleWallDragStart}
+            selectedBlock={selectedBlock}
+            wallHeight={effectiveWallHeight}
+            wallPreviewEnd={wallPreviewEnd}
+            wallPreviewStart={wallPreviewStart}
+          />
+        </div>
+      </SectionCard>
 
       <div className="grid gap-5 xl:grid-cols-2 2xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)_360px]">
         <SectionCard

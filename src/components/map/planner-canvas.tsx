@@ -9,7 +9,11 @@ import {
   sampleBuildings,
 } from "@/data/buildings";
 import type { GridTile, StorageMode } from "@/lib/types";
-import { findPlacementAtTile, useMapStore } from "@/store/use-map-store";
+import {
+  findPlacementAtTile,
+  type MapTool,
+  useMapStore,
+} from "@/store/use-map-store";
 
 const roadColors: Record<NonNullable<GridTile["roadType"]>, string> = {
   dirt: "#bf8a5b",
@@ -35,6 +39,46 @@ const themeColors: Record<string, string> = {
 type TilePoint = { x: number; y: number };
 type DrawMode = "brush" | "line" | "rectangle" | "fill";
 
+const plannerToolDefinitions: ReadonlyArray<{
+  tool: MapTool;
+  label: string;
+  shortcut: string;
+}> = [
+  { tool: "hand", label: "Hand", shortcut: "H" },
+  { tool: "road", label: "Road", shortcut: "R" },
+  { tool: "building", label: "Building", shortcut: "B" },
+  { tool: "decoration", label: "Decoration", shortcut: "D" },
+  { tool: "eyedropper", label: "Eyedropper", shortcut: "E" },
+  { tool: "delete", label: "Delete", shortcut: "X" },
+];
+
+const drawModeDefinitions: ReadonlyArray<{
+  mode: DrawMode;
+  label: string;
+  shortcut: string;
+}> = [
+  { mode: "brush", label: "Brush", shortcut: "1" },
+  { mode: "line", label: "Line", shortcut: "2" },
+  { mode: "rectangle", label: "Rectangle", shortcut: "3" },
+  { mode: "fill", label: "Fill", shortcut: "4" },
+];
+
+const toolShortcutLookup: Partial<Record<string, MapTool>> = {
+  h: "hand",
+  r: "road",
+  b: "building",
+  d: "decoration",
+  e: "eyedropper",
+  x: "delete",
+};
+
+const drawModeShortcutLookup: Partial<Record<string, DrawMode>> = {
+  "1": "brush",
+  "2": "line",
+  "3": "rectangle",
+  "4": "fill",
+};
+
 function roundToTile(value: number, tileSize: number) {
   return Math.floor(value / tileSize);
 }
@@ -45,6 +89,19 @@ function tileKey(x: number, y: number) {
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
+}
+
+function isTypingTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  return (
+    target.isContentEditable ||
+    target.tagName === "INPUT" ||
+    target.tagName === "TEXTAREA" ||
+    target.tagName === "SELECT"
+  );
 }
 
 function uniqueTiles(tiles: TilePoint[]) {
@@ -150,6 +207,7 @@ function signatureForTile(tile: GridTile | null | undefined) {
 
 export function PlannerCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasViewportRef = useRef<HTMLDivElement>(null);
   const dragActiveRef = useRef(false);
   const paintActiveRef = useRef(false);
   const [hoveredTile, setHoveredTile] = useState<TilePoint | null>(null);
@@ -157,7 +215,9 @@ export function PlannerCanvas() {
   const [drawMode, setDrawMode] = useState<DrawMode>("brush");
   const [brushSize, setBrushSize] = useState(1);
   const [drawStart, setDrawStart] = useState<TilePoint | null>(null);
+  const [mapZoom, setMapZoom] = useState(1);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
   const width = useMapStore((state) => state.width);
   const height = useMapStore((state) => state.height);
   const name = useMapStore((state) => state.name);
@@ -209,6 +269,18 @@ export function PlannerCanvas() {
     : null;
   const selectedTileForDisplay =
     selectedTile && selectedTileRecord ? selectedTile : null;
+  const hasViewportSize = viewportSize.width > 0 && viewportSize.height > 0;
+  const baseCanvasSize = hasViewportSize
+    ? Math.min(viewportSize.width, viewportSize.height)
+    : 720;
+  const canvasDisplaySize = Math.max(320, Math.round(baseCanvasSize * mapZoom));
+  const canvasShellWidth = hasViewportSize
+    ? Math.max(viewportSize.width, canvasDisplaySize)
+    : canvasDisplaySize;
+  const canvasShellHeight = hasViewportSize
+    ? Math.max(viewportSize.height, canvasDisplaySize)
+    : canvasDisplaySize;
+  const zoomPercent = Math.round(mapZoom * 100);
 
   function applyTileOperation(tile: TilePoint) {
     if (tool === "road") {
@@ -224,6 +296,22 @@ export function PlannerCanvas() {
     if (tool === "delete") {
       deleteAt(tile.x, tile.y);
     }
+  }
+
+  function activateTool(nextTool: MapTool) {
+    setTool(nextTool);
+
+    if (
+      nextTool === "building" ||
+      nextTool === "hand" ||
+      nextTool === "eyedropper"
+    ) {
+      setDrawStart(null);
+    }
+  }
+
+  function activateDrawMode(nextMode: DrawMode) {
+    setDrawMode(nextMode);
   }
 
   function applyDrawTiles(points: TilePoint[]) {
@@ -513,6 +601,65 @@ export function PlannerCanvas() {
   });
 
   useEffect(() => {
+    const viewport = canvasViewportRef.current;
+
+    if (!viewport) {
+      return;
+    }
+
+    const updateViewportSize = () => {
+      setViewportSize({
+        width: viewport.clientWidth,
+        height: viewport.clientHeight,
+      });
+    };
+
+    updateViewportSize();
+    const observer = new ResizeObserver(updateViewportSize);
+    observer.observe(viewport);
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.metaKey || event.ctrlKey || event.altKey || isTypingTarget(event.target)) {
+        return;
+      }
+
+      const key = event.key.toLowerCase();
+      const nextTool = toolShortcutLookup[key];
+
+      if (nextTool) {
+        event.preventDefault();
+        setTool(nextTool);
+
+        if (
+          nextTool === "building" ||
+          nextTool === "hand" ||
+          nextTool === "eyedropper"
+        ) {
+          setDrawStart(null);
+        }
+
+        return;
+      }
+
+      const nextDrawMode = drawModeShortcutLookup[key];
+
+      if (!nextDrawMode) {
+        return;
+      }
+
+      event.preventDefault();
+      setDrawMode(nextDrawMode);
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [setDrawMode, setDrawStart, setTool]);
+
+  useEffect(() => {
     const canvas = canvasRef.current;
 
     if (!canvas) {
@@ -530,6 +677,7 @@ export function PlannerCanvas() {
     drawStart,
     height,
     hoveredTile,
+    mapZoom,
     placements,
     selectedPlacementId,
     selectedTileForDisplay,
@@ -649,81 +797,128 @@ export function PlannerCanvas() {
             Brush, line, rectangle, and fill work with roads, decorations, and
             delete.
           </span>
+          <span>Shortcuts: H, R, B, D, E, X and 1-4 for draw modes.</span>
           <span>
             Bold grid lines mark every 10 tiles without limiting the map size.
           </span>
         </div>
-        <div className="min-h-[720px] flex-1 overflow-hidden rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-strong)]">
-          <canvas
-            ref={canvasRef}
-            className={`h-full w-full touch-none ${
-              tool === "hand"
-                ? "cursor-grab"
-                : tool === "eyedropper"
-                  ? "cursor-copy"
-                  : "cursor-crosshair"
-            }`}
-            onPointerDown={(event) => {
-              const tile = getTileCoordinates(event);
+        <div className="grid min-h-[720px] flex-1 grid-cols-[minmax(0,1fr)_78px] gap-4">
+          <div
+            ref={canvasViewportRef}
+            className="overflow-auto rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-strong)]"
+          >
+            <div
+              className="flex items-center justify-center"
+              style={{
+                width: `${canvasShellWidth}px`,
+                height: `${canvasShellHeight}px`,
+                minWidth: "100%",
+                minHeight: "100%",
+              }}
+            >
+              <canvas
+                ref={canvasRef}
+                style={{
+                  width: `${canvasDisplaySize}px`,
+                  height: `${canvasDisplaySize}px`,
+                }}
+                className={`block touch-none ${
+                  tool === "hand"
+                    ? "cursor-grab"
+                    : tool === "eyedropper"
+                      ? "cursor-copy"
+                      : "cursor-crosshair"
+                }`}
+                onPointerDown={(event) => {
+                  const tile = getTileCoordinates(event);
 
-              if (!tile) {
-                return;
-              }
+                  if (!tile) {
+                    return;
+                  }
 
-              handleTileAction(tile);
-            }}
-            onPointerMove={(event) => {
-              const tile = getTileCoordinates(event);
-              setHoveredTile(tile);
+                  handleTileAction(tile);
+                }}
+                onPointerMove={(event) => {
+                  const tile = getTileCoordinates(event);
+                  setHoveredTile(tile);
 
-              if (dragActiveRef.current && tile) {
-                moveSelectedPlacement(tile.x, tile.y);
-              }
+                  if (dragActiveRef.current && tile) {
+                    moveSelectedPlacement(tile.x, tile.y);
+                  }
 
-              if (
-                paintActiveRef.current &&
-                tile &&
-                (tool === "road" ||
-                  tool === "decoration" ||
-                  tool === "delete") &&
-                drawMode === "brush"
-              ) {
-                applyDrawTiles([tile]);
-              }
-            }}
-            onPointerLeave={() => {
-              setHoveredTile(null);
-              dragActiveRef.current = false;
-              paintActiveRef.current = false;
-            }}
-            onPointerUp={(event) => {
-              const tile = getTileCoordinates(event);
+                  if (
+                    paintActiveRef.current &&
+                    tile &&
+                    (tool === "road" ||
+                      tool === "decoration" ||
+                      tool === "delete") &&
+                    drawMode === "brush"
+                  ) {
+                    applyDrawTiles([tile]);
+                  }
+                }}
+                onPointerLeave={() => {
+                  setHoveredTile(null);
+                  dragActiveRef.current = false;
+                  paintActiveRef.current = false;
+                }}
+                onPointerUp={(event) => {
+                  const tile = getTileCoordinates(event);
 
-              if (
-                drawStart &&
-                tile &&
-                (tool === "road" || tool === "decoration" || tool === "delete")
-              ) {
-                if (drawMode === "line") {
-                  applyDrawTiles(getLineTiles(drawStart, tile));
-                }
+                  if (
+                    drawStart &&
+                    tile &&
+                    (tool === "road" || tool === "decoration" || tool === "delete")
+                  ) {
+                    if (drawMode === "line") {
+                      applyDrawTiles(getLineTiles(drawStart, tile));
+                    }
 
-                if (drawMode === "rectangle") {
-                  applyDrawTiles(getRectangleTiles(drawStart, tile));
-                }
-              }
+                    if (drawMode === "rectangle") {
+                      applyDrawTiles(getRectangleTiles(drawStart, tile));
+                    }
+                  }
 
-              dragActiveRef.current = false;
-              paintActiveRef.current = false;
-              setDrawStart(null);
-            }}
-          />
+                  dragActiveRef.current = false;
+                  paintActiveRef.current = false;
+                  setDrawStart(null);
+                }}
+              />
+            </div>
+          </div>
+          <div className="flex min-h-[720px] flex-col items-center justify-center gap-4 rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
+              Zoom
+            </p>
+            <div className="rounded-full bg-[color:var(--surface-strong)] px-3 py-2 text-sm font-semibold text-[color:var(--foreground)]">
+              {zoomPercent}%
+            </div>
+            <div className="flex flex-1 items-center justify-center">
+              <input
+                type="range"
+                min={0.6}
+                max={2}
+                step={0.1}
+                value={mapZoom}
+                onChange={(event) => setMapZoom(Number(event.target.value))}
+                className="h-12 w-[260px] -rotate-90 accent-[color:var(--accent)]"
+                aria-label="Map zoom"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => setMapZoom(1)}
+              className="rounded-2xl bg-[color:var(--surface-strong)] px-3 py-2 text-xs font-semibold text-[color:var(--foreground)]"
+            >
+              Reset
+            </button>
+          </div>
         </div>
       </SectionCard>
       <div className="space-y-5 xl:sticky xl:top-28 xl:self-start">
         <SectionCard
           title="Planner Controls"
-          description="Choose the active tool, switch drawing modes, and tune the stamp behavior."
+          description="Choose the active tool, switch drawing modes, and tune the stamp behavior. Keyboard shortcuts mirror the main planner controls."
         >
           <div className="space-y-4">
             <label className="block space-y-2">
@@ -737,59 +932,44 @@ export function PlannerCanvas() {
               />
             </label>
             <div className="grid grid-cols-2 gap-3">
-              {(
-                [
-                  "hand",
-                  "road",
-                  "building",
-                  "decoration",
-                  "eyedropper",
-                  "delete",
-                ] as const
-              ).map((option) => (
+              {plannerToolDefinitions.map((option) => (
                 <button
-                  key={option}
+                  key={option.tool}
                   type="button"
-                  onClick={() => {
-                    setTool(option);
-
-                    if (
-                      option === "building" ||
-                      option === "hand" ||
-                      option === "eyedropper"
-                    ) {
-                      setDrawStart(null);
-                    }
-                  }}
-                  className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
-                    tool === option
+                  onClick={() => activateTool(option.tool)}
+                  className={`flex items-center justify-between gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold ${
+                    tool === option.tool
                       ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
                       : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
                   }`}
                 >
-                  {option}
+                  <span>{option.label}</span>
+                  <span className="rounded-full bg-black/20 px-2 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--muted)]">
+                    {option.shortcut}
+                  </span>
                 </button>
               ))}
             </div>
             {tool === "road" || tool === "decoration" || tool === "delete" ? (
               <>
                 <div className="grid grid-cols-2 gap-3">
-                  {(["brush", "line", "rectangle", "fill"] as const).map(
-                    (mode) => (
-                      <button
-                        key={mode}
-                        type="button"
-                        onClick={() => setDrawMode(mode)}
-                        className={`rounded-2xl px-4 py-3 text-left text-sm font-semibold capitalize ${
-                          drawMode === mode
-                            ? "bg-[color:var(--accent)]/20 text-[color:var(--foreground)]"
-                            : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
-                        }`}
-                      >
-                        {mode}
-                      </button>
-                    ),
-                  )}
+                  {drawModeDefinitions.map((modeOption) => (
+                    <button
+                      key={modeOption.mode}
+                      type="button"
+                      onClick={() => activateDrawMode(modeOption.mode)}
+                      className={`flex items-center justify-between gap-3 rounded-2xl px-4 py-3 text-left text-sm font-semibold ${
+                        drawMode === modeOption.mode
+                          ? "bg-[color:var(--accent)]/20 text-[color:var(--foreground)]"
+                          : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+                      }`}
+                    >
+                      <span>{modeOption.label}</span>
+                      <span className="rounded-full bg-black/20 px-2 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[color:var(--muted)]">
+                        {modeOption.shortcut}
+                      </span>
+                    </button>
+                  ))}
                 </div>
                 {drawMode === "brush" ? (
                   <div className="space-y-2">
