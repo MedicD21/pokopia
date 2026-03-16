@@ -17,6 +17,29 @@ import type {
   TownMap,
 } from "@/lib/types";
 
+function isVercelDeployment() {
+  return process.env.VERCEL === "1" || Boolean(process.env.VERCEL_ENV);
+}
+
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error && error.message.trim().length > 0) {
+    return error.message;
+  }
+
+  return "Unknown error";
+}
+
+function assertLocalSaveFallbackAvailable(target: "building" | "map") {
+  if (!isVercelDeployment()) {
+    return;
+  }
+
+  throw new Error(
+    `Vercel deployments require DATABASE_URL for ${target} saves. ` +
+      "The local JSON fallback in storage/ is for local development only.",
+  );
+}
+
 function toSavedBuildingRecord(building: Building): SavedBuildingRecord {
   const data = building.data as unknown as BuildingData;
   const description = building.description ?? data.description ?? "";
@@ -105,6 +128,8 @@ export async function saveBuildingRecord(input: {
   const id = input.id ?? crypto.randomUUID();
 
   if (!prisma) {
+    assertLocalSaveFallbackAvailable("building");
+
     const record = await upsertFileSavedBuilding({
       id,
       name: input.name,
@@ -155,7 +180,13 @@ export async function saveBuildingRecord(input: {
       building: toSavedBuildingRecord(building),
       storageMode: getStorageMode(),
     };
-  } catch {
+  } catch (error) {
+    if (isVercelDeployment()) {
+      throw new Error(
+        `Unable to save the building to PostgreSQL on Vercel. ${getErrorMessage(error)}`,
+      );
+    }
+
     const record = await upsertFileSavedBuilding({
       id,
       name: input.name,
@@ -193,6 +224,8 @@ export async function listSavedMaps() {
 
 export async function saveMapRecord(input: Omit<TownMap, "createdAt" | "updatedAt">) {
   if (!prisma) {
+    assertLocalSaveFallbackAvailable("map");
+
     const map = await saveFileMapRecord(input);
 
     return {
@@ -229,7 +262,13 @@ export async function saveMapRecord(input: Omit<TownMap, "createdAt" | "updatedA
       map: toTownMapRecord(map),
       storageMode: getStorageMode(),
     };
-  } catch {
+  } catch (error) {
+    if (isVercelDeployment()) {
+      throw new Error(
+        `Unable to save the map to PostgreSQL on Vercel. ${getErrorMessage(error)}`,
+      );
+    }
+
     const map = await saveFileMapRecord(input);
 
     return {

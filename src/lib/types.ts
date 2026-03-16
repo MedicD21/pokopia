@@ -75,6 +75,33 @@ export interface BuildingData {
   suggestedSkills: BuildSkill[];
 }
 
+export type AutoBuildStyle = "cottage" | "hall" | "workshop" | "greenhouse";
+
+export interface AutoBuildOptions {
+  prompt: string;
+  style: AutoBuildStyle;
+  width: number;
+  depth: number;
+  wallHeight: number;
+  roofHeight: number;
+  foundationMaterial: BlockMaterialId;
+  wallMaterial: BlockMaterialId;
+  trimMaterial: BlockMaterialId;
+  roofMaterial: BlockMaterialId;
+  doorMaterial: BlockMaterialId;
+  windowMaterial: BlockMaterialId;
+  beamMaterial: BlockMaterialId;
+  pillarMaterial: BlockMaterialId;
+  lightMaterial: BlockMaterialId;
+  decorMaterial: BlockMaterialId;
+  includeDoor: boolean;
+  includeWindows: boolean;
+  includeBeams: boolean;
+  includePillars: boolean;
+  includeLights: boolean;
+  includeDecor: boolean;
+}
+
 export interface MaterialCount {
   materialId: BlockMaterialId;
   name: string;
@@ -128,13 +155,11 @@ export interface ItemCatalogEntry {
   name: string;
   primaryCategory: string;
   serebiiCategory: string | null;
-  game8Category: string | null;
   description: string;
   tag: string | null;
   tagDetailUrl: string | null;
   primaryImageUrl: string | null;
   serebiiImageUrl: string | null;
-  game8ImageUrl: string | null;
   locationSummary: string;
   locationEntries: ItemCatalogLocationEntry[];
   obtainMethod: string | null;
@@ -142,15 +167,12 @@ export interface ItemCatalogEntry {
   habitats: ItemCatalogHabitatEntry[];
   sourceUrls: {
     serebii: string | null;
-    game8: string | null;
   };
 }
 
 export interface ItemCatalogSnapshot {
   generatedAt: string | null;
   sources: {
-    game8Items: string | null;
-    game8Habitats: string | null;
     serebiiItems: string | null;
   };
   totalItems: number;

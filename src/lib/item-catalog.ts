@@ -56,13 +56,11 @@ interface RawItemCatalogEntry {
   name?: string;
   primary_category?: string;
   serebii_category?: string | null;
-  game8_category?: string | null;
   description?: string;
   tag?: string | null;
   tag_detail_url?: string | null;
   primary_image_url?: string | null;
   serebii_image_url?: string | null;
-  game8_image_url?: string | null;
   location_summary?: string;
   location_entries?: RawItemCatalogLocationEntry[];
   obtain_method?: string | null;
@@ -70,15 +68,12 @@ interface RawItemCatalogEntry {
   habitats?: RawItemCatalogHabitatEntry[];
   source_urls?: {
     serebii?: string | null;
-    game8?: string | null;
   };
 }
 
 interface RawItemCatalogSnapshot {
   generated_at?: string | null;
   sources?: {
-    game8_items?: string | null;
-    game8_habitats?: string | null;
     serebii_items?: string | null;
   };
   items?: RawItemCatalogEntry[];
@@ -87,8 +82,6 @@ interface RawItemCatalogSnapshot {
 const emptyCatalog: ItemCatalogSnapshot = {
   generatedAt: null,
   sources: {
-    game8Items: null,
-    game8Habitats: null,
     serebiiItems: null,
   },
   totalItems: 0,
@@ -178,13 +171,11 @@ function mapCatalogEntry(raw: RawItemCatalogEntry): ItemCatalogEntry {
     serebiiCategory: raw.serebii_category
       ? canonicalizeCategory(raw.serebii_category)
       : null,
-    game8Category: raw.game8_category ? canonicalizeCategory(raw.game8_category) : null,
     description: raw.description ?? "",
     tag: raw.tag ?? null,
     tagDetailUrl: raw.tag_detail_url ?? null,
-    primaryImageUrl: raw.primary_image_url ?? null,
+    primaryImageUrl: raw.serebii_image_url ?? null,
     serebiiImageUrl: raw.serebii_image_url ?? null,
-    game8ImageUrl: raw.game8_image_url ?? null,
     locationSummary: raw.location_summary ?? "",
     locationEntries: (raw.location_entries ?? []).map(mapLocationEntry),
     obtainMethod: raw.obtain_method ?? null,
@@ -192,7 +183,6 @@ function mapCatalogEntry(raw: RawItemCatalogEntry): ItemCatalogEntry {
     habitats: (raw.habitats ?? []).map(mapHabitatEntry),
     sourceUrls: {
       serebii: raw.source_urls?.serebii ?? null,
-      game8: raw.source_urls?.game8 ?? null,
     },
   };
 }
@@ -205,7 +195,6 @@ function mergeCatalogEntry(current: ItemCatalogEntry, incoming: ItemCatalogEntry
     tagDetailUrl: current.tagDetailUrl || incoming.tagDetailUrl,
     primaryImageUrl: current.primaryImageUrl || incoming.primaryImageUrl,
     serebiiImageUrl: current.serebiiImageUrl || incoming.serebiiImageUrl,
-    game8ImageUrl: current.game8ImageUrl || incoming.game8ImageUrl,
     locationSummary: current.locationSummary || incoming.locationSummary,
     obtainMethod: current.obtainMethod || incoming.obtainMethod,
     craftingRecipe: current.craftingRecipe || incoming.craftingRecipe,
@@ -219,7 +208,6 @@ function mergeCatalogEntry(current: ItemCatalogEntry, incoming: ItemCatalogEntry
     ),
     sourceUrls: {
       serebii: current.sourceUrls.serebii || incoming.sourceUrls.serebii,
-      game8: current.sourceUrls.game8 || incoming.sourceUrls.game8,
     },
   };
 }
@@ -262,8 +250,6 @@ export async function listItemCatalog(): Promise<ItemCatalogSnapshot> {
     return {
       generatedAt: rawCatalog.generated_at ?? null,
       sources: {
-        game8Items: rawCatalog.sources?.game8_items ?? null,
-        game8Habitats: rawCatalog.sources?.game8_habitats ?? null,
         serebiiItems: rawCatalog.sources?.serebii_items ?? null,
       },
       totalItems: dedupedItems.length,

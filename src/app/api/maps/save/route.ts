@@ -21,9 +21,14 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(payload, { status: 201 });
-  } catch {
+  } catch (error) {
+    const message =
+      error instanceof Error && error.message.trim().length > 0
+        ? error.message
+        : "Unable to save the map right now.";
+
     return NextResponse.json(
-      { error: "Unable to save the map right now." },
+      { error: message },
       { status: 500 },
     );
   }

@@ -808,7 +808,7 @@ export function PlannerCanvas() {
             className="overflow-auto rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface-strong)]"
           >
             <div
-              className="flex items-center justify-center"
+              className="flex items-start justify-center"
               style={{
                 width: `${canvasShellWidth}px`,
                 height: `${canvasShellHeight}px`,
@@ -886,14 +886,14 @@ export function PlannerCanvas() {
               />
             </div>
           </div>
-          <div className="flex min-h-[720px] flex-col items-center justify-center gap-4 rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-4">
+          <div className="flex min-h-[720px] flex-col items-center gap-4 rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-4">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
               Zoom
             </p>
             <div className="rounded-full bg-[color:var(--surface-strong)] px-3 py-2 text-sm font-semibold text-[color:var(--foreground)]">
               {zoomPercent}%
             </div>
-            <div className="flex flex-1 items-center justify-center">
+            <div className="pt-1">
               <input
                 type="range"
                 min={0.6}
@@ -908,7 +908,7 @@ export function PlannerCanvas() {
             <button
               type="button"
               onClick={() => setMapZoom(1)}
-              className="rounded-2xl bg-[color:var(--surface-strong)] px-3 py-2 text-xs font-semibold text-[color:var(--foreground)]"
+              className="mt-auto rounded-2xl bg-[color:var(--surface-strong)] px-3 py-2 text-xs font-semibold text-[color:var(--foreground)]"
             >
               Reset
             </button>

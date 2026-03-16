@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Canvas, type ThreeEvent, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
@@ -7,13 +8,19 @@ import { type InstancedMesh, Matrix4, Object3D, Plane, Vector3 } from "three";
 import type { RefObject } from "react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
+import { BlockMaterialDropdown } from "@/components/builder3d/material-dropdown";
 import { MaterialsBreakdown } from "@/components/materials/materials-breakdown";
 import { HelperPanel } from "@/components/pokemon/helper-panel";
 import { SectionCard } from "@/components/ui/section-card";
 import { sampleBuildings } from "@/data/buildings";
 import { blockMaterialLookup, blockMaterials } from "@/data/materials";
 import { summarizeMaterials } from "@/lib/materials";
-import type { BlockMaterialId, BuildingData, StorageMode, VoxelBlock } from "@/lib/types";
+import type {
+  BlockMaterialId,
+  BuildingData,
+  StorageMode,
+  VoxelBlock,
+} from "@/lib/types";
 import { type BuilderMode, useBuilderStore } from "@/store/use-builder-store";
 
 const gridSize = 24;
@@ -38,6 +45,94 @@ const blockColorSwatches = [
 
 type CameraPreset = "iso" | "front" | "back" | "left" | "right" | "top";
 type VoxelPoint = { x: number; y: number; z: number };
+const cameraPresets: readonly CameraPreset[] = [
+  "iso",
+  "front",
+  "back",
+  "left",
+  "right",
+  "top",
+];
+
+type BuilderMaterialSlotId =
+  | "foundation"
+  | "wall"
+  | "trim"
+  | "roof"
+  | "door"
+  | "window"
+  | "beam"
+  | "pillar"
+  | "light"
+  | "decor";
+
+const builderMaterialSlots: ReadonlyArray<{
+  id: BuilderMaterialSlotId;
+  label: string;
+  description: string;
+  defaultMaterial: BlockMaterialId;
+}> = [
+  {
+    id: "foundation",
+    label: "Foundation",
+    description: "Heavy base material for floors and ground structure.",
+    defaultMaterial: "stone",
+  },
+  {
+    id: "wall",
+    label: "Wall",
+    description: "Main wall block you will place most often.",
+    defaultMaterial: "brick",
+  },
+  {
+    id: "trim",
+    label: "Trim",
+    description: "Accent piece for edges, floors, and frame changes.",
+    defaultMaterial: "wood",
+  },
+  {
+    id: "roof",
+    label: "Roof",
+    description: "Top layer block for caps and sloped roofs.",
+    defaultMaterial: "roof",
+  },
+  {
+    id: "door",
+    label: "Door",
+    description: "Entry piece for fronts, gates, and larger openings.",
+    defaultMaterial: "door",
+  },
+  {
+    id: "window",
+    label: "Window",
+    description: "Window piece for light wells and outer walls.",
+    defaultMaterial: "window",
+  },
+  {
+    id: "beam",
+    label: "Beam",
+    description: "Structural support for workshop and roof framing.",
+    defaultMaterial: "beam",
+  },
+  {
+    id: "pillar",
+    label: "Pillar",
+    description: "Vertical support and facade accent piece.",
+    defaultMaterial: "pillar",
+  },
+  {
+    id: "light",
+    label: "Light",
+    description: "Lantern and lit accent placement piece.",
+    defaultMaterial: "light",
+  },
+  {
+    id: "decor",
+    label: "Decor",
+    description: "Signage, trim, and finishing details.",
+    defaultMaterial: "decor",
+  },
+];
 
 const toolDefinitions: ReadonlyArray<{
   mode: BuilderMode;
@@ -86,20 +181,6 @@ const toolDefinitions: ReadonlyArray<{
     label: "Eyedropper",
     shortcut: "E",
     description: "Sample a placed block's material and color back into the active brush.",
-  },
-];
-
-const materialSections: ReadonlyArray<{
-  title: string;
-  items: readonly BlockMaterialId[];
-}> = [
-  {
-    title: "Core blocks",
-    items: ["stone", "wood", "brick", "metal", "glass", "roof"],
-  },
-  {
-    title: "Architectural pieces",
-    items: ["door", "window", "beam", "pillar", "light", "decor"],
   },
 ];
 
@@ -809,6 +890,17 @@ export function VoxelBuilder() {
   const [wallPreviewStart, setWallPreviewStart] = useState<VoxelPoint | null>(null);
   const [wallPreviewEnd, setWallPreviewEnd] = useState<VoxelPoint | null>(null);
   const [wallHeight, setWallHeight] = useState(4);
+  const [builderPalette, setBuilderPalette] = useState<
+    Record<BuilderMaterialSlotId, BlockMaterialId>
+  >(() =>
+    builderMaterialSlots.reduce(
+      (palette, slot) => {
+        palette[slot.id] = slot.defaultMaterial;
+        return palette;
+      },
+      {} as Record<BuilderMaterialSlotId, BlockMaterialId>,
+    ),
+  );
   const name = useBuilderStore((state) => state.name);
   const description = useBuilderStore((state) => state.description);
   const loadedTemplateId = useBuilderStore((state) => state.loadedTemplateId);
@@ -855,6 +947,18 @@ export function VoxelBuilder() {
   function selectMode(nextMode: BuilderMode) {
     setMode(nextMode);
     resetTransientToolState();
+  }
+
+  function updateBuilderPalette(slotId: BuilderMaterialSlotId, material: BlockMaterialId) {
+    setBuilderPalette((current) => ({
+      ...current,
+      [slotId]: material,
+    }));
+  }
+
+  function applyPaletteMaterial(slotId: BuilderMaterialSlotId) {
+    const material = builderPalette[slotId];
+    setActiveMaterial(material);
   }
 
   useEffect(() => {
@@ -1073,24 +1177,14 @@ export function VoxelBuilder() {
         title="3D Builder"
         description="Build setup, tools, and the live voxel scene now share one workspace so you can edit without side-panel scrolling. Press H, A, P, X, B, W, and E to switch tools quickly."
         action={
-          <div className="flex flex-wrap gap-2">
-            {(["iso", "front", "back", "left", "right", "top"] as const).map((preset) => (
-              <button
-                key={preset}
-                type="button"
-                onClick={() => setCameraPreset(preset)}
-                className={`rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] ${
-                  cameraPreset === preset
-                    ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
-                    : "bg-[color:var(--surface-strong)] text-[color:var(--foreground)]"
-                }`}
-              >
-                {preset}
-              </button>
-            ))}
-          </div>
+          <Link
+            href="/ai-builder"
+            className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
+          >
+            Open AI Builder
+          </Link>
         }
-      className="flex min-h-[calc(100vh-5.75rem)] flex-col"
+        className="flex min-h-[calc(100vh-5.75rem)] flex-col"
       >
         <div className="mb-4 rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface)]/88 p-4">
           <div className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1.08fr)]">
@@ -1231,41 +1325,60 @@ export function VoxelBuilder() {
             </div>
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_280px]">
               <div className="space-y-4">
-                {materialSections.map((section) => (
-                  <div
-                    key={section.title}
-                    className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4"
-                  >
-                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
-                      {section.title}
-                    </p>
-                    <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                      {section.items.map((materialId) => {
-                        const material = blockMaterialLookup[materialId];
-
-                        return (
+                <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
+                  <BlockMaterialDropdown
+                    label="Active block type"
+                    value={activeMaterial}
+                    onChange={setActiveMaterial}
+                    description="Pick the current block/item to place. The builder still renders it as a solid color based on the selected material."
+                  />
+                </div>
+                <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
+                    Build palette
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-[color:var(--muted)]">
+                    These manual build slots mirror the AI builder categories so you can keep a full set of building parts ready while working in 3D.
+                  </p>
+                  <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                    {builderMaterialSlots.map((slot) => (
+                      <div
+                        key={slot.id}
+                        className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-3"
+                      >
+                        <div className="mb-3 flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-semibold text-[color:var(--foreground)]">
+                              {slot.label}
+                            </p>
+                            <p className="mt-1 text-xs leading-5 text-[color:var(--muted)]">
+                              {slot.description}
+                            </p>
+                          </div>
                           <button
-                            key={material.id}
                             type="button"
-                            onClick={() => setActiveMaterial(material.id)}
-                            className={`flex items-center gap-2 rounded-2xl px-3 py-3 text-left text-xs font-semibold leading-5 ${
-                              activeMaterial === material.id
-                                ? "bg-[color:var(--accent-2)]/18 text-[color:var(--foreground)]"
-                                : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+                            onClick={() => applyPaletteMaterial(slot.id)}
+                            className={`rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] ${
+                              activeMaterial === builderPalette[slot.id]
+                                ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
+                                : "bg-[color:var(--surface-strong)] text-[color:var(--foreground)]"
                             }`}
-                            title={material.displayName}
                           >
-                            <span
-                              className="h-3.5 w-3.5 shrink-0 rounded-full border border-black/10"
-                              style={{ backgroundColor: material.color }}
-                            />
-                            <span>{material.displayName}</span>
+                            Use
                           </button>
-                        );
-                      })}
-                    </div>
+                        </div>
+                        <BlockMaterialDropdown
+                          label={`${slot.label} item`}
+                          value={builderPalette[slot.id]}
+                          onChange={(material) => {
+                            updateBuilderPalette(slot.id, material);
+                            setActiveMaterial(material);
+                          }}
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
               </div>
               <div className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-4">
                 <div className="flex items-center justify-between gap-4">
@@ -1356,6 +1469,32 @@ export function VoxelBuilder() {
                     shortcut={tool.shortcut}
                   />
                 ))}
+              </div>
+              <div className="mt-4 rounded-2xl bg-[color:var(--surface)] px-4 py-4">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
+                    Camera views
+                  </p>
+                  <span className="rounded-full bg-[color:var(--surface-strong)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
+                    Hand mode to orbit
+                  </span>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {cameraPresets.map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setCameraPreset(preset)}
+                      className={`rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] ${
+                        cameraPreset === preset
+                          ? "border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 text-[color:var(--foreground)]"
+                          : "bg-[color:var(--surface-strong)] text-[color:var(--foreground)]"
+                      }`}
+                    >
+                      {preset}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {toolDefinitions.map((tool) => (

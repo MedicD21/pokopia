@@ -73,28 +73,16 @@ function ItemCard({ item }: { item: ItemCatalogEntry }) {
           {truncateText(locationText, 220)}
         </p>
       </div>
-      {(item.sourceUrls.serebii || item.sourceUrls.game8) && (
+      {item.sourceUrls.serebii && (
         <div className="mt-4 flex flex-wrap gap-2">
-          {item.sourceUrls.serebii ? (
-            <a
-              href={item.sourceUrls.serebii}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-3 py-2 text-sm font-semibold text-[color:var(--foreground)] transition hover:border-[color:var(--accent)]/60 hover:bg-[color:var(--accent)]/10"
-            >
-              Serebii
-            </a>
-          ) : null}
-          {item.sourceUrls.game8 ? (
-            <a
-              href={item.sourceUrls.game8}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-3 py-2 text-sm font-semibold text-[color:var(--foreground)] transition hover:border-[color:var(--accent)]/60 hover:bg-[color:var(--accent)]/10"
-            >
-              Game8
-            </a>
-          ) : null}
+          <a
+            href={item.sourceUrls.serebii}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-3 py-2 text-sm font-semibold text-[color:var(--foreground)] transition hover:border-[color:var(--accent)]/60 hover:bg-[color:var(--accent)]/10"
+          >
+            Serebii
+          </a>
         </div>
       )}
     </article>
@@ -119,7 +107,7 @@ export function ItemLibraryBrowser({ catalog }: { catalog: ItemCatalogSnapshot }
       <SectionCard
         eyebrow="Catalog"
         title="Item Library"
-        description="Run the scraper to populate the Serebii and Game8 item index for this page."
+        description="Run the scraper to populate the Serebii item index for this page."
       >
         <p className="rounded-2xl bg-[color:var(--surface)] px-4 py-4 text-sm leading-6 text-[color:var(--muted)]">
           No item catalog data is available yet.

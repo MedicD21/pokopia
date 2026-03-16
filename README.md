@@ -1,21 +1,19 @@
 # Pokopia Planner
 
-Pokopia Planner is a playful planning tool for designing original monster-world towns, voxel buildings, and build checklists.
+Pokopia Planner is a Next.js app for planning towns, voxel buildings, build materials, item libraries, and Pokemon-style construction helpers in an original monster world.
 
-Current milestone includes:
+## What is included
 
-- Next.js App Router foundation
-- Prisma schema for the core domain
-- Sample materials, buildings, and Pokemon-style construction helpers
-- Interactive map planner prototype
-- Interactive voxel builder prototype
-- Materials calculator and helper recommendations
-- Mock screenshot-to-blueprint upload flow
-- Hand/edit tools for selecting existing map items and voxel blocks
-- Camera presets plus orbit/pan/zoom controls in the 3D editor
-- Prisma/Postgres persistence with automatic fallback to local file storage
+- 2D town planner at `/map`
+- 3D voxel builder at `/builder`
+- Materials calculator and checklist views
+- Scraped item and habitat catalog data for library/checklist use
+- Prisma schema and Postgres-backed persistence
+- Local JSON fallback for development-only saves when no database is configured
 
-## Getting Started
+## Local development
+
+Install dependencies and start the app:
 
 ```bash
 npm install
@@ -24,17 +22,18 @@ npm run dev
 
 Open `http://localhost:3000/home`.
 
-## Your Setup
+If you do not configure Postgres locally, the app can still run and save to JSON files inside `storage/`.
 
-You do not need to set up Postgres immediately. The app will save to local JSON files in `storage/` until `DATABASE_URL` is configured.
+## Database setup
 
-If you want real database persistence:
+For persistent saves, copy the example environment file and point `DATABASE_URL` at PostgreSQL:
 
-1. Copy `.env.example` to `.env.local`
-2. Set `DATABASE_URL` to a PostgreSQL database you control
-3. Run `npm run db:generate`
-4. Run `npm run db:push`
-5. Run `npm run db:seed`
+```bash
+cp .env.example .env.local
+npm run db:generate
+npm run db:push
+npm run db:seed
+```
 
 Local Postgres example:
 
@@ -46,13 +45,52 @@ npm run db:push
 npm run db:seed
 ```
 
-After that, building and map saves will go through Prisma into PostgreSQL. If the database is missing or unavailable, the app falls back to local storage so you can keep working.
+After that, map and building saves will use Prisma/PostgreSQL.
 
-## Available Scripts
+## Vercel deployment
+
+The app is now set up for Vercel, with two important behaviors:
+
+- The scraped catalog JSON files in `storage/` are included in the production bundle so server routes and server components can read them at runtime.
+- Build and map saves require `DATABASE_URL` on Vercel. Local JSON save fallback is intentionally limited to local development because Vercel Functions use a read-only filesystem outside `/tmp`.
+
+### What you need on your end
+
+1. A Vercel project connected to this repo
+2. A PostgreSQL database
+3. `DATABASE_URL` added in Vercel for the environments you want to use
+
+### Deploy steps
+
+1. Push the repo to GitHub, GitLab, or Bitbucket.
+2. Import the repository into Vercel.
+3. Add `DATABASE_URL` in Vercel Project Settings for `Production`, and `Preview` too if you want preview saves to work.
+4. Run `npm run db:push` against that database before the first live use of saves.
+5. Run `npm run db:seed` if you want the Prisma-backed material and helper records loaded into the database.
+6. Trigger the deployment.
+
+Vercel will automatically detect Next.js and run the project build. This repo also includes `postinstall: prisma generate` so Prisma Client is regenerated during deploys.
+
+### Optional Vercel CLI flow
+
+```bash
+npm install -g vercel
+vercel login
+vercel
+```
+
+Useful local sync command after you add or change environment variables in Vercel:
+
+```bash
+vercel env pull .env.local
+```
+
+## Available scripts
 
 ```bash
 npm run dev
 npm run build
+npm run start
 npm run lint
 npm run typecheck
 npm run db:generate
@@ -61,8 +99,9 @@ npm run db:seed
 npm run scrape:materials
 ```
 
-## Editor Notes
+## Notes
 
-- `/map` now has a larger workspace plus a hand tool for selecting, moving, rotating, and editing existing roads, decorations, and building placements.
-- `/builder` now has a larger workspace, hand mode for block inspection, and camera preset buttons for `iso`, `front`, `back`, `left`, `right`, and `top`.
-- The screenshot scanner is still a mocked approximation pipeline for now, designed so a real vision service can plug in later.
+- `/map` includes keyboard shortcuts, zoom controls, and editing tools for roads, decorations, and placed buildings.
+- `/builder` includes keyboard shortcuts, multiple placement tools, camera presets, and per-block colors.
+- `/library` uses the scraped item catalog with grouped categories and item images.
+- The screenshot-to-blueprint flow is still a mocked approximation pipeline, ready for a future real vision service.

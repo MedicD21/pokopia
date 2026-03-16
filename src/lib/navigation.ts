@@ -15,6 +15,11 @@ export const navigationItems = [
     summary: "Shape voxel buildings and export blueprints.",
   },
   {
+    href: "/ai-builder",
+    label: "AI Builder",
+    summary: "Auto-generate a draft structure from materials, pieces, and dimensions.",
+  },
+  {
     href: "/materials",
     label: "Materials",
     summary: "Count required blocks and find sourcing info.",

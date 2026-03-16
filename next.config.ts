@@ -10,10 +10,6 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "www.serebii.net",
       },
-      {
-        protocol: "https",
-        hostname: "img.game8.co",
-      },
     ],
   },
   outputFileTracingIncludes: {

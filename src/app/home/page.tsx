@@ -79,6 +79,8 @@ export default function HomePage() {
                   ? "Shape the district plan with a 100 x 100 sparse tile grid and draggable building footprints."
                   : item.href === "/builder"
                     ? "Edit sample blueprints or imported scans in the voxel builder and generate JSON instantly."
+                    : item.href === "/ai-builder"
+                      ? "Draft a starter structure by choosing dimensions, materials, and build pieces before sending it to the voxel editor."
                     : item.href === "/materials"
                       ? "Inspect counts, sourcing notes, and recommended build helpers in one place."
                       : item.href === "/library"
