@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 import { sampleBuildingLookup } from "@/data/buildings";
+import { readSessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
 import { getSavedBuildingById } from "@/lib/persistence";
 
 export async function GET(
@@ -23,7 +25,17 @@ export async function GET(
     });
   }
 
-  const saved = await getSavedBuildingById(id);
+  const cookieStore = await cookies();
+  const session = readSessionToken(cookieStore.get(SESSION_COOKIE_NAME)?.value);
+
+  if (!session) {
+    return NextResponse.json(
+      { error: "Sign in to access your saved builds." },
+      { status: 401 },
+    );
+  }
+
+  const saved = await getSavedBuildingById(id, session.userId);
 
   if (!saved) {
     return NextResponse.json({ error: "Building not found." }, { status: 404 });

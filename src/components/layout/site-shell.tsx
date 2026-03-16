@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
+import { AuthControl } from "@/components/layout/auth-control";
 import { SiteNav } from "@/components/layout/site-nav";
 
 export function SiteShell({ children }: { children: ReactNode }) {
@@ -72,7 +73,10 @@ export function SiteShell({ children }: { children: ReactNode }) {
                 recommendations for an original monster-building world.
               </p>
             </div>
-            <SiteNav />
+            <div className="space-y-3 lg:items-end">
+              <SiteNav />
+              <AuthControl />
+            </div>
           </div>
         </header>
         <main className={editorMode ? "pb-6 pt-4" : "pb-14 pt-8"}>

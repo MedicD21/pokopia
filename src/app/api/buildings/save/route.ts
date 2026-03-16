@@ -1,10 +1,24 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
+import { readSessionToken, SESSION_COOKIE_NAME } from "@/lib/auth";
 import { saveBuildingRecord } from "@/lib/persistence";
 import type { BuildingData } from "@/lib/types";
 
 export async function POST(request: Request) {
   try {
+    const cookieStore = await cookies();
+    const session = readSessionToken(
+      cookieStore.get(SESSION_COOKIE_NAME)?.value,
+    );
+
+    if (!session) {
+      return NextResponse.json(
+        { error: "Sign in to save your builds." },
+        { status: 401 },
+      );
+    }
+
     const body = (await request.json()) as {
       id?: string;
       name?: string;
@@ -27,6 +41,7 @@ export async function POST(request: Request) {
 
     const payload = await saveBuildingRecord({
       id: body.id,
+      ownerId: session.userId,
       name,
       description,
       data: body.data,
@@ -39,9 +54,6 @@ export async function POST(request: Request) {
         ? error.message
         : "Unable to save the building right now.";
 
-    return NextResponse.json(
-      { error: message },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

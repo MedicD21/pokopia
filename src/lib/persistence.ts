@@ -79,7 +79,9 @@ function toBuildingJson(data: BuildingData): Prisma.InputJsonValue {
   return data as unknown as Prisma.InputJsonValue;
 }
 
-function toMapJson(payload: Pick<TownMap, "tiles" | "placements">): Prisma.InputJsonValue {
+function toMapJson(
+  payload: Pick<TownMap, "tiles" | "placements">,
+): Prisma.InputJsonValue {
   return payload as unknown as Prisma.InputJsonValue;
 }
 
@@ -87,45 +89,50 @@ export function getStorageMode(): StorageMode {
   return isDatabaseConfigured() && prisma ? "database" : "file";
 }
 
-export async function listSavedBuildings() {
+export async function listSavedBuildings(ownerId?: string) {
   if (!prisma) {
-    return listFileSavedBuildings();
+    return ownerId ? [] : listFileSavedBuildings();
   }
 
   try {
     const buildings = await prisma.building.findMany({
+      where: ownerId ? { ownerId } : undefined,
       orderBy: { updatedAt: "desc" },
     });
 
     return buildings.map(toSavedBuildingRecord);
   } catch {
-    return listFileSavedBuildings();
+    return ownerId ? [] : listFileSavedBuildings();
   }
 }
 
-export async function getSavedBuildingById(id: string) {
+export async function getSavedBuildingById(id: string, ownerId?: string) {
   if (!prisma) {
-    return getFileSavedBuildingById(id);
+    return ownerId ? null : getFileSavedBuildingById(id);
   }
 
   try {
-    const building = await prisma.building.findUnique({
-      where: { id },
+    const building = await prisma.building.findFirst({
+      where: {
+        id,
+        ...(ownerId ? { ownerId } : {}),
+      },
     });
 
     return building ? toSavedBuildingRecord(building) : null;
   } catch {
-    return getFileSavedBuildingById(id);
+    return ownerId ? null : getFileSavedBuildingById(id);
   }
 }
 
 export async function saveBuildingRecord(input: {
   id?: string;
+  ownerId?: string;
   name: string;
   description: string;
   data: BuildingData;
 }) {
-  const id = input.id ?? crypto.randomUUID();
+  let id = input.id ?? crypto.randomUUID();
 
   if (!prisma) {
     assertLocalSaveFallbackAvailable("building");
@@ -149,11 +156,23 @@ export async function saveBuildingRecord(input: {
   }
 
   try {
+    if (input.ownerId && input.id) {
+      const existing = await prisma.building.findUnique({
+        where: { id: input.id },
+        select: { ownerId: true },
+      });
+
+      if (existing?.ownerId && existing.ownerId !== input.ownerId) {
+        id = crypto.randomUUID();
+      }
+    }
+
     const building = await prisma.building.upsert({
       where: { id },
       update: {
         name: input.name,
         description: input.description,
+        ownerId: input.ownerId ?? undefined,
         theme: input.data.theme,
         data: toBuildingJson({
           ...input.data,
@@ -166,6 +185,7 @@ export async function saveBuildingRecord(input: {
         id,
         name: input.name,
         description: input.description,
+        ownerId: input.ownerId ?? null,
         theme: input.data.theme,
         data: toBuildingJson({
           ...input.data,
@@ -206,23 +226,27 @@ export async function saveBuildingRecord(input: {
   }
 }
 
-export async function listSavedMaps() {
+export async function listSavedMaps(ownerId?: string) {
   if (!prisma) {
-    return listFileSavedMaps();
+    return ownerId ? [] : listFileSavedMaps();
   }
 
   try {
     const maps = await prisma.map.findMany({
+      where: ownerId ? { ownerId } : undefined,
       orderBy: { updatedAt: "desc" },
     });
 
     return maps.map(toTownMapRecord);
   } catch {
-    return listFileSavedMaps();
+    return ownerId ? [] : listFileSavedMaps();
   }
 }
 
-export async function saveMapRecord(input: Omit<TownMap, "createdAt" | "updatedAt">) {
+export async function saveMapRecord(
+  input: Omit<TownMap, "createdAt" | "updatedAt">,
+  ownerId?: string,
+) {
   if (!prisma) {
     assertLocalSaveFallbackAvailable("map");
 
@@ -235,10 +259,24 @@ export async function saveMapRecord(input: Omit<TownMap, "createdAt" | "updatedA
   }
 
   try {
+    let id = input.id;
+
+    if (ownerId && input.id) {
+      const existing = await prisma.map.findUnique({
+        where: { id: input.id },
+        select: { ownerId: true },
+      });
+
+      if (existing?.ownerId && existing.ownerId !== ownerId) {
+        id = crypto.randomUUID();
+      }
+    }
+
     const map = await prisma.map.upsert({
-      where: { id: input.id },
+      where: { id },
       update: {
         name: input.name,
+        ownerId: ownerId ?? undefined,
         width: input.width,
         height: input.height,
         tiles: toMapJson({
@@ -247,8 +285,9 @@ export async function saveMapRecord(input: Omit<TownMap, "createdAt" | "updatedA
         }),
       },
       create: {
-        id: input.id,
+        id,
         name: input.name,
+        ownerId: ownerId ?? null,
         width: input.width,
         height: input.height,
         tiles: toMapJson({
