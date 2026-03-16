@@ -12,7 +12,11 @@ import type {
   ItemCatalogSnapshot,
 } from "@/lib/types";
 
-const itemCatalogPath = path.join(process.cwd(), "storage", "pokopia-items-catalog.json");
+const itemCatalogPath = path.join(
+  process.cwd(),
+  "storage",
+  "pokopia-items-catalog.json",
+);
 const categoryOrder = [
   "Materials",
   "Blocks",
@@ -237,7 +241,10 @@ function inferBuildingCollection(name: string) {
     return "Concrete border set";
   }
 
-  if (startsWithPhrase(normalized, "wooden border") || startsWithPhrase(normalized, "wooden corner")) {
+  if (
+    startsWithPhrase(normalized, "wooden border") ||
+    startsWithPhrase(normalized, "wooden corner")
+  ) {
     return "Wooden border set";
   }
 
@@ -331,7 +338,10 @@ function inferBlockCollection(name: string) {
     return "Copper deposit set";
   }
 
-  if (startsWithPhrase(normalized, "iron") || normalized.includes("rusted iron")) {
+  if (
+    startsWithPhrase(normalized, "iron") ||
+    normalized.includes("rusted iron")
+  ) {
     return "Iron block set";
   }
 
@@ -431,7 +441,16 @@ function inferKitCollection(name: string) {
     return "Pokemon Center kit set";
   }
 
-  for (const phrase of ["city", "leaf", "sand", "stone", "gray", "orange", "pink", "yellow"]) {
+  for (const phrase of [
+    "city",
+    "leaf",
+    "sand",
+    "stone",
+    "gray",
+    "orange",
+    "pink",
+    "yellow",
+  ]) {
     if (startsWithPhrase(normalized, phrase)) {
       return `${phrase[0].toUpperCase()}${phrase.slice(1)} building kit set`;
     }
@@ -673,12 +692,18 @@ function inferTypeLabel(entry: ItemCatalogEntry) {
   }
 }
 
-function inferLabels(entry: ItemCatalogEntry, collectionLabel: string | null, typeLabel: string | null) {
+function inferLabels(
+  entry: ItemCatalogEntry,
+  collectionLabel: string | null,
+  typeLabel: string | null,
+) {
   const labels = new Set<string>();
   const normalizedName = normalizeMatchText(entry.name);
   const normalizedLocation = normalizeMatchText(entry.locationSummary);
   const normalizedDescription = normalizeMatchText(
-    [entry.description, entry.obtainMethod, entry.craftingRecipe].filter(Boolean).join(" "),
+    [entry.description, entry.obtainMethod, entry.craftingRecipe]
+      .filter(Boolean)
+      .join(" "),
   );
 
   addLabel(labels, entry.tag);
@@ -775,7 +800,9 @@ function canonicalizeCategory(category: string) {
 
 function categoryRank(category: string) {
   const normalized = canonicalizeCategory(category);
-  const index = categoryOrder.indexOf(normalized as (typeof categoryOrder)[number]);
+  const index = categoryOrder.indexOf(
+    normalized as (typeof categoryOrder)[number],
+  );
   return index === -1 ? categoryOrder.length : index;
 }
 
@@ -807,7 +834,10 @@ function uniqueByKey<T>(values: T[], getKey: (value: T) => string) {
 }
 
 function sortCatalogItems(left: ItemCatalogEntry, right: ItemCatalogEntry) {
-  const categoryComparison = compareCategories(left.primaryCategory, right.primaryCategory);
+  const categoryComparison = compareCategories(
+    left.primaryCategory,
+    right.primaryCategory,
+  );
 
   if (categoryComparison !== 0) {
     return categoryComparison;
@@ -816,7 +846,9 @@ function sortCatalogItems(left: ItemCatalogEntry, right: ItemCatalogEntry) {
   return left.name.localeCompare(right.name);
 }
 
-function mapLocationEntry(raw: RawItemCatalogLocationEntry): ItemCatalogLocationEntry {
+function mapLocationEntry(
+  raw: RawItemCatalogLocationEntry,
+): ItemCatalogLocationEntry {
   return {
     label: raw.label ?? "",
     href: raw.href ?? null,
@@ -827,7 +859,9 @@ function mapLocationEntry(raw: RawItemCatalogLocationEntry): ItemCatalogLocation
   };
 }
 
-function mapHabitatEntry(raw: RawItemCatalogHabitatEntry): ItemCatalogHabitatEntry {
+function mapHabitatEntry(
+  raw: RawItemCatalogHabitatEntry,
+): ItemCatalogHabitatEntry {
   return {
     slug: raw.slug ?? "",
     name: raw.name ?? "",
@@ -868,7 +902,10 @@ function mapCatalogEntry(raw: RawItemCatalogEntry): ItemCatalogEntry {
   };
 }
 
-function mergeCatalogEntry(current: ItemCatalogEntry, incoming: ItemCatalogEntry): ItemCatalogEntry {
+function mergeCatalogEntry(
+  current: ItemCatalogEntry,
+  incoming: ItemCatalogEntry,
+): ItemCatalogEntry {
   return {
     ...current,
     description: current.description || incoming.description,
@@ -876,7 +913,10 @@ function mergeCatalogEntry(current: ItemCatalogEntry, incoming: ItemCatalogEntry
     tagDetailUrl: current.tagDetailUrl || incoming.tagDetailUrl,
     collectionLabel: current.collectionLabel || incoming.collectionLabel,
     typeLabel: current.typeLabel || incoming.typeLabel,
-    labels: uniqueByKey([...current.labels, ...incoming.labels], (label) => label),
+    labels: uniqueByKey(
+      [...current.labels, ...incoming.labels],
+      (label) => label,
+    ),
     primaryImageUrl: current.primaryImageUrl || incoming.primaryImageUrl,
     serebiiImageUrl: current.serebiiImageUrl || incoming.serebiiImageUrl,
     locationSummary: current.locationSummary || incoming.locationSummary,
@@ -888,7 +928,8 @@ function mergeCatalogEntry(current: ItemCatalogEntry, incoming: ItemCatalogEntry
     ),
     locationEntries: uniqueByKey(
       [...current.locationEntries, ...incoming.locationEntries],
-      (entry) => `${entry.kind}:${entry.label}:${entry.href ?? ""}:${entry.rawText}`,
+      (entry) =>
+        `${entry.kind}:${entry.label}:${entry.href ?? ""}:${entry.rawText}`,
     ),
     sourceUrls: {
       serebii: current.sourceUrls.serebii || incoming.sourceUrls.serebii,
@@ -897,10 +938,15 @@ function mergeCatalogEntry(current: ItemCatalogEntry, incoming: ItemCatalogEntry
 }
 
 function buildCategoryCounts(items: ItemCatalogEntry[]) {
-  return [...items.reduce((lookup, item) => {
-    lookup.set(item.primaryCategory, (lookup.get(item.primaryCategory) ?? 0) + 1);
-    return lookup;
-  }, new Map<string, number>())]
+  return [
+    ...items.reduce((lookup, item) => {
+      lookup.set(
+        item.primaryCategory,
+        (lookup.get(item.primaryCategory) ?? 0) + 1,
+      );
+      return lookup;
+    }, new Map<string, number>()),
+  ]
     .map(([name, count]) => ({
       name,
       count,
@@ -916,54 +962,63 @@ function buildCategoryCounts(items: ItemCatalogEntry[]) {
     });
 }
 
-  function buildSnapshot(rawCatalog: RawItemCatalogSnapshot): ItemCatalogSnapshot {
-    const mappedItems = (rawCatalog.items ?? [])
-      .map(mapCatalogEntry)
-      .filter((item) => item.slug && item.name);
-    const dedupedItems = [...mappedItems.reduce((lookup, item) => {
-      const key = `${item.primaryCategory}:${item.slug}`;
-      const existing = lookup.get(key);
+function buildSnapshot(
+  rawCatalog: RawItemCatalogSnapshot,
+): ItemCatalogSnapshot {
+  const mappedItems = (rawCatalog.items ?? [])
+    .map(mapCatalogEntry)
+    .filter((item) => item.slug && item.name);
+  const dedupedItems = [
+    ...mappedItems
+      .reduce((lookup, item) => {
+        const key = `${item.primaryCategory}:${item.slug}`;
+        const existing = lookup.get(key);
 
-      lookup.set(key, existing ? mergeCatalogEntry(existing, item) : item);
-      return lookup;
-    }, new Map<string, ItemCatalogEntry>()).values()]
-      .map(enrichCatalogEntry)
-      .sort(sortCatalogItems);
+        lookup.set(key, existing ? mergeCatalogEntry(existing, item) : item);
+        return lookup;
+      }, new Map<string, ItemCatalogEntry>())
+      .values(),
+  ]
+    .map(enrichCatalogEntry)
+    .sort(sortCatalogItems);
 
-    return {
-      generatedAt: rawCatalog.generated_at ?? null,
-      sources: {
-        serebiiItems: rawCatalog.sources?.serebii_items ?? null,
-      },
-      totalItems: dedupedItems.length,
-      totalItemsWithImages: dedupedItems.filter((item) => item.primaryImageUrl).length,
-      totalItemsWithLocationEntries: dedupedItems.filter(
-        (item) => item.locationEntries.length > 0,
-      ).length,
-      categories: buildCategoryCounts(dedupedItems),
-      items: dedupedItems,
-    };
-  }
+  return {
+    generatedAt: rawCatalog.generated_at ?? null,
+    sources: {
+      serebiiItems: rawCatalog.sources?.serebii_items ?? null,
+    },
+    totalItems: dedupedItems.length,
+    totalItemsWithImages: dedupedItems.filter((item) => item.primaryImageUrl)
+      .length,
+    totalItemsWithLocationEntries: dedupedItems.filter(
+      (item) => item.locationEntries.length > 0,
+    ).length,
+    categories: buildCategoryCounts(dedupedItems),
+    items: dedupedItems,
+  };
+}
 
 export async function listItemCatalog(): Promise<ItemCatalogSnapshot> {
-    if (prisma) {
-      try {
-        const cachedSnapshot = await prisma.itemCatalogCache.findUnique({
-          where: { id: "primary" },
-        });
+  if (prisma) {
+    try {
+      const cachedSnapshot = await prisma.itemCatalogCache.findUnique({
+        where: { id: "primary" },
+      });
 
-        if (cachedSnapshot?.payload) {
-          return buildSnapshot(cachedSnapshot.payload as unknown as RawItemCatalogSnapshot);
-        }
-      } catch {
-        // Fall back to file storage below.
+      if (cachedSnapshot?.payload) {
+        return buildSnapshot(
+          cachedSnapshot.payload as unknown as RawItemCatalogSnapshot,
+        );
       }
+    } catch {
+      // Fall back to file storage below.
     }
+  }
 
   try {
     const contents = await readFile(itemCatalogPath, "utf8");
     const rawCatalog = JSON.parse(contents) as RawItemCatalogSnapshot;
-      return buildSnapshot(rawCatalog);
+    return buildSnapshot(rawCatalog);
   } catch {
     return emptyCatalog;
   }

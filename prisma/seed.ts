@@ -21,9 +21,21 @@ const pool = new Pool({
 const prisma = new PrismaClient({
   adapter: new PrismaPg(pool),
 });
-const scrapedMaterialsPath = path.join(process.cwd(), "storage", "materials-scraped.json");
-const scrapedHabitatsPath = path.join(process.cwd(), "storage", "game8-habitats-scraped.json");
-const itemCatalogPath = path.join(process.cwd(), "storage", "pokopia-items-catalog.json");
+const scrapedMaterialsPath = path.join(
+  process.cwd(),
+  "storage",
+  "materials-scraped.json",
+);
+const scrapedHabitatsPath = path.join(
+  process.cwd(),
+  "storage",
+  "game8-habitats-scraped.json",
+);
+const itemCatalogPath = path.join(
+  process.cwd(),
+  "storage",
+  "pokopia-items-catalog.json",
+);
 
 interface ScrapedLinkedHabitatRecord {
   slug: string;
@@ -124,7 +136,8 @@ function fallbackMaterialSeedData(): SeedMaterialRecord[] {
 }
 
 async function loadSeedMaterials() {
-  const scrapedMaterials = await readJsonFile<ScrapedMaterialRecord[]>(scrapedMaterialsPath);
+  const scrapedMaterials =
+    await readJsonFile<ScrapedMaterialRecord[]>(scrapedMaterialsPath);
 
   if (!scrapedMaterials || scrapedMaterials.length === 0) {
     return fallbackMaterialSeedData();
@@ -146,7 +159,9 @@ async function loadSeedMaterials() {
 }
 
 async function loadSeedHabitats() {
-  return (await readJsonFile<ScrapedHabitatRecord[]>(scrapedHabitatsPath)) ?? [];
+  return (
+    (await readJsonFile<ScrapedHabitatRecord[]>(scrapedHabitatsPath)) ?? []
+  );
 }
 
 async function loadItemCatalogSnapshot() {
@@ -238,8 +253,11 @@ async function main() {
           reason: habitatLink.match_reason,
         };
       })
-      .filter((link): link is { materialId: string; habitatId: string; reason: string } =>
-        Boolean(link),
+      .filter(
+        (
+          link,
+        ): link is { materialId: string; habitatId: string; reason: string } =>
+          Boolean(link),
       ),
   );
 

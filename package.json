@@ -12,6 +12,7 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
+    "db:refresh-library": "tsx scripts/refreshLibraryCache.ts",
     "scrape:materials": "tsx scripts/scrapeMaterials.ts"
   },
   "dependencies": {
