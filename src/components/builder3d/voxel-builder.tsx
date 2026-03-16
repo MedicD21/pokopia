@@ -1093,6 +1093,13 @@ export function VoxelBuilder() {
   const buildWall = useBuilderStore((state) => state.buildWall);
   const clear = useBuilderStore((state) => state.clear);
   const exportBuilding = useBuilderStore((state) => state.exportBuilding);
+  const pushSnapshot = useBuilderStore((state) => state.pushSnapshot);
+  const undo = useBuilderStore((state) => state.undo);
+  const redo = useBuilderStore((state) => state.redo);
+  const past = useBuilderStore((state) => state.past);
+  const future = useBuilderStore((state) => state.future);
+  const canUndo = past.length > 0;
+  const canRedo = future.length > 0;
   const summary = summarizeMaterials(blocks);
   const blueprint = exportBuilding();
   const previewBlueprint = buildPreviewBlueprint(blueprint);
@@ -1145,12 +1152,30 @@ export function VoxelBuilder() {
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (
-        event.metaKey ||
-        event.ctrlKey ||
-        event.altKey ||
-        isTypingTarget(event.target)
-      ) {
+      if (isTypingTarget(event.target)) {
+        return;
+      }
+
+      if ((event.metaKey || event.ctrlKey) && !event.altKey) {
+        if (event.key.toLowerCase() === "z" && !event.shiftKey) {
+          event.preventDefault();
+          undo();
+          return;
+        }
+
+        if (
+          event.key.toLowerCase() === "y" ||
+          (event.key.toLowerCase() === "z" && event.shiftKey)
+        ) {
+          event.preventDefault();
+          redo();
+          return;
+        }
+
+        return;
+      }
+
+      if (event.altKey) {
         return;
       }
 
@@ -1187,7 +1212,7 @@ export function VoxelBuilder() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [setMode]);
+  }, [setMode, undo, redo]);
 
   useEffect(() => {
     if (
@@ -1205,6 +1230,7 @@ export function VoxelBuilder() {
       return;
     }
 
+    pushSnapshot();
     fillBox(boxStart, point);
     setBoxStart(null);
     setSelectedBlockId(`${point.x}:${point.y}:${point.z}`);
@@ -1217,6 +1243,7 @@ export function VoxelBuilder() {
       return;
     }
 
+    pushSnapshot();
     fillFrame(frameStart, point);
     setFrameStart(null);
     setSelectedBlockId(`${point.x}:${point.y}:${point.z}`);
@@ -1249,15 +1276,18 @@ export function VoxelBuilder() {
     }
 
     if (mode === "remove") {
+      pushSnapshot();
       removeBlock(x, layerY, z);
       return;
     }
 
     if (mode === "paint") {
+      pushSnapshot();
       paintBlock(x, layerY, z);
       return;
     }
 
+    pushSnapshot();
     addBlock(x, layerY, z);
     setSelectedBlockId(`${x}:${layerY}:${z}`);
   }
@@ -1320,6 +1350,7 @@ export function VoxelBuilder() {
         return;
       }
 
+      pushSnapshot();
       removeBlock(block.x, block.y, block.z);
       return;
     }
@@ -1329,6 +1360,7 @@ export function VoxelBuilder() {
         return;
       }
 
+      pushSnapshot();
       paintBlock(block.x, block.y, block.z);
       return;
     }
@@ -1337,6 +1369,7 @@ export function VoxelBuilder() {
     const nextX = sensedPoint.x;
     const nextY = layerY;
     const nextZ = sensedPoint.z;
+    pushSnapshot();
     addBlock(nextX, nextY, nextZ);
     setSelectedBlockId(`${nextX}:${nextY}:${nextZ}`);
   }
@@ -1407,6 +1440,7 @@ export function VoxelBuilder() {
 
     const end = { x, y: clamp(activeLayer, floorLevel, maxBuildHeight - 1), z };
 
+    pushSnapshot();
     buildWall(wallPreviewStart, end, effectiveWallHeight);
     wallDragActiveRef.current = false;
     setWallPreviewEnd(end);
@@ -1457,7 +1491,9 @@ export function VoxelBuilder() {
             </div>
             <div className="flex items-center gap-2 rounded-xl bg-[color:var(--surface-strong)] px-2.5 py-1.5">
               <span className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--muted)]">
-                Layer
+                Layer Shortcuts <br />
+                Down = [ <br />
+                Up = ]
               </span>
               <button
                 type="button"
@@ -1707,6 +1743,24 @@ export function VoxelBuilder() {
 
             {/* Save / clear */}
             <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => undo()}
+                disabled={!canUndo}
+                className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-3 py-2.5 text-xs font-semibold text-[color:var(--foreground)] disabled:opacity-35"
+                title="Undo (Ctrl+Z)"
+              >
+                ↩ Undo
+              </button>
+              <button
+                type="button"
+                onClick={() => redo()}
+                disabled={!canRedo}
+                className="rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-3 py-2.5 text-xs font-semibold text-[color:var(--foreground)] disabled:opacity-35"
+                title="Redo (Ctrl+Y)"
+              >
+                ↪ Redo
+              </button>
               <button
                 type="button"
                 onClick={() => {

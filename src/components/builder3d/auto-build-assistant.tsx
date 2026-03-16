@@ -142,7 +142,7 @@ export function AutoBuildAssistant({
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
-            AI Build Assistant
+            Auto Build Assistant
           </p>
           <p className="max-w-2xl text-sm leading-6 text-[color:var(--muted)]">
             Pick a shell style, dimensions, materials, and optional build

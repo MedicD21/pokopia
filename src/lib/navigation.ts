@@ -16,8 +16,9 @@ export const navigationItems = [
   },
   {
     href: "/ai-builder",
-    label: "AI Builder",
-    summary: "Auto-generate a draft structure from materials, pieces, and dimensions.",
+    label: "Auto Builder",
+    summary:
+      "Auto-generate a draft structure from materials, pieces, and dimensions.",
   },
   {
     href: "/materials",
@@ -28,10 +29,5 @@ export const navigationItems = [
     href: "/library",
     label: "Library",
     summary: "Browse reusable starter blueprints.",
-  },
-  {
-    href: "/scan",
-    label: "Scan Build",
-    summary: "Convert a screenshot into a rough blueprint draft.",
   },
 ];

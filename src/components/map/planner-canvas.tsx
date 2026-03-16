@@ -16,23 +16,118 @@ import {
 } from "@/store/use-map-store";
 
 const roadColors: Record<string, string> = {
-  dirt: "#bf8a5b",
+  // surface / finish types
   stone: "#8792ab",
+  cobblestone: "#6b7285",
+  tile: "#7f8cab",
+  brick: "#c9603e",
+  asphalt: "#4e5263",
+  marked: "#3e4250",
+  // natural / unpaved
+  path: "#d0b583",
+  dirt: "#bf8a5b",
+  gravel: "#9a8e7d",
+  sand: "#e0c87a",
+  grass: "#5ab06a",
+  // structural
   wood: "#b77741",
   bridge: "#5f83a1",
-  path: "#d0b583",
 };
 
-const defaultRoadOptions = ["stone", "path", "dirt", "wood", "bridge"];
+/** All road types drawn by default – matches the Block category surfaces in the item library. */
+const defaultRoadOptions = [
+  // paved / hard surfaces
+  "stone",
+  "cobblestone",
+  "tile",
+  "brick",
+  "asphalt",
+  "marked",
+  // natural / soft
+  "path",
+  "dirt",
+  "gravel",
+  "sand",
+  "grass",
+  // structural
+  "wood",
+  "bridge",
+];
 
 const decorationColors: Record<string, string> = {
+  // Trees (Nature category)
   tree: "#3e9a67",
-  lamp: "#f4d46a",
+  "palm-tree": "#5ecb7e",
+  "pointy-tree": "#2e7d52",
+  // Flowers & ground cover (Nature)
   flower: "#f08ba3",
+  wildflower: "#e065a0",
+  "mountain-flower": "#b981e0",
+  // Hedges & grass (Nature)
+  hedge: "#2d7045",
+  "tall-grass": "#7dcf60",
+  // Landscape features (Nature)
+  boulder: "#8a8f9e",
+  vine: "#4e9458",
+  // Lighting (Outdoor)
+  lamp: "#f4d46a",
+  torch: "#f07032",
+  // Power (Outdoor / custom)
   "electric-pole": "#ffe15a",
+  // Water features (Outdoor)
+  fountain: "#5ab4d4",
+  "water-basin": "#6ac0d8",
+  // Fire (Outdoor)
+  campfire: "#f58c28",
+  // Signage (Outdoor)
+  sign: "#c8a86a",
+  "information-board": "#a8c0e8",
+  // Storage & objects (Outdoor)
+  barrel: "#8f6240",
+  planter: "#78b86c",
+  mailbox: "#4a82d4",
+  "trash-bin": "#6b7280",
+  "weather-vane": "#9eb0c8",
+  "vending-machine": "#40b8b8",
 };
 
-const defaultDecorationOptions = ["tree", "flower", "lamp", "electric-pole"];
+/** All decoration types drawn by default – matches Nature + Outdoor items in the item library. */
+const defaultDecorationOptions = [
+  // trees
+  "tree",
+  "palm-tree",
+  "pointy-tree",
+  // flowers & ground cover
+  "flower",
+  "wildflower",
+  "mountain-flower",
+  // hedges & grass
+  "hedge",
+  "tall-grass",
+  // landscape
+  "boulder",
+  "vine",
+  // lighting
+  "lamp",
+  "torch",
+  // power
+  "electric-pole",
+  // water
+  "fountain",
+  "water-basin",
+  // fire
+  "campfire",
+  // signage
+  "sign",
+  "information-board",
+  // storage & objects
+  "barrel",
+  "planter",
+  "mailbox",
+  "trash-bin",
+  "weather-vane",
+  "vending-machine",
+];
 
 const themeColors: Record<string, string> = {
   community: "#f59c74",
@@ -147,6 +242,132 @@ function drawElectricPoleStamp(
     context.closePath();
     context.fill();
   }
+}
+
+/**
+ * Draws a canvas stamp for a decoration tile.  Each type uses a distinct
+ * shape so the map is readable even at small zoom levels.
+ */
+function drawDecorationStamp(
+  context: CanvasRenderingContext2D,
+  px: number,
+  py: number,
+  tileSize: number,
+  decorationType: string,
+  color: string,
+) {
+  const cx = px + tileSize / 2;
+  const cy = py + tileSize / 2;
+  const r = Math.max(tileSize / 3, 1.5);
+
+  // ── Rectangle / block shapes ──────────────────────────────────────────
+  if (
+    decorationType === "hedge" ||
+    decorationType === "sign" ||
+    decorationType === "information-board" ||
+    decorationType === "vending-machine"
+  ) {
+    const w = tileSize * 0.64;
+    const h = tileSize * 0.64;
+    context.fillStyle = color;
+    context.fillRect(cx - w / 2, cy - h / 2, w, h);
+    context.strokeStyle = "rgba(0,0,0,0.28)";
+    context.lineWidth = Math.max(tileSize * 0.05, 0.8);
+    context.strokeRect(cx - w / 2, cy - h / 2, w, h);
+    return;
+  }
+
+  // ── Narrow upright rectangle ───────────────────────────────────────────
+  if (
+    decorationType === "mailbox" ||
+    decorationType === "trash-bin" ||
+    decorationType === "barrel" ||
+    decorationType === "water-basin"
+  ) {
+    const w = tileSize * 0.44;
+    const h = tileSize * 0.56;
+    context.fillStyle = color;
+    context.fillRect(cx - w / 2, cy - h / 2, w, h);
+    context.strokeStyle = "rgba(0,0,0,0.22)";
+    context.lineWidth = Math.max(tileSize * 0.04, 0.7);
+    context.strokeRect(cx - w / 2, cy - h / 2, w, h);
+    return;
+  }
+
+  // ── Campfire / torch: circle with a bright inner dot ──────────────────
+  if (decorationType === "campfire" || decorationType === "torch") {
+    context.fillStyle = color;
+    context.beginPath();
+    context.arc(cx, cy, r, 0, Math.PI * 2);
+    context.fill();
+    if (tileSize >= 8) {
+      context.fillStyle = "#ffe0a0";
+      context.beginPath();
+      context.arc(cx, cy - r * 0.25, r * 0.38, 0, Math.PI * 2);
+      context.fill();
+    }
+    return;
+  }
+
+  // ── Boulder: oversized circle with stroke ─────────────────────────────
+  if (decorationType === "boulder") {
+    context.fillStyle = color;
+    context.beginPath();
+    context.arc(cx, cy, r * 1.15, 0, Math.PI * 2);
+    context.fill();
+    context.strokeStyle = "rgba(30,34,50,0.35)";
+    context.lineWidth = Math.max(tileSize * 0.06, 1);
+    context.beginPath();
+    context.arc(cx, cy, r * 1.15, 0, Math.PI * 2);
+    context.stroke();
+    return;
+  }
+
+  // ── Tall-grass: thin vertical blades ─────────────────────────────────
+  if (decorationType === "tall-grass") {
+    const bladeW = Math.max(tileSize * 0.09, 1.2);
+    context.fillStyle = color;
+    for (let i = -1; i <= 1; i += 1) {
+      const bx = cx + i * tileSize * 0.22;
+      context.fillRect(bx - bladeW / 2, cy - r * 1.05, bladeW, r * 2.1);
+    }
+    return;
+  }
+
+  // ── Fountain: circle with a light-blue center drop ───────────────────
+  if (decorationType === "fountain") {
+    context.fillStyle = color;
+    context.beginPath();
+    context.arc(cx, cy, r, 0, Math.PI * 2);
+    context.fill();
+    if (tileSize >= 8) {
+      context.fillStyle = "#d0f0ff";
+      context.beginPath();
+      context.arc(cx, cy, r * 0.38, 0, Math.PI * 2);
+      context.fill();
+    }
+    return;
+  }
+
+  // ── Weather-vane: small diamond ───────────────────────────────────────
+  if (decorationType === "weather-vane") {
+    const s = r * 0.9;
+    context.fillStyle = color;
+    context.beginPath();
+    context.moveTo(cx, cy - s);
+    context.lineTo(cx + s, cy);
+    context.lineTo(cx, cy + s);
+    context.lineTo(cx - s, cy);
+    context.closePath();
+    context.fill();
+    return;
+  }
+
+  // ── Default: solid circle ─────────────────────────────────────────────
+  context.fillStyle = color;
+  context.beginPath();
+  context.arc(cx, cy, r, 0, Math.PI * 2);
+  context.fill();
 }
 
 function normalizeCustomSlug(value: string) {
@@ -346,6 +567,13 @@ export function PlannerCanvas() {
   const createNewMap = useMapStore((state) => state.createNewMap);
   const resetMap = useMapStore((state) => state.resetMap);
   const exportMap = useMapStore((state) => state.exportMap);
+  const pushSnapshot = useMapStore((state) => state.pushSnapshot);
+  const undo = useMapStore((state) => state.undo);
+  const redo = useMapStore((state) => state.redo);
+  const past = useMapStore((state) => state.past);
+  const future = useMapStore((state) => state.future);
+  const canUndo = past.length > 0;
+  const canRedo = future.length > 0;
 
   const selectedPlacement =
     placements.find((placement) => placement.id === selectedPlacementId) ??
@@ -683,19 +911,18 @@ export function PlannerCanvas() {
           electricPoles.push({ x: tile.x, y: tile.y });
           drawElectricPoleStamp(context, px, py, tileSize);
         } else {
-          context.fillStyle =
+          const decoColor =
             customDecorationColors[tile.decorationType] ??
             decorationColors[tile.decorationType] ??
             "#74b48f";
-          context.beginPath();
-          context.arc(
-            px + tileSize / 2,
-            py + tileSize / 2,
-            Math.max(tileSize / 3, 1.5),
-            0,
-            Math.PI * 2,
+          drawDecorationStamp(
+            context,
+            px,
+            py,
+            tileSize,
+            tile.decorationType,
+            decoColor,
           );
-          context.fill();
         }
       }
     });
@@ -878,12 +1105,30 @@ export function PlannerCanvas() {
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (
-        event.metaKey ||
-        event.ctrlKey ||
-        event.altKey ||
-        isTypingTarget(event.target)
-      ) {
+      if (isTypingTarget(event.target)) {
+        return;
+      }
+
+      if ((event.metaKey || event.ctrlKey) && !event.altKey) {
+        if (event.key.toLowerCase() === "z" && !event.shiftKey) {
+          event.preventDefault();
+          undo();
+          return;
+        }
+
+        if (
+          event.key.toLowerCase() === "y" ||
+          (event.key.toLowerCase() === "z" && event.shiftKey)
+        ) {
+          event.preventDefault();
+          redo();
+          return;
+        }
+
+        return;
+      }
+
+      if (event.altKey) {
         return;
       }
 
@@ -917,7 +1162,7 @@ export function PlannerCanvas() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [setDrawMode, setDrawStart, setTool]);
+  }, [setDrawMode, setDrawStart, setTool, undo, redo]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -979,6 +1224,7 @@ export function PlannerCanvas() {
     if (placement) {
       selectPlacement(placement.id);
       setSelectedTile(null);
+      pushSnapshot();
       dragActiveRef.current = true;
       return;
     }
@@ -1000,6 +1246,7 @@ export function PlannerCanvas() {
 
     if (tool === "building") {
       setSelectedTile(null);
+      pushSnapshot();
       placeBuilding(tile.x, tile.y);
       return;
     }
@@ -1008,11 +1255,13 @@ export function PlannerCanvas() {
       setSelectedTile(null);
 
       if (drawMode === "fill") {
+        pushSnapshot();
         floodFillFrom(tile);
         return;
       }
 
       if (drawMode === "brush") {
+        pushSnapshot();
         applyDrawTiles([tile]);
         paintActiveRef.current = true;
         return;
@@ -1055,20 +1304,57 @@ export function PlannerCanvas() {
     <div className="grid min-h-[calc(100vh-10rem)] gap-5 xl:grid-cols-[minmax(0,1fr)_390px]">
       <SectionCard
         title="2D Town Planner"
-        description="The planner supports brush, line, rectangle, fill, eyedropper, placement duplication, precise nudging, and clearer 10x10 guide lines for larger town layouts."
+        description="Design your town on a 100×100 grid. Place roads, decorations, and buildings — then save your map or generate a materials list."
         className="flex min-h-[calc(100vh-11rem)] flex-col"
       >
-        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-[24px] bg-[color:var(--surface)] px-4 py-3 text-sm text-[color:var(--muted)]">
-          <span>Hand: select and move placed buildings.</span>
-          <span>Eyedropper: sample existing map content.</span>
-          <span>
-            Brush, line, rectangle, and fill work with roads, decorations, and
-            delete.
-          </span>
-          <span>Shortcuts: H, R, B, D, E, X and 1-4 for draw modes.</span>
-          <span>
-            Bold grid lines mark every 10 tiles without limiting the map size.
-          </span>
+        <div className="mb-4 space-y-2 rounded-[24px] bg-[color:var(--surface)] px-4 py-4 text-sm text-[color:var(--muted)]">
+          <p className="font-semibold text-[color:var(--foreground)]">
+            Quick Start — Tools &amp; Shortcuts
+          </p>
+          <div className="flex flex-wrap gap-x-5 gap-y-1">
+            <span>
+              <strong className="text-[color:var(--foreground)]">H</strong> —
+              Hand: click a building to select it, then drag to move it.
+            </span>
+            <span>
+              <strong className="text-[color:var(--foreground)]">R</strong> —
+              Road: paint road tiles onto the grid.
+            </span>
+            <span>
+              <strong className="text-[color:var(--foreground)]">B</strong> —
+              Building: stamp the chosen blueprint.
+            </span>
+            <span>
+              <strong className="text-[color:var(--foreground)]">D</strong> —
+              Decoration: place trees, lamps, electric poles and more.
+            </span>
+            <span>
+              <strong className="text-[color:var(--foreground)]">E</strong> —
+              Eyedropper: click any tile or building to sample its type.
+            </span>
+            <span>
+              <strong className="text-[color:var(--foreground)]">X</strong> —
+              Delete: click or drag to erase tiles and remove buildings.
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-x-5 gap-y-1 border-t border-[color:var(--line)] pt-2">
+            <span>
+              Draw modes:{" "}
+              <strong className="text-[color:var(--foreground)]">1</strong>{" "}
+              Brush ·{" "}
+              <strong className="text-[color:var(--foreground)]">2</strong> Line
+              · <strong className="text-[color:var(--foreground)]">3</strong>{" "}
+              Rectangle ·{" "}
+              <strong className="text-[color:var(--foreground)]">4</strong> Fill
+            </span>
+            <span>
+              Undo:{" "}
+              <strong className="text-[color:var(--foreground)]">Ctrl+Z</strong>{" "}
+              · Redo:{" "}
+              <strong className="text-[color:var(--foreground)]">Ctrl+Y</strong>{" "}
+              (or Ctrl+Shift+Z) · Bold grid lines = every 10 tiles.
+            </span>
+          </div>
         </div>
         <div className="grid min-h-[720px] flex-1 grid-cols-[minmax(0,1fr)_78px] gap-4">
           <div
@@ -1141,10 +1427,12 @@ export function PlannerCanvas() {
                       tool === "delete")
                   ) {
                     if (drawMode === "line") {
+                      pushSnapshot();
                       applyDrawTiles(getLineTiles(drawStart, tile));
                     }
 
                     if (drawMode === "rectangle") {
+                      pushSnapshot();
                       applyDrawTiles(getRectangleTiles(drawStart, tile));
                     }
                   }
@@ -1325,6 +1613,24 @@ export function PlannerCanvas() {
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
+                onClick={() => undo()}
+                disabled={!canUndo}
+                className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)] disabled:opacity-35"
+                title="Undo (Ctrl+Z)"
+              >
+                ↩ Undo
+              </button>
+              <button
+                type="button"
+                onClick={() => redo()}
+                disabled={!canRedo}
+                className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)] disabled:opacity-35"
+                title="Redo (Ctrl+Y)"
+              >
+                ↪ Redo
+              </button>
+              <button
+                type="button"
                 onClick={handleCreateCustomAsset}
                 className="col-span-2 rounded-2xl border border-[color:var(--foreground)]/20 bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
               >
@@ -1392,28 +1698,40 @@ export function PlannerCanvas() {
               <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
-                  onClick={() => nudgeSelectedPlacement(0, -1)}
+                  onClick={() => {
+                    pushSnapshot();
+                    nudgeSelectedPlacement(0, -1);
+                  }}
                   className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
                 >
                   Up
                 </button>
                 <button
                   type="button"
-                  onClick={rotateSelectedPlacement}
+                  onClick={() => {
+                    pushSnapshot();
+                    rotateSelectedPlacement();
+                  }}
                   className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
                 >
                   Rotate
                 </button>
                 <button
                   type="button"
-                  onClick={() => nudgeSelectedPlacement(0, 1)}
+                  onClick={() => {
+                    pushSnapshot();
+                    nudgeSelectedPlacement(0, 1);
+                  }}
                   className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
                 >
                   Down
                 </button>
                 <button
                   type="button"
-                  onClick={() => nudgeSelectedPlacement(-1, 0)}
+                  onClick={() => {
+                    pushSnapshot();
+                    nudgeSelectedPlacement(-1, 0);
+                  }}
                   className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
                 >
                   Left
@@ -1430,7 +1748,10 @@ export function PlannerCanvas() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => nudgeSelectedPlacement(1, 0)}
+                  onClick={() => {
+                    pushSnapshot();
+                    nudgeSelectedPlacement(1, 0);
+                  }}
                   className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
                 >
                   Right
@@ -1439,14 +1760,20 @@ export function PlannerCanvas() {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  onClick={duplicateSelectedPlacement}
+                  onClick={() => {
+                    pushSnapshot();
+                    duplicateSelectedPlacement();
+                  }}
                   className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
                 >
                   Duplicate
                 </button>
                 <button
                   type="button"
-                  onClick={deleteSelectedPlacement}
+                  onClick={() => {
+                    pushSnapshot();
+                    deleteSelectedPlacement();
+                  }}
                   className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
                 >
                   Remove
@@ -1520,6 +1847,7 @@ export function PlannerCanvas() {
                 type="button"
                 onClick={() => {
                   if (selectedTile) {
+                    pushSnapshot();
                     deleteAt(selectedTile.x, selectedTile.y);
                   }
                 }}

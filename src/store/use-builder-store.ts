@@ -2,7 +2,11 @@
 
 import { create } from "zustand";
 
-import { cloneBuildingData, sampleBuildings, sampleBuildingLookup } from "@/data/buildings";
+import {
+  cloneBuildingData,
+  sampleBuildings,
+  sampleBuildingLookup,
+} from "@/data/buildings";
 import { blockMaterialLookup } from "@/data/materials";
 import { deriveFootprintFromBlocks } from "@/lib/materials";
 import type { BlockMaterialId, BuildingData, VoxelBlock } from "@/lib/types";
@@ -23,6 +27,8 @@ interface BuilderState {
   theme: string;
   loadedTemplateId: string;
   blocks: VoxelBlock[];
+  past: VoxelBlock[][];
+  future: VoxelBlock[][];
   activeMaterial: BlockMaterialId;
   activeColor: string;
   mode: BuilderMode;
@@ -31,6 +37,9 @@ interface BuilderState {
   setActiveMaterial: (material: BlockMaterialId) => void;
   setActiveColor: (color: string) => void;
   setMode: (mode: BuilderMode) => void;
+  pushSnapshot: () => void;
+  undo: () => void;
+  redo: () => void;
   loadTemplate: (buildingId: string) => void;
   loadBlueprint: (building: BuildingData) => void;
   addBlock: (x: number, y: number, z: number) => void;
@@ -244,7 +253,14 @@ function buildWallWithMaterial(
 
   getLinePoints(start, end).forEach((point) => {
     for (let y = baseY; y <= topY; y += 1) {
-      nextBlocks = upsertBlock(nextBlocks, point.x, y, point.z, material, color);
+      nextBlocks = upsertBlock(
+        nextBlocks,
+        point.x,
+        y,
+        point.z,
+        material,
+        color,
+      );
     }
   });
 
@@ -259,8 +275,12 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   theme: defaultBuilding.theme,
   loadedTemplateId: defaultBuilding.id,
   blocks: cloneBlocks(defaultBuilding.blocks),
+  past: [],
+  future: [],
   activeMaterial: "wooden-wall",
-  activeColor: blockMaterialLookup["wooden-wall"]?.color ?? blockMaterialLookup.stone.color,
+  activeColor:
+    blockMaterialLookup["wooden-wall"]?.color ??
+    blockMaterialLookup.stone.color,
   mode: "hand",
   setName: (name) => set({ name }),
   setDescription: (description) => set({ description }),
@@ -271,6 +291,38 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     }),
   setActiveColor: (activeColor) => set({ activeColor }),
   setMode: (mode) => set({ mode }),
+  pushSnapshot: () => {
+    const { blocks, past } = get();
+    set({ past: [...past, cloneBlocks(blocks)].slice(-60), future: [] });
+  },
+  undo: () => {
+    const { past, future, blocks } = get();
+
+    if (past.length === 0) {
+      return;
+    }
+
+    const previous = past[past.length - 1];
+    set({
+      past: past.slice(0, -1),
+      future: [cloneBlocks(blocks), ...future].slice(0, 60),
+      blocks: previous,
+    });
+  },
+  redo: () => {
+    const { past, future, blocks } = get();
+
+    if (future.length === 0) {
+      return;
+    }
+
+    const next = future[0];
+    set({
+      past: [...past, cloneBlocks(blocks)].slice(-60),
+      future: future.slice(1),
+      blocks: next,
+    });
+  },
   loadTemplate: (buildingId) => {
     const template = sampleBuildingLookup[buildingId];
 
@@ -286,8 +338,12 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       theme: nextBuilding.theme,
       loadedTemplateId: nextBuilding.id,
       blocks: cloneBlocks(nextBuilding.blocks),
+      past: [],
+      future: [],
       activeMaterial: "wooden-wall",
-      activeColor: blockMaterialLookup["wooden-wall"]?.color ?? blockMaterialLookup.stone.color,
+      activeColor:
+        blockMaterialLookup["wooden-wall"]?.color ??
+        blockMaterialLookup.stone.color,
       mode: "hand",
     });
   },
@@ -300,15 +356,21 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       theme: nextBuilding.theme,
       loadedTemplateId: nextBuilding.id,
       blocks: cloneBlocks(nextBuilding.blocks),
+      past: [],
+      future: [],
       activeMaterial: "wooden-wall",
-      activeColor: blockMaterialLookup["wooden-wall"]?.color ?? blockMaterialLookup.stone.color,
+      activeColor:
+        blockMaterialLookup["wooden-wall"]?.color ??
+        blockMaterialLookup.stone.color,
       mode: "hand",
     });
   },
   addBlock: (x, y, z) => {
     const { activeColor, activeMaterial, blocks } = get();
     set({
-      blocks: sortBlocks(upsertBlock(blocks, x, y, z, activeMaterial, activeColor)),
+      blocks: sortBlocks(
+        upsertBlock(blocks, x, y, z, activeMaterial, activeColor),
+      ),
     });
   },
   removeBlock: (x, y, z) => {
@@ -318,7 +380,9 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   paintBlock: (x, y, z) => {
     const { activeColor, activeMaterial, blocks } = get();
     set({
-      blocks: sortBlocks(upsertBlock(blocks, x, y, z, activeMaterial, activeColor)),
+      blocks: sortBlocks(
+        upsertBlock(blocks, x, y, z, activeMaterial, activeColor),
+      ),
     });
   },
   fillBox: (start, end) => {
@@ -344,7 +408,14 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
 
     set({
       blocks: sortBlocks(
-        buildWallWithMaterial(blocks, start, end, height, activeMaterial, activeColor),
+        buildWallWithMaterial(
+          blocks,
+          start,
+          end,
+          height,
+          activeMaterial,
+          activeColor,
+        ),
       ),
     });
   },
@@ -374,7 +445,9 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     }
 
     set({
-      blocks: sortBlocks(upsertBlock(blocks, x, y, z, existing.material, color)),
+      blocks: sortBlocks(
+        upsertBlock(blocks, x, y, z, existing.material, color),
+      ),
     });
   },
   moveBlock: (x, y, z, dx, dy, dz) => {
@@ -457,22 +530,30 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       theme: "custom",
       loadedTemplateId: "custom",
       blocks: [],
+      past: [],
+      future: [],
       activeMaterial: "wooden-wall",
-      activeColor: blockMaterialLookup["wooden-wall"]?.color ?? blockMaterialLookup.stone.color,
+      activeColor:
+        blockMaterialLookup["wooden-wall"]?.color ??
+        blockMaterialLookup.stone.color,
       mode: "hand",
     }),
   exportBuilding: () => {
     const { blocks, description, loadedTemplateId, name, theme } = get();
 
     return {
-      id: loadedTemplateId === "custom" ? `custom-${Date.now()}` : loadedTemplateId,
+      id:
+        loadedTemplateId === "custom"
+          ? `custom-${Date.now()}`
+          : loadedTemplateId,
       name,
       description,
       theme,
       footprint: deriveFootprintFromBlocks(blocks),
       blocks: cloneBlocks(blocks),
       tags: ["builder-export"],
-      suggestedSkills: sampleBuildingLookup[loadedTemplateId]?.suggestedSkills ?? [],
+      suggestedSkills:
+        sampleBuildingLookup[loadedTemplateId]?.suggestedSkills ?? [],
     };
   },
 }));

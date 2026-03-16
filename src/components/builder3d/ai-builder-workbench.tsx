@@ -15,16 +15,66 @@ import { useBuilderStore } from "@/store/use-builder-store";
 export function AiBuilderWorkbench() {
   const router = useRouter();
   const loadBlueprint = useBuilderStore((state) => state.loadBlueprint);
-  const [generatedBlueprint, setGeneratedBlueprint] = useState<BuildingData | null>(null);
-  const [generatedOptions, setGeneratedOptions] = useState<AutoBuildOptions | null>(null);
+  const [generatedBlueprint, setGeneratedBlueprint] =
+    useState<BuildingData | null>(null);
+  const [generatedOptions, setGeneratedOptions] =
+    useState<AutoBuildOptions | null>(null);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
   const summary = useMemo(
     () => (generatedBlueprint ? summarizeMaterials(generatedBlueprint) : null),
     [generatedBlueprint],
   );
 
-  function handleGenerate(blueprint: BuildingData, options: AutoBuildOptions) {
+  async function handleGenerate(
+    blueprint: BuildingData,
+    options: AutoBuildOptions,
+  ) {
     setGeneratedBlueprint(blueprint);
     setGeneratedOptions(options);
+    setSaveMessage(null);
+
+    // Auto-save the generated blueprint
+    await handleAutoSave(blueprint);
+  }
+
+  async function handleAutoSave(blueprint: BuildingData) {
+    setIsSaving(true);
+    setSaveMessage(null);
+
+    try {
+      const response = await fetch("/api/buildings/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: blueprint.name ?? "Auto-Generated Build",
+          description:
+            blueprint.description ??
+            "Auto-generated from Auto Builder assistant.",
+          data: blueprint,
+        }),
+      });
+
+      const payload = (await response.json()) as {
+        building?: { id: string; name: string };
+        error?: string;
+      };
+
+      if (!response.ok || payload.error) {
+        setSaveMessage(payload.error ?? "Unable to save building right now.");
+        return;
+      }
+
+      setSaveMessage(
+        `✓ Auto-saved as "${payload.building?.name}" — ready to edit in the 3D builder.`,
+      );
+    } catch {
+      setSaveMessage(
+        "Auto-save failed — check your connection. You can still open in 3D builder.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   function handleOpenInBuilder() {
@@ -39,7 +89,7 @@ export function AiBuilderWorkbench() {
   return (
     <div className="space-y-6">
       <SectionCard
-        eyebrow="AI Builder"
+        eyebrow="Auto Builder"
         title="Generate a starter structure before you fine-tune it in 3D."
         description="Use the assistant to choose shell style, materials, dimensions, and feature pieces. When the draft looks right, send it straight into the voxel builder."
         action={
@@ -56,25 +106,52 @@ export function AiBuilderWorkbench() {
 
       <SectionCard
         eyebrow="Draft Preview"
-        title={generatedBlueprint ? generatedBlueprint.name : "No generated draft yet"}
+        title={
+          generatedBlueprint
+            ? generatedBlueprint.name
+            : "No generated draft yet"
+        }
         description={
           generatedBlueprint
             ? generatedBlueprint.description
             : "Generate a build to review its footprint, materials, and suggested helper Pokemon before opening it in the builder."
         }
         action={
-          <button
-            type="button"
-            onClick={handleOpenInBuilder}
-            disabled={!generatedBlueprint}
-            className="rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)] disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Open in 3D Builder
-          </button>
+          <div className="flex flex-col gap-2 md:flex-row">
+            <button
+              type="button"
+              onClick={handleOpenInBuilder}
+              disabled={!generatedBlueprint}
+              className="rounded-2xl border border-[color:var(--foreground)]/40 bg-[color:var(--accent)]/16 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Open in 3D Builder
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                generatedBlueprint && handleAutoSave(generatedBlueprint)
+              }
+              disabled={!generatedBlueprint || isSaving}
+              className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isSaving ? "Saving..." : "Save Build"}
+            </button>
+          </div>
         }
       >
         {generatedBlueprint && summary ? (
           <div className="space-y-6">
+            {saveMessage && (
+              <div
+                className={`rounded-2xl border px-4 py-3 text-sm font-semibold ${
+                  saveMessage.startsWith("✓")
+                    ? "border-[color:var(--success)]/40 bg-[color:var(--success)]/8 text-[color:var(--success)]"
+                    : "border-[color:var(--destructive)]/40 bg-[color:var(--destructive)]/8 text-[color:var(--destructive)]"
+                }`}
+              >
+                {saveMessage}
+              </div>
+            )}
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4">
                 <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">

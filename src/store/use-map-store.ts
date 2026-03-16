@@ -11,6 +11,11 @@ import type {
   TownMap,
 } from "@/lib/types";
 
+type MapSnapshot = {
+  tiles: Record<string, GridTile>;
+  placements: BuildingPlacement[];
+};
+
 export type MapTool =
   | "hand"
   | "road"
@@ -27,6 +32,8 @@ interface MapPlannerState {
   tiles: Record<string, GridTile>;
   placements: BuildingPlacement[];
   customBuildings: Record<string, BuildingData>;
+  past: MapSnapshot[];
+  future: MapSnapshot[];
   tool: MapTool;
   roadType: NonNullable<GridTile["roadType"]>;
   decorationType: string;
@@ -54,6 +61,9 @@ interface MapPlannerState {
   rotateSelectedPlacement: () => void;
   deleteSelectedPlacement: () => void;
   deleteAt: (x: number, y: number) => void;
+  pushSnapshot: () => void;
+  undo: () => void;
+  redo: () => void;
   createNewMap: () => void;
   resetMap: () => void;
   exportMap: () => TownMap;
@@ -120,6 +130,8 @@ function createStarterState() {
       ...placement,
     })),
     customBuildings: {},
+    past: [] as MapSnapshot[],
+    future: [] as MapSnapshot[],
     tool: "hand" as MapTool,
     roadType: "stone" as NonNullable<GridTile["roadType"]>,
     decorationType: "tree",
@@ -138,6 +150,8 @@ function createBlankState() {
     tiles: {},
     placements: [] as BuildingPlacement[],
     customBuildings: {},
+    past: [] as MapSnapshot[],
+    future: [] as MapSnapshot[],
     tool: "hand" as MapTool,
     roadType: "stone" as NonNullable<GridTile["roadType"]>,
     decorationType: "tree",
@@ -445,6 +459,43 @@ export const useMapStore = create<MapPlannerState>((set, get) => ({
     const nextTiles = { ...tiles };
     delete nextTiles[tileKey(x, y)];
     set({ tiles: nextTiles });
+  },
+  pushSnapshot: () => {
+    const { placements, tiles, past } = get();
+    const snapshot: MapSnapshot = { tiles, placements };
+    set({ past: [...past, snapshot].slice(-60), future: [] });
+  },
+  undo: () => {
+    const { past, future, tiles, placements } = get();
+
+    if (past.length === 0) {
+      return;
+    }
+
+    const previous = past[past.length - 1];
+    set({
+      past: past.slice(0, -1),
+      future: [{ tiles, placements }, ...future].slice(0, 60),
+      tiles: previous.tiles,
+      placements: previous.placements,
+      selectedPlacementId: null,
+    });
+  },
+  redo: () => {
+    const { past, future, tiles, placements } = get();
+
+    if (future.length === 0) {
+      return;
+    }
+
+    const next = future[0];
+    set({
+      past: [...past, { tiles, placements }].slice(-60),
+      future: future.slice(1),
+      tiles: next.tiles,
+      placements: next.placements,
+      selectedPlacementId: null,
+    });
   },
   createNewMap: () => set(createBlankState()),
   resetMap: () => set(createStarterState()),
