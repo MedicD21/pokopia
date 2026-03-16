@@ -5,10 +5,10 @@ import { navigationItems } from "@/lib/navigation";
 
 export default function HomePage() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-2">
       <section className="relative overflow-hidden rounded-[36px] border border-[color:var(--line)] bg-[linear-gradient(135deg,rgba(18,31,52,0.95),rgba(8,17,31,0.92))] px-6 py-8 shadow-[0_22px_60px_rgba(0,0,0,0.34)] sm:px-8 sm:py-10">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(242,160,39,0.16),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(125,166,255,0.12),transparent_36%)]" />
-        <div className="relative max-w-4xl space-y-5">
+        <div className="relative w-[auto]">
           <div className="space-y-3">
             <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[color:var(--accent-2)]">
               Pokopia Planner
@@ -17,8 +17,9 @@ export default function HomePage() {
               Design towns, draft buildings, and plan materials in one place.
             </h1>
             <p className="max-w-3xl text-base leading-7 text-[color:var(--muted)]">
-              Jump straight into the map planner, 3D voxel builder, AI draft builder,
-              materials lookup, and item library without the extra homepage cards.
+              Jump straight into the map planner, 3D voxel builder, AI draft
+              builder, materials lookup, and item library without the extra
+              homepage cards.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">

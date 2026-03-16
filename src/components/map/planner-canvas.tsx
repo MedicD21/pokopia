@@ -623,7 +623,12 @@ export function PlannerCanvas() {
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.metaKey || event.ctrlKey || event.altKey || isTypingTarget(event.target)) {
+      if (
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        isTypingTarget(event.target)
+      ) {
         return;
       }
 
@@ -789,7 +794,6 @@ export function PlannerCanvas() {
   return (
     <div className="grid min-h-[calc(100vh-10rem)] gap-5 xl:grid-cols-[minmax(0,1fr)_390px]">
       <SectionCard
-        eyebrow="Phase 3"
         title="2D Town Planner"
         description="The planner supports brush, line, rectangle, fill, eyedropper, placement duplication, precise nudging, and clearer 10x10 guide lines for larger town layouts."
         className="flex min-h-[calc(100vh-11rem)] flex-col"
@@ -872,7 +876,9 @@ export function PlannerCanvas() {
                   if (
                     drawStart &&
                     tile &&
-                    (tool === "road" || tool === "decoration" || tool === "delete")
+                    (tool === "road" ||
+                      tool === "decoration" ||
+                      tool === "delete")
                   ) {
                     if (drawMode === "line") {
                       applyDrawTiles(getLineTiles(drawStart, tile));
@@ -890,14 +896,14 @@ export function PlannerCanvas() {
               />
             </div>
           </div>
-          <div className="flex min-h-[720px] flex-col items-center gap-4 rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-4">
+          <div className="flex h-[16.8em] flex-col items-center gap-4 rounded-[24px] border border-[color:var(--line)] bg-[color:var(--surface)] px-3 py-4">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--accent-2)]">
               Zoom
             </p>
             <div className="rounded-full bg-[color:var(--surface-strong)] px-3 py-2 text-sm font-semibold text-[color:var(--foreground)]">
               {zoomPercent}%
             </div>
-            <div className="pt-1">
+            <div className="pt-10">
               <input
                 type="range"
                 min={0.6}
@@ -905,14 +911,14 @@ export function PlannerCanvas() {
                 step={0.1}
                 value={mapZoom}
                 onChange={(event) => setMapZoom(Number(event.target.value))}
-                className="h-12 w-[260px] -rotate-90 accent-[color:var(--accent)]"
+                className="h-[auto] w-[auto]  -rotate-90 accent-[color:var(--accent)]"
                 aria-label="Map zoom"
               />
             </div>
             <button
               type="button"
               onClick={() => setMapZoom(1)}
-              className="mt-auto rounded-2xl bg-[color:var(--surface-strong)] px-3 py-2 text-xs font-semibold text-[color:var(--foreground)]"
+              className="mt-10 rounded-2xl bg-[color:var(--surface-strong)] px-3 py-2 text-xs font-semibold text-[color:var(--foreground)]"
             >
               Reset
             </button>

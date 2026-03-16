@@ -58,7 +58,9 @@ export type BlockMaterialId =
   | "window-hatch"
   | "window-skylight"
   | "window-stained"
-  | "window-shutter";
+  | "window-shutter"
+  // catalog block items (any slug from the item library)
+  | (string & {});
 
 export type RoadType = "dirt" | "stone" | "wood" | "bridge" | "path";
 export type Rotation = 0 | 90 | 180 | 270;

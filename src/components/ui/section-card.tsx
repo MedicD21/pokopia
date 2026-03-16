@@ -22,7 +22,7 @@ export function SectionCard({
       className={`rounded-[28px] border border-[color:var(--line)] bg-[color:var(--card)]/95 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.34)] backdrop-blur ${className}`.trim()}
     >
       {(title || eyebrow || description || action) && (
-        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="mb-5 w-[auto] flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
             {eyebrow ? (
               <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[color:var(--accent-2)]">

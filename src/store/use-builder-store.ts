@@ -13,6 +13,7 @@ export type BuilderMode =
   | "remove"
   | "paint"
   | "box"
+  | "frame"
   | "wall"
   | "eyedropper";
 
@@ -38,6 +39,10 @@ interface BuilderState {
   removeBlock: (x: number, y: number, z: number) => void;
   paintBlock: (x: number, y: number, z: number) => void;
   fillBox: (
+    start: { x: number; y: number; z: number },
+    end: { x: number; y: number; z: number },
+  ) => void;
+  fillFrame: (
     start: { x: number; y: number; z: number },
     end: { x: number; y: number; z: number },
   ) => void;
@@ -163,6 +168,34 @@ function fillVolumeWithMaterial(
   return nextBlocks;
 }
 
+function fillFrameWithMaterial(
+  blocks: VoxelBlock[],
+  start: { x: number; y: number; z: number },
+  end: { x: number; y: number; z: number },
+  material: BlockMaterialId,
+  color: string,
+) {
+  let nextBlocks = blocks;
+  const x0 = Math.min(start.x, end.x);
+  const x1 = Math.max(start.x, end.x);
+  const y0 = Math.min(start.y, end.y);
+  const y1 = Math.max(start.y, end.y);
+  const z0 = Math.min(start.z, end.z);
+  const z1 = Math.max(start.z, end.z);
+
+  for (let y = y0; y <= y1; y += 1) {
+    for (let x = x0; x <= x1; x += 1) {
+      for (let z = z0; z <= z1; z += 1) {
+        if (x === x0 || x === x1 || z === z0 || z === z1) {
+          nextBlocks = upsertBlock(nextBlocks, x, y, z, material, color);
+        }
+      }
+    }
+  }
+
+  return nextBlocks;
+}
+
 function getLinePoints(
   start: { x: number; z: number },
   end: { x: number; z: number },
@@ -229,8 +262,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   theme: defaultBuilding.theme,
   loadedTemplateId: defaultBuilding.id,
   blocks: cloneBlocks(defaultBuilding.blocks),
-  activeMaterial: "stone",
-  activeColor: blockMaterialLookup.stone.color,
+  activeMaterial: "wooden-wall",
+  activeColor: blockMaterialLookup["wooden-wall"]?.color ?? blockMaterialLookup.stone.color,
   activeLayer: 0,
   mode: "hand",
   setName: (name) => set({ name }),
@@ -261,8 +294,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       theme: nextBuilding.theme,
       loadedTemplateId: nextBuilding.id,
       blocks: cloneBlocks(nextBuilding.blocks),
-      activeMaterial: "stone",
-      activeColor: blockMaterialLookup.stone.color,
+      activeMaterial: "wooden-wall",
+      activeColor: blockMaterialLookup["wooden-wall"]?.color ?? blockMaterialLookup.stone.color,
       activeLayer: 0,
       mode: "hand",
     });
@@ -276,8 +309,8 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       theme: nextBuilding.theme,
       loadedTemplateId: nextBuilding.id,
       blocks: cloneBlocks(nextBuilding.blocks),
-      activeMaterial: "stone",
-      activeColor: blockMaterialLookup.stone.color,
+      activeMaterial: "wooden-wall",
+      activeColor: blockMaterialLookup["wooden-wall"]?.color ?? blockMaterialLookup.stone.color,
       activeLayer: 0,
       mode: "hand",
     });
@@ -304,6 +337,15 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     set({
       blocks: sortBlocks(
         fillVolumeWithMaterial(blocks, start, end, activeMaterial, activeColor),
+      ),
+    });
+  },
+  fillFrame: (start, end) => {
+    const { activeColor, activeMaterial, blocks } = get();
+
+    set({
+      blocks: sortBlocks(
+        fillFrameWithMaterial(blocks, start, end, activeMaterial, activeColor),
       ),
     });
   },
@@ -431,9 +473,9 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       theme: "custom",
       loadedTemplateId: "custom",
       blocks: [],
-      activeMaterial: "stone",
+      activeMaterial: "wooden-wall",
       activeLayer: 0,
-      activeColor: blockMaterialLookup.stone.color,
+      activeColor: blockMaterialLookup["wooden-wall"]?.color ?? blockMaterialLookup.stone.color,
       mode: "hand",
     }),
   exportBuilding: () => {

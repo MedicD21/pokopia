@@ -12,6 +12,7 @@ import { SectionCard } from "@/components/ui/section-card";
 import { MaterialsBreakdown } from "@/components/materials/materials-breakdown";
 import { HelperPanel } from "@/components/pokemon/helper-panel";
 import { sampleBuildings } from "@/data/buildings";
+import { catalogBlockMaterials } from "@/data/catalog-blocks";
 import { blockMaterialLookup, blockMaterials } from "@/data/materials";
 import { summarizeMaterials } from "@/lib/materials";
 import type {
@@ -49,7 +50,7 @@ const builderMaterialSlots: ReadonlyArray<{
     label: "Block Type",
     description:
       "Main building block list with all solid materials and placeable block-style items.",
-    defaultMaterial: "stone",
+    defaultMaterial: "wooden-wall",
   },
   {
     id: "roof",
@@ -76,12 +77,7 @@ const builderMaterialSlots: ReadonlyArray<{
 function getPaletteMaterials(slotId: BuilderMaterialSlotId) {
   switch (slotId) {
     case "block":
-      return blockMaterials.filter(
-        (m) =>
-          !m.id.startsWith("roof") &&
-          !m.id.startsWith("door") &&
-          !m.id.startsWith("window"),
-      );
+      return catalogBlockMaterials;
     case "roof":
       return blockMaterials.filter(
         (m) => m.id === "roof" || m.id.startsWith("roof-"),
@@ -139,6 +135,13 @@ const toolDefinitions: ReadonlyArray<{
     description: "Pick two corners to fill a full rectangular volume at once.",
   },
   {
+    mode: "frame",
+    label: "Frame",
+    shortcut: "F",
+    description:
+      "Pick two corners to build a hollow square wall frame (perimeter only).",
+  },
+  {
     mode: "wall",
     label: "Wall",
     shortcut: "W",
@@ -160,6 +163,7 @@ const toolShortcutLookup: Partial<Record<string, BuilderMode>> = {
   p: "paint",
   x: "remove",
   b: "box",
+  f: "frame",
   w: "wall",
   e: "eyedropper",
 };
@@ -510,6 +514,7 @@ function ColorBlockInstances({
       args={[undefined, undefined, blocks.length]}
       castShadow
       receiveShadow
+      onPointerDown={(event) => event.stopPropagation()}
       onClick={(event) => {
         event.stopPropagation();
         const index = event.instanceId;
@@ -738,6 +743,7 @@ function BuildScene({
   activeLayer,
   blocks,
   boxStart,
+  frameStart,
   cameraPreset,
   mode,
   onBlockInteract,
@@ -755,6 +761,7 @@ function BuildScene({
   activeLayer: number;
   blocks: VoxelBlock[];
   boxStart: VoxelPoint | null;
+  frameStart: VoxelPoint | null;
   cameraPreset: CameraPreset;
   mode: BuilderMode;
   onBlockInteract: (
@@ -884,6 +891,7 @@ function BuildScene({
       <PreviewBlocks color={activeBlockColor} points={wallPreviewBlocks} />
       <SelectedBlockOutline block={selectedBlock} />
       <BoxStartMarker point={boxStart} />
+      <BoxStartMarker point={frameStart} />
       <OrbitControls
         ref={controlsRef}
         makeDefault
@@ -906,6 +914,7 @@ export function VoxelBuilder() {
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>("iso");
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
   const [boxStart, setBoxStart] = useState<VoxelPoint | null>(null);
+  const [frameStart, setFrameStart] = useState<VoxelPoint | null>(null);
   const [wallPreviewStart, setWallPreviewStart] = useState<VoxelPoint | null>(
     null,
   );
@@ -940,6 +949,7 @@ export function VoxelBuilder() {
   const removeBlock = useBuilderStore((state) => state.removeBlock);
   const paintBlock = useBuilderStore((state) => state.paintBlock);
   const fillBox = useBuilderStore((state) => state.fillBox);
+  const fillFrame = useBuilderStore((state) => state.fillFrame);
   const buildWall = useBuilderStore((state) => state.buildWall);
   const clearLayer = useBuilderStore((state) => state.clearLayer);
   const clear = useBuilderStore((state) => state.clear);
@@ -971,6 +981,7 @@ export function VoxelBuilder() {
 
   function resetTransientToolState() {
     setBoxStart(null);
+    setFrameStart(null);
     setWallPreviewStart(null);
     setWallPreviewEnd(null);
     wallDragActiveRef.current = false;
@@ -1011,6 +1022,7 @@ export function VoxelBuilder() {
       event.preventDefault();
       setMode(nextMode);
       setBoxStart(null);
+      setFrameStart(null);
       setWallPreviewStart(null);
       setWallPreviewEnd(null);
       wallDragActiveRef.current = false;
@@ -1042,6 +1054,19 @@ export function VoxelBuilder() {
     setSelectedBlockId(`${point.x}:${point.y}:${point.z}`);
   }
 
+  function commitFramePoint(point: VoxelPoint) {
+    if (!frameStart) {
+      setFrameStart(point);
+      setActiveLayer(point.y);
+      setSelectedBlockId(null);
+      return;
+    }
+
+    fillFrame(frameStart, point);
+    setFrameStart(null);
+    setSelectedBlockId(`${point.x}:${point.y}:${point.z}`);
+  }
+
   function handleSurfaceAction(x: number, y: number, z: number) {
     if (mode === "hand") {
       setSelectedBlockId(null);
@@ -1054,6 +1079,11 @@ export function VoxelBuilder() {
 
     if (mode === "box") {
       commitBoxPoint({ x, y, z });
+      return;
+    }
+
+    if (mode === "frame") {
+      commitFramePoint({ x, y, z });
       return;
     }
 
@@ -1099,6 +1129,11 @@ export function VoxelBuilder() {
 
     if (interactionMode === "box") {
       commitBoxPoint({ x: block.x, y: block.y, z: block.z });
+      return;
+    }
+
+    if (interactionMode === "frame") {
+      commitFramePoint({ x: block.x, y: block.y, z: block.z });
       return;
     }
 
@@ -1282,6 +1317,7 @@ export function VoxelBuilder() {
               activeLayer={activeLayer}
               blocks={blocks}
               boxStart={boxStart}
+              frameStart={frameStart}
               cameraPreset={cameraPreset}
               mode={mode}
               onBlockInteract={handleBlockInteraction}
@@ -1517,7 +1553,7 @@ export function VoxelBuilder() {
         </div>
       </section>
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.45fr)_360px]">
+      <div className="grid gap-5 xl:grid-cols-2">
         <MaterialsBreakdown
           title="Live Materials"
           description="Every material currently used in the build is tracked here in a wider two-column checklist."

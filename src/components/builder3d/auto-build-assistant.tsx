@@ -16,30 +16,36 @@ const styleOptions: Array<{
   label: string;
   description: string;
 }> = [
-  {
-    value: "cottage",
-    label: "Cottage",
-    description: "Compact stepped roof and cozy home proportions.",
-  },
-  {
-    value: "hall",
-    label: "Hall",
-    description: "Wider civic shell with a long stepped roofline.",
-  },
-  {
-    value: "workshop",
-    label: "Workshop",
-    description: "Flat industrial roof with heavier support framing.",
-  },
-  {
-    value: "greenhouse",
-    label: "Greenhouse",
-    description: "Glass-forward shell with a framed roof spine.",
-  },
+  // {
+  //   value: "cottage",
+  //   label: "Cottage",
+  //   description: "Compact stepped roof and cozy home proportions.",
+  // },
+  // {
+  //   value: "hall",
+  //   label: "Hall",
+  //   description: "Wider civic shell with a long stepped roofline.",
+  // },
+  // {
+  //   value: "workshop",
+  //   label: "Workshop",
+  //   description: "Flat industrial roof with heavier support framing.",
+  // },
+  // {
+  //   value: "greenhouse",
+  //   label: "Greenhouse",
+  //   description: "Glass-forward shell with a framed roof spine.",
+  // },
 ];
 
 const itemSlotDefinitions: Array<{
-  id: "includeDoor" | "includeWindows" | "includeBeams" | "includePillars" | "includeLights" | "includeDecor";
+  id:
+    | "includeDoor"
+    | "includeWindows"
+    | "includeBeams"
+    | "includePillars"
+    | "includeLights"
+    | "includeDecor";
   label: string;
   materialKey:
     | "doorMaterial"
@@ -139,7 +145,9 @@ export function AutoBuildAssistant({
             AI Build Assistant
           </p>
           <p className="max-w-2xl text-sm leading-6 text-[color:var(--muted)]">
-            Pick a shell style, dimensions, materials, and optional build pieces, then auto-generate a starter structure directly into the live voxel scene.
+            Pick a shell style, dimensions, materials, and optional build
+            pieces, then auto-generate a starter structure directly into the
+            live voxel scene.
           </p>
         </div>
         <button
@@ -191,24 +199,32 @@ export function AutoBuildAssistant({
 
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-[color:var(--muted)]">Width</span>
+            <span className="text-sm font-semibold text-[color:var(--muted)]">
+              Width
+            </span>
             <input
               type="number"
               min={5}
               max={20}
               value={options.width}
-              onChange={(event) => updateOption("width", Number(event.target.value))}
+              onChange={(event) =>
+                updateOption("width", Number(event.target.value))
+              }
               className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-3 text-sm outline-none"
             />
           </label>
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-[color:var(--muted)]">Depth</span>
+            <span className="text-sm font-semibold text-[color:var(--muted)]">
+              Depth
+            </span>
             <input
               type="number"
               min={5}
               max={20}
               value={options.depth}
-              onChange={(event) => updateOption("depth", Number(event.target.value))}
+              onChange={(event) =>
+                updateOption("depth", Number(event.target.value))
+              }
               className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-3 text-sm outline-none"
             />
           </label>
@@ -221,7 +237,9 @@ export function AutoBuildAssistant({
               min={3}
               max={8}
               value={options.wallHeight}
-              onChange={(event) => updateOption("wallHeight", Number(event.target.value))}
+              onChange={(event) =>
+                updateOption("wallHeight", Number(event.target.value))
+              }
               className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-3 text-sm outline-none"
             />
           </label>
@@ -234,7 +252,9 @@ export function AutoBuildAssistant({
               min={1}
               max={4}
               value={options.roofHeight}
-              onChange={(event) => updateOption("roofHeight", Number(event.target.value))}
+              onChange={(event) =>
+                updateOption("roofHeight", Number(event.target.value))
+              }
               className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface)] px-4 py-3 text-sm outline-none"
             />
           </label>
@@ -251,21 +271,27 @@ export function AutoBuildAssistant({
             />
           </label>
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-[color:var(--muted)]">Wall</span>
+            <span className="text-sm font-semibold text-[color:var(--muted)]">
+              Wall
+            </span>
             <MaterialSelect
               value={options.wallMaterial}
               onChange={(value) => updateOption("wallMaterial", value)}
             />
           </label>
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-[color:var(--muted)]">Trim</span>
+            <span className="text-sm font-semibold text-[color:var(--muted)]">
+              Trim
+            </span>
             <MaterialSelect
               value={options.trimMaterial}
               onChange={(value) => updateOption("trimMaterial", value)}
             />
           </label>
           <label className="space-y-2">
-            <span className="text-sm font-semibold text-[color:var(--muted)]">Roof</span>
+            <span className="text-sm font-semibold text-[color:var(--muted)]">
+              Roof
+            </span>
             <MaterialSelect
               value={options.roofMaterial}
               onChange={(value) => updateOption("roofMaterial", value)}
@@ -286,7 +312,9 @@ export function AutoBuildAssistant({
                 <input
                   type="checkbox"
                   checked={options[slot.id]}
-                  onChange={(event) => updateOption(slot.id, event.target.checked)}
+                  onChange={(event) =>
+                    updateOption(slot.id, event.target.checked)
+                  }
                   className="h-4 w-4 accent-[color:var(--accent)]"
                 />
               </label>
@@ -311,7 +339,8 @@ export function AutoBuildAssistant({
             Roof {options.roofHeight} layers
           </span>
           <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
-            Style {styleOptions.find((style) => style.value === options.style)?.label}
+            Style{" "}
+            {styleOptions.find((style) => style.value === options.style)?.label}
           </span>
         </div>
       </div>

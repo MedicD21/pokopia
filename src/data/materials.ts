@@ -1,5 +1,7 @@
 import type { BlockMaterialDefinition, BlockMaterialId } from "@/lib/types";
 
+import { catalogBlockMaterials } from "@/data/catalog-blocks";
+
 export const blockMaterials: BlockMaterialDefinition[] = [
   {
     id: "stone",
@@ -433,9 +435,9 @@ export const blockMaterials: BlockMaterialDefinition[] = [
   },
 ];
 
-export const blockMaterialLookup = blockMaterials.reduce<
-  Record<BlockMaterialId, BlockMaterialDefinition>
+export const blockMaterialLookup = [...blockMaterials, ...catalogBlockMaterials].reduce<
+  Record<string, BlockMaterialDefinition>
 >((lookup, material) => {
   lookup[material.id] = material;
   return lookup;
-}, {} as Record<BlockMaterialId, BlockMaterialDefinition>);
+}, {});
