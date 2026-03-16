@@ -68,7 +68,6 @@ export default function HomePage() {
               action={
                 <Link
                   href={item.href}
-                  className="rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
                   className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
                 >
                   Open

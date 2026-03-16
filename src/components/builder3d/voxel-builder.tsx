@@ -7,24 +7,69 @@ import { Color, type InstancedMesh, Matrix4, Object3D } from "three";
 import type { RefObject } from "react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { HelperPanel } from "@/components/pokemon/helper-panel";
 import { MaterialsBreakdown } from "@/components/materials/materials-breakdown";
+import { HelperPanel } from "@/components/pokemon/helper-panel";
 import { SectionCard } from "@/components/ui/section-card";
 import { sampleBuildings } from "@/data/buildings";
-import { blockMaterials, blockMaterialLookup } from "@/data/materials";
+import { blockMaterialLookup, blockMaterials } from "@/data/materials";
 import { summarizeMaterials } from "@/lib/materials";
 import type { BuildingData, StorageMode, VoxelBlock } from "@/lib/types";
-import { useBuilderStore } from "@/store/use-builder-store";
+import { type BuilderMode, useBuilderStore } from "@/store/use-builder-store";
 
 const gridSize = 24;
 const maxInstances = 12000;
 
 type CameraPreset = "iso" | "front" | "back" | "left" | "right" | "top";
+type VoxelPoint = { x: number; y: number; z: number };
 
 function buildPreviewBlueprint(building: BuildingData) {
   return {
     ...building,
     blocks: building.blocks.slice(0, 24),
+  };
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function deriveSceneFocus(blocks: VoxelBlock[]) {
+  if (blocks.length === 0) {
+    return {
+      centerX: gridSize / 2,
+      centerY: 1.75,
+      centerZ: gridSize / 2,
+      footprintSpan: 8,
+      heightSpan: 4,
+    };
+  }
+
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let minZ = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+  let maxZ = Number.NEGATIVE_INFINITY;
+
+  blocks.forEach((block) => {
+    minX = Math.min(minX, block.x);
+    minY = Math.min(minY, block.y);
+    minZ = Math.min(minZ, block.z);
+    maxX = Math.max(maxX, block.x);
+    maxY = Math.max(maxY, block.y);
+    maxZ = Math.max(maxZ, block.z);
+  });
+
+  const width = maxX - minX + 1;
+  const height = maxY - minY + 1;
+  const depth = maxZ - minZ + 1;
+
+  return {
+    centerX: (minX + maxX + 1) / 2,
+    centerY: minY + Math.max(1.25, height * 0.42),
+    centerZ: (minZ + maxZ + 1) / 2,
+    footprintSpan: Math.max(width, depth, 6),
+    heightSpan: Math.max(height, 3),
   };
 }
 
@@ -34,11 +79,11 @@ function BlockInstances({
   onInteract,
 }: {
   blocks: VoxelBlock[];
-  mode: "hand" | "add" | "remove" | "paint";
+  mode: BuilderMode;
   onInteract: (
     block: VoxelBlock,
     event: ThreeEvent<MouseEvent>,
-    mode: "hand" | "add" | "remove" | "paint",
+    mode: BuilderMode,
   ) => void;
 }) {
   const meshRef = useRef<InstancedMesh>(null);
@@ -111,28 +156,51 @@ function SelectedBlockOutline({ block }: { block: VoxelBlock | null }) {
   );
 }
 
+function BoxStartMarker({ point }: { point: VoxelPoint | null }) {
+  if (!point) {
+    return null;
+  }
+
+  return (
+    <mesh position={[point.x + 0.5, point.y + 0.5, point.z + 0.5]}>
+      <boxGeometry args={[1.14, 1.14, 1.14]} />
+      <meshBasicMaterial color="#42d3bd" wireframe />
+    </mesh>
+  );
+}
+
 function CameraRig({
+  centerX,
+  centerY,
+  centerZ,
   controlsRef,
+  footprintSpan,
+  heightSpan,
   preset,
 }: {
+  centerX: number;
+  centerY: number;
+  centerZ: number;
   controlsRef: RefObject<OrbitControlsImpl | null>;
+  footprintSpan: number;
+  heightSpan: number;
   preset: CameraPreset;
 }) {
   const { camera } = useThree();
 
   useEffect(() => {
-    const centerX = gridSize / 2;
-    const centerY = 4;
-    const centerZ = gridSize / 2;
-    const distance = 26;
+    const diagonalDistance = footprintSpan * 1.1 + 4;
+    const forwardDistance = footprintSpan * 1.35 + 4;
+    const verticalLift = Math.max(4.5, heightSpan * 0.9 + 2.5);
+    const viewHeight = Math.max(2, centerY);
 
     const presets: Record<CameraPreset, [number, number, number]> = {
-      iso: [centerX + distance, centerY + 14, centerZ + distance],
-      front: [centerX, centerY + 6, centerZ + distance + 6],
-      back: [centerX, centerY + 6, centerZ - distance - 6],
-      left: [centerX - distance - 6, centerY + 6, centerZ],
-      right: [centerX + distance + 6, centerY + 6, centerZ],
-      top: [centerX, centerY + 34, centerZ],
+      iso: [centerX + diagonalDistance, viewHeight + verticalLift, centerZ + diagonalDistance],
+      front: [centerX, viewHeight + verticalLift * 0.45, centerZ + forwardDistance],
+      back: [centerX, viewHeight + verticalLift * 0.45, centerZ - forwardDistance],
+      left: [centerX - forwardDistance, viewHeight + verticalLift * 0.45, centerZ],
+      right: [centerX + forwardDistance, viewHeight + verticalLift * 0.45, centerZ],
+      top: [centerX, viewHeight + Math.max(14, heightSpan * 2.1 + 6), centerZ],
     };
 
     const [x, y, z] = presets[preset];
@@ -140,7 +208,16 @@ function CameraRig({
     camera.lookAt(centerX, centerY, centerZ);
     controlsRef.current?.target.set(centerX, centerY, centerZ);
     controlsRef.current?.update();
-  }, [camera, controlsRef, preset]);
+  }, [
+    camera,
+    centerX,
+    centerY,
+    centerZ,
+    controlsRef,
+    footprintSpan,
+    heightSpan,
+    preset,
+  ]);
 
   return null;
 }
@@ -148,47 +225,58 @@ function CameraRig({
 function BuildScene({
   activeLayer,
   blocks,
+  boxStart,
   cameraPreset,
   mode,
-  onAddFromSurface,
   onBlockInteract,
   onSelectBlock,
+  onSurfaceInteract,
   selectedBlock,
 }: {
   activeLayer: number;
   blocks: VoxelBlock[];
+  boxStart: VoxelPoint | null;
   cameraPreset: CameraPreset;
-  mode: "hand" | "add" | "remove" | "paint";
-  onAddFromSurface: (x: number, z: number) => void;
+  mode: BuilderMode;
   onBlockInteract: (
     block: VoxelBlock,
     event: ThreeEvent<MouseEvent>,
-    mode: "hand" | "add" | "remove" | "paint",
+    mode: BuilderMode,
   ) => void;
   onSelectBlock: (blockId: string | null) => void;
+  onSurfaceInteract: (x: number, y: number, z: number) => void;
   selectedBlock: VoxelBlock | null;
 }) {
   const controlsRef = useRef<OrbitControlsImpl>(null);
+  const sceneFocus = deriveSceneFocus(blocks);
 
   return (
     <Canvas
-      camera={{ position: [18, 16, 18], fov: 42 }}
+      camera={{ position: [14, 10, 14], fov: 40 }}
       shadows
       className="h-full w-full"
       onPointerMissed={() => onSelectBlock(null)}
     >
-      <color attach="background" args={["#f4eee0"]} />
+      <color attach="background" args={["#09111f"]} />
       <ambientLight intensity={1} />
       <directionalLight
         castShadow
-        intensity={1.2}
-        position={[20, 24, 10]}
+        intensity={1.25}
+        position={[18, 22, 10]}
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
       />
-      <CameraRig controlsRef={controlsRef} preset={cameraPreset} />
+      <CameraRig
+        centerX={sceneFocus.centerX}
+        centerY={sceneFocus.centerY}
+        centerZ={sceneFocus.centerZ}
+        controlsRef={controlsRef}
+        footprintSpan={sceneFocus.footprintSpan}
+        heightSpan={sceneFocus.heightSpan}
+        preset={cameraPreset}
+      />
       <gridHelper
-        args={[gridSize, gridSize, "#9eb1cf", "#d1d9e9"]}
+        args={[gridSize, gridSize, "#6d87ae", "#22334f"]}
         position={[gridSize / 2, activeLayer, gridSize / 2]}
       />
       <mesh
@@ -197,19 +285,13 @@ function BuildScene({
         receiveShadow
         onClick={(event) => {
           event.stopPropagation();
-
-          if (mode === "hand") {
-            onSelectBlock(null);
-            return;
-          }
-
-          const x = Math.max(0, Math.min(gridSize - 1, Math.floor(event.point.x)));
-          const z = Math.max(0, Math.min(gridSize - 1, Math.floor(event.point.z)));
-          onAddFromSurface(x, z);
+          const x = clamp(Math.floor(event.point.x), 0, gridSize - 1);
+          const z = clamp(Math.floor(event.point.z), 0, gridSize - 1);
+          onSurfaceInteract(x, activeLayer, z);
         }}
       >
         <planeGeometry args={[gridSize, gridSize]} />
-        <meshStandardMaterial color="#375e8f" transparent opacity={0.12} />
+        <meshStandardMaterial color="#6c94d8" transparent opacity={0.16} />
       </mesh>
       <mesh
         rotation-x={-Math.PI / 2}
@@ -217,16 +299,17 @@ function BuildScene({
         receiveShadow
       >
         <planeGeometry args={[gridSize, gridSize]} />
-        <meshStandardMaterial color="#d4c29a" />
+        <meshStandardMaterial color="#16243a" />
       </mesh>
       <BlockInstances blocks={blocks} mode={mode} onInteract={onBlockInteract} />
       <SelectedBlockOutline block={selectedBlock} />
+      <BoxStartMarker point={boxStart} />
       <OrbitControls
         ref={controlsRef}
         makeDefault
         enableDamping
-        maxDistance={64}
-        minDistance={6}
+        maxDistance={72}
+        minDistance={4}
         maxPolarAngle={Math.PI / 2.05}
       />
     </Canvas>
@@ -237,6 +320,7 @@ export function VoxelBuilder() {
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [cameraPreset, setCameraPreset] = useState<CameraPreset>("iso");
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null);
+  const [boxStart, setBoxStart] = useState<VoxelPoint | null>(null);
   const name = useBuilderStore((state) => state.name);
   const description = useBuilderStore((state) => state.description);
   const loadedTemplateId = useBuilderStore((state) => state.loadedTemplateId);
@@ -253,42 +337,84 @@ export function VoxelBuilder() {
   const addBlock = useBuilderStore((state) => state.addBlock);
   const removeBlock = useBuilderStore((state) => state.removeBlock);
   const paintBlock = useBuilderStore((state) => state.paintBlock);
+  const fillBox = useBuilderStore((state) => state.fillBox);
   const updateBlockMaterial = useBuilderStore((state) => state.updateBlockMaterial);
+  const moveBlock = useBuilderStore((state) => state.moveBlock);
+  const cloneBlock = useBuilderStore((state) => state.cloneBlock);
+  const clearLayer = useBuilderStore((state) => state.clearLayer);
   const clear = useBuilderStore((state) => state.clear);
   const exportBuilding = useBuilderStore((state) => state.exportBuilding);
   const summary = summarizeMaterials(blocks);
   const blueprint = exportBuilding();
   const previewBlueprint = buildPreviewBlueprint(blueprint);
-  const selectedBlock =
-    blocks.find((block) => block.id === selectedBlockId) ?? null;
+  const selectedBlock = blocks.find((block) => block.id === selectedBlockId) ?? null;
 
-  function handleSurfaceAction(x: number, z: number) {
+  function selectMode(nextMode: BuilderMode) {
+    setMode(nextMode);
+    setBoxStart(null);
+  }
+
+  function commitBoxPoint(point: VoxelPoint) {
+    if (!boxStart) {
+      setBoxStart(point);
+      setActiveLayer(point.y);
+      setSelectedBlockId(null);
+      return;
+    }
+
+    fillBox(boxStart, point);
+    setBoxStart(null);
+    setSelectedBlockId(`${point.x}:${point.y}:${point.z}`);
+  }
+
+  function handleSurfaceAction(x: number, y: number, z: number) {
     if (mode === "hand") {
       setSelectedBlockId(null);
       return;
     }
 
+    if (mode === "box") {
+      commitBoxPoint({ x, y, z });
+      return;
+    }
+
+    if (mode === "eyedropper") {
+      return;
+    }
+
     if (mode === "remove") {
-      removeBlock(x, activeLayer, z);
+      removeBlock(x, y, z);
       return;
     }
 
     if (mode === "paint") {
-      paintBlock(x, activeLayer, z);
+      paintBlock(x, y, z);
       return;
     }
 
-    addBlock(x, activeLayer, z);
+    addBlock(x, y, z);
   }
 
   function handleBlockInteraction(
     block: VoxelBlock,
     event: ThreeEvent<MouseEvent>,
-    interactionMode: "hand" | "add" | "remove" | "paint",
+    interactionMode: BuilderMode,
   ) {
     if (interactionMode === "hand") {
       setSelectedBlockId(block.id);
       setActiveLayer(block.y);
+      return;
+    }
+
+    if (interactionMode === "eyedropper") {
+      setSelectedBlockId(block.id);
+      setActiveMaterial(block.material);
+      setActiveLayer(block.y);
+      return;
+    }
+
+    if (interactionMode === "box") {
+      commitBoxPoint({ x: block.x, y: block.y, z: block.z });
       return;
     }
 
@@ -308,9 +434,9 @@ export function VoxelBuilder() {
       return;
     }
 
-    const nextX = Math.max(0, Math.min(gridSize - 1, block.x + Math.round(normal.x)));
-    const nextY = Math.max(0, Math.min(12, block.y + Math.round(normal.y)));
-    const nextZ = Math.max(0, Math.min(gridSize - 1, block.z + Math.round(normal.z)));
+    const nextX = clamp(block.x + Math.round(normal.x), 0, gridSize - 1);
+    const nextY = clamp(block.y + Math.round(normal.y), 0, 12);
+    const nextZ = clamp(block.z + Math.round(normal.z), 0, gridSize - 1);
     addBlock(nextX, nextY, nextZ);
     setActiveLayer(nextY);
     setSelectedBlockId(`${nextX}:${nextY}:${nextZ}`);
@@ -345,143 +471,212 @@ export function VoxelBuilder() {
     setSaveMessage(payload.error ?? "Unable to save building right now.");
   }
 
+  function moveSelected(dx: number, dy: number, dz: number) {
+    if (!selectedBlock) {
+      return;
+    }
+
+    const nextId = moveBlock(selectedBlock.x, selectedBlock.y, selectedBlock.z, dx, dy, dz);
+
+    if (nextId) {
+      setSelectedBlockId(nextId);
+    }
+  }
+
+  function cloneSelected(dx: number, dy: number, dz: number) {
+    if (!selectedBlock) {
+      return;
+    }
+
+    const nextId = cloneBlock(selectedBlock.x, selectedBlock.y, selectedBlock.z, dx, dy, dz);
+
+    if (nextId) {
+      setSelectedBlockId(nextId);
+    }
+  }
+
   return (
-    <div className="grid min-h-[calc(100vh-10rem)] gap-5 xl:grid-cols-[300px_minmax(0,1fr)_360px] 2xl:grid-cols-[320px_minmax(0,1.35fr)_380px]">
-      <div className="space-y-5 xl:sticky xl:top-28 xl:self-start">
-        <SectionCard
-          eyebrow="Phase 2"
-          title="Builder Controls"
-          description="Use hand mode to inspect and edit existing blocks. Drag inside the scene to orbit the camera, right-drag to pan, and scroll to zoom."
-        >
-          <div className="space-y-4">
-            <label className="block space-y-2">
-              <span className="text-sm font-semibold text-[color:var(--muted)]">
-                Template
-              </span>
-              <select
-                value={
-                  sampleBuildings.some((building) => building.id === loadedTemplateId)
-                    ? loadedTemplateId
-                    : ""
-                }
-                onChange={(event) => loadTemplate(event.target.value)}
-                className="w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm outline-none"
-              >
-                {sampleBuildings.map((building) => (
-                  <option key={building.id} value={building.id}>
-                    {building.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="block space-y-2">
-              <span className="text-sm font-semibold text-[color:var(--muted)]">
-                Building name
-              </span>
-              <input
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                className="w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm outline-none"
-              />
-            </label>
-            <label className="block space-y-2">
-              <span className="text-sm font-semibold text-[color:var(--muted)]">
-                Description
-              </span>
-              <textarea
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-                rows={3}
-                className="w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm outline-none"
-              />
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              {(["hand", "add", "paint", "remove"] as const).map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => setMode(option)}
-                  className={`rounded-2xl px-4 py-3 text-sm font-semibold capitalize ${
-                    mode === option
-                      ? "bg-[color:var(--foreground)] text-[color:var(--background)]"
-                      : "bg-white/70 text-[color:var(--foreground)]"
-                  }`}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-[color:var(--muted)]">
-                  Active layer
-                </span>
-                <span className="rounded-full bg-[color:var(--accent)]/14 px-3 py-1 text-sm font-semibold">
-                  Y {activeLayer}
-                </span>
+    <div className="space-y-5">
+      <div className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)] 2xl:grid-cols-[340px_minmax(0,1fr)]">
+        <div className="xl:sticky xl:top-28 xl:max-h-[calc(100vh-7.5rem)] xl:overflow-y-auto">
+          <SectionCard
+            eyebrow="Phase 2"
+            title="Builder Controls"
+            description="Sculpt with direct-edit tools, swap materials, and control the active layer without giving up screen space."
+          >
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-3">
+                  <p className="text-xs uppercase tracking-[0.22em] text-[color:var(--accent-2)]">
+                    Blocks
+                  </p>
+                  <p className="mt-2 font-display text-2xl text-[color:var(--foreground)]">
+                    {summary.totalBlocks}
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-3">
+                  <p className="text-xs uppercase tracking-[0.22em] text-[color:var(--accent-2)]">
+                    Layer
+                  </p>
+                  <p className="mt-2 font-display text-2xl text-[color:var(--foreground)]">
+                    Y {activeLayer}
+                  </p>
+                </div>
               </div>
-              <input
-                type="range"
-                min={0}
-                max={12}
-                value={activeLayer}
-                onChange={(event) => setActiveLayer(Number(event.target.value))}
-                className="w-full accent-[color:var(--accent)]"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {blockMaterials.map((material) => (
-                <button
-                  key={material.id}
-                  type="button"
-                  onClick={() => setActiveMaterial(material.id)}
-                  className={`flex items-center gap-3 rounded-2xl px-3 py-3 text-left text-sm font-semibold ${
-                    activeMaterial === material.id
-                      ? "bg-[color:var(--accent-2)]/18 text-[color:var(--foreground)]"
-                      : "bg-white/70 text-[color:var(--foreground)]"
-                  }`}
+              <label className="block space-y-2">
+                <span className="text-sm font-semibold text-[color:var(--muted)]">
+                  Template
+                </span>
+                <select
+                  value={
+                    sampleBuildings.some((building) => building.id === loadedTemplateId)
+                      ? loadedTemplateId
+                      : ""
+                  }
+                  onChange={(event) => loadTemplate(event.target.value)}
+                  className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
                 >
-                  <span
-                    className="h-4 w-4 rounded-full border border-black/10"
-                    style={{ backgroundColor: material.color }}
-                  />
-                  {material.displayName}
+                  {sampleBuildings.map((building) => (
+                    <option key={building.id} value={building.id}>
+                      {building.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="block space-y-2">
+                <span className="text-sm font-semibold text-[color:var(--muted)]">
+                  Building name
+                </span>
+                <input
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
+                />
+              </label>
+              <label className="block space-y-2">
+                <span className="text-sm font-semibold text-[color:var(--muted)]">
+                  Description
+                </span>
+                <textarea
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
+                  rows={3}
+                  className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
+                />
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                {(["hand", "add", "paint", "remove", "box", "eyedropper"] as const).map(
+                  (option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => selectMode(option)}
+                      className={`rounded-2xl px-4 py-3 text-sm font-semibold capitalize ${
+                        mode === option
+                          ? "bg-[color:var(--foreground)] text-[color:var(--background)]"
+                          : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+                      }`}
+                    >
+                      {option}
+                    </button>
+                  ),
+                )}
+              </div>
+              {mode === "box" ? (
+                <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4 text-sm leading-6 text-[color:var(--muted)]">
+                  {boxStart
+                    ? `Box start locked at ${boxStart.x}, ${boxStart.y}, ${boxStart.z}. Click a second point to fill the full volume.`
+                    : "Click one corner, then a second point to fill a complete box volume with the active material."}
+                </div>
+              ) : null}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-[color:var(--muted)]">
+                    Active layer
+                  </span>
+                  <span className="rounded-full bg-[color:var(--accent)]/14 px-3 py-1 text-sm font-semibold">
+                    Y {activeLayer}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={12}
+                  value={activeLayer}
+                  onChange={(event) => setActiveLayer(Number(event.target.value))}
+                  className="w-full accent-[color:var(--accent)]"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {blockMaterials.map((material) => (
+                  <button
+                    key={material.id}
+                    type="button"
+                    onClick={() => setActiveMaterial(material.id)}
+                    className={`flex items-center gap-3 rounded-2xl px-3 py-3 text-left text-sm font-semibold ${
+                      activeMaterial === material.id
+                        ? "bg-[color:var(--accent-2)]/18 text-[color:var(--foreground)]"
+                        : "bg-[color:var(--surface)] text-[color:var(--foreground)]"
+                    }`}
+                  >
+                    <span
+                      className="h-4 w-4 rounded-full border border-black/10"
+                      style={{ backgroundColor: material.color }}
+                    />
+                    {material.displayName}
+                  </button>
+                ))}
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={handleSaveBuilding}
+                  className="rounded-2xl bg-[color:var(--foreground)] px-4 py-3 text-sm font-semibold text-[color:var(--background)]"
+                >
+                  Save blueprint
                 </button>
-              ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    clear();
+                    setSelectedBlockId(null);
+                    setBoxStart(null);
+                  }}
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
+                >
+                  Clear scene
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => clearLayer(activeLayer)}
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
+                >
+                  Clear layer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCameraPreset("top")}
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
+                >
+                  Top view
+                </button>
+              </div>
+              {saveMessage ? (
+                <p className="text-sm leading-6 text-[color:var(--muted)]">{saveMessage}</p>
+              ) : null}
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={handleSaveBuilding}
-                className="rounded-2xl bg-[color:var(--foreground)] px-4 py-3 text-sm font-semibold text-[color:var(--background)]"
-              >
-                Save blueprint
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  clear();
-                  setSelectedBlockId(null);
-                }}
-                className="rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold text-[color:var(--foreground)]"
-              >
-                Clear scene
-              </button>
-            </div>
-            {saveMessage ? (
-              <p className="text-sm leading-6 text-[color:var(--muted)]">{saveMessage}</p>
-            ) : null}
-          </div>
-        </SectionCard>
-      </div>
-      <SectionCard
-        eyebrow="Voxel Scene"
-        title="3D Builder"
-        description="Hand mode selects existing blocks for editing. Add mode extrudes from a clicked face, while paint and remove work directly on the current structure."
-        action={
-          <div className="flex flex-wrap gap-2">
-            {(["iso", "front", "back", "left", "right", "top"] as const).map(
-              (preset) => (
+          </SectionCard>
+        </div>
+
+        <SectionCard
+          eyebrow="Voxel Scene"
+          title="3D Builder"
+          description="Orbit, pan, and zoom around the current build. The camera now frames the live structure instead of the whole empty grid."
+          action={
+            <div className="flex flex-wrap gap-2">
+              {(["iso", "front", "back", "left", "right", "top"] as const).map((preset) => (
                 <button
                   key={preset}
                   type="button"
@@ -489,44 +684,48 @@ export function VoxelBuilder() {
                   className={`rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[0.22em] ${
                     cameraPreset === preset
                       ? "bg-[color:var(--foreground)] text-[color:var(--background)]"
-                      : "bg-white/80 text-[color:var(--foreground)]"
+                      : "bg-[color:var(--surface-strong)] text-[color:var(--foreground)]"
                   }`}
                 >
                   {preset}
                 </button>
-              ),
-            )}
+              ))}
+            </div>
+          }
+          className="flex min-h-[600px] flex-col xl:min-h-[calc(100vh-9rem)]"
+        >
+          <div className="mb-3 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--muted)]">
+            <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">Orbit: drag</span>
+            <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">Pan: right drag</span>
+            <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">Zoom: wheel</span>
+            <span className="rounded-full bg-[color:var(--surface)] px-3 py-2">
+              Hand: inspect
+            </span>
           </div>
-        }
-        className="flex min-h-[calc(100vh-11rem)] flex-col"
-      >
-        <div className="mb-4 flex flex-wrap items-center gap-3 rounded-[24px] bg-white/70 px-4 py-3 text-sm text-[color:var(--muted)]">
-          <span>Drag: orbit camera.</span>
-          <span>Right-drag: pan.</span>
-          <span>Scroll: zoom.</span>
-          <span>Camera buttons: snap to every side.</span>
-        </div>
-        <div className="min-h-[760px] flex-1 overflow-hidden rounded-[24px] border border-white/60">
-          <BuildScene
-            activeLayer={activeLayer}
-            blocks={blocks}
-            cameraPreset={cameraPreset}
-            mode={mode}
-            onAddFromSurface={handleSurfaceAction}
-            onBlockInteract={handleBlockInteraction}
-            onSelectBlock={setSelectedBlockId}
-            selectedBlock={selectedBlock}
-          />
-        </div>
-      </SectionCard>
-      <div className="space-y-5 xl:sticky xl:top-28 xl:self-start">
+          <div className="min-h-[clamp(480px,70vh,860px)] flex-1 overflow-hidden rounded-[24px] border border-[color:var(--line)]">
+            <BuildScene
+              activeLayer={activeLayer}
+              blocks={blocks}
+              boxStart={boxStart}
+              cameraPreset={cameraPreset}
+              mode={mode}
+              onBlockInteract={handleBlockInteraction}
+              onSelectBlock={setSelectedBlockId}
+              onSurfaceInteract={handleSurfaceAction}
+              selectedBlock={selectedBlock}
+            />
+          </div>
+        </SectionCard>
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-2 2xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)_360px]">
         <SectionCard
           title="Block Inspector"
-          description="Select a block with the hand tool to edit or remove it directly."
+          description="Selected blocks can be recolored, moved in six directions, or cloned to speed up structural edits."
         >
           {selectedBlock ? (
             <div className="space-y-4">
-              <div className="rounded-2xl bg-white/70 px-4 py-4">
+              <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4">
                 <p className="text-xs uppercase tracking-[0.26em] text-[color:var(--accent-2)]">
                   Selected Block
                 </p>
@@ -553,7 +752,7 @@ export function VoxelBuilder() {
                     );
                     setActiveMaterial(material);
                   }}
-                  className="w-full rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm outline-none"
+                  className="w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface-strong)] px-4 py-3 text-sm outline-none"
                 >
                   {blockMaterials.map((material) => (
                     <option key={material.id} value={material.id}>
@@ -562,11 +761,78 @@ export function VoxelBuilder() {
                   ))}
                 </select>
               </label>
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  type="button"
+                  onClick={() => moveSelected(0, 1, 0)}
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
+                >
+                  Up
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveSelected(0, 0, -1)}
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
+                >
+                  North
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveSelected(0, -1, 0)}
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
+                >
+                  Down
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveSelected(-1, 0, 0)}
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
+                >
+                  West
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveSelected(1, 0, 0)}
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
+                >
+                  East
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveSelected(0, 0, 1)}
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
+                >
+                  South
+                </button>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  type="button"
+                  onClick={() => cloneSelected(1, 0, 0)}
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
+                >
+                  Clone +X
+                </button>
+                <button
+                  type="button"
+                  onClick={() => cloneSelected(0, 1, 0)}
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
+                >
+                  Clone +Y
+                </button>
+                <button
+                  type="button"
+                  onClick={() => cloneSelected(0, 0, 1)}
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
+                >
+                  Clone +Z
+                </button>
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setActiveMaterial(selectedBlock.material)}
-                  className="rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold"
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
                 >
                   Match brush
                 </button>
@@ -576,7 +842,7 @@ export function VoxelBuilder() {
                     removeBlock(selectedBlock.x, selectedBlock.y, selectedBlock.z);
                     setSelectedBlockId(null);
                   }}
-                  className="rounded-2xl bg-white/80 px-4 py-3 text-sm font-semibold"
+                  className="rounded-2xl bg-[color:var(--surface-strong)] px-4 py-3 text-sm font-semibold"
                 >
                   Delete block
                 </button>
@@ -584,24 +850,28 @@ export function VoxelBuilder() {
             </div>
           ) : (
             <p className="text-sm leading-6 text-[color:var(--muted)]">
-              Nothing selected yet. Switch to hand mode and click an existing block in the structure.
+              Nothing selected yet. Use the hand tool or eyedropper to inspect the current structure.
             </p>
           )}
         </SectionCard>
+
         <MaterialsBreakdown
           title="Live Materials"
           materials={summary.materials}
           totalBlocks={summary.totalBlocks}
         />
-        <HelperPanel helpers={summary.helpers} />
-        <SectionCard
-          title="Blueprint Export"
-          description="The exported JSON stays lightweight so it can flow into the map planner, persistence layer, and future AI import pipeline."
-        >
-          <pre className="max-h-[300px] overflow-auto rounded-2xl bg-[color:var(--foreground)] p-4 text-xs leading-6 text-[color:var(--background)]">
-            {JSON.stringify(previewBlueprint, null, 2)}
-          </pre>
-        </SectionCard>
+
+        <div className="space-y-5">
+          <HelperPanel helpers={summary.helpers} />
+          <SectionCard
+            title="Blueprint Export"
+            description="The exported JSON stays lightweight so it can flow into the map planner, persistence layer, and future AI import pipeline."
+          >
+            <pre className="max-h-[320px] overflow-auto rounded-2xl bg-[color:var(--surface-strong)] p-4 text-xs leading-6 text-[color:var(--foreground)]">
+              {JSON.stringify(previewBlueprint, null, 2)}
+            </pre>
+          </SectionCard>
+        </div>
       </div>
     </div>
   );

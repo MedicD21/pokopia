@@ -63,6 +63,15 @@ textarea {
   font: inherit;
 }
 
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
 ::selection {
   background: rgba(255, 157, 69, 0.34);
   color: var(--foreground);

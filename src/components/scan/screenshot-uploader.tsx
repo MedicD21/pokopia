@@ -112,7 +112,7 @@ export function ScreenshotUploader() {
             {isPending ? "Generating blueprint..." : "Generate blueprint"}
           </button>
           {error ? (
-            <p className="rounded-2xl bg-[#ffebe6] px-4 py-3 text-sm text-[#9e3a1f]">
+            <p className="rounded-2xl border border-[#7a3240] bg-[#321923] px-4 py-3 text-sm text-[#ffd1da]">
               {error}
             </p>
           ) : null}

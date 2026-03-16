@@ -7,7 +7,13 @@ import { blockMaterialLookup } from "@/data/materials";
 import { deriveFootprintFromBlocks } from "@/lib/materials";
 import type { BlockMaterialId, BuildingData, VoxelBlock } from "@/lib/types";
 
-export type BuilderMode = "hand" | "add" | "remove" | "paint";
+export type BuilderMode =
+  | "hand"
+  | "add"
+  | "remove"
+  | "paint"
+  | "box"
+  | "eyedropper";
 
 interface BuilderState {
   name: string;
@@ -28,12 +34,33 @@ interface BuilderState {
   addBlock: (x: number, y: number, z: number) => void;
   removeBlock: (x: number, y: number, z: number) => void;
   paintBlock: (x: number, y: number, z: number) => void;
+  fillBox: (
+    start: { x: number; y: number; z: number },
+    end: { x: number; y: number; z: number },
+  ) => void;
   updateBlockMaterial: (
     x: number,
     y: number,
     z: number,
     material: BlockMaterialId,
   ) => void;
+  moveBlock: (
+    x: number,
+    y: number,
+    z: number,
+    dx: number,
+    dy: number,
+    dz: number,
+  ) => string | null;
+  cloneBlock: (
+    x: number,
+    y: number,
+    z: number,
+    dx: number,
+    dy: number,
+    dz: number,
+  ) => string | null;
+  clearLayer: (layer: number) => void;
   clear: () => void;
   exportBuilding: () => BuildingData;
 }
@@ -92,6 +119,37 @@ function removeBlockAt(blocks: VoxelBlock[], x: number, y: number, z: number) {
   return blocks.filter(
     (block) => !(block.x === x && block.y === y && block.z === z),
   );
+}
+
+function findBlock(blocks: VoxelBlock[], x: number, y: number, z: number) {
+  return blocks.find(
+    (block) => block.x === x && block.y === y && block.z === z,
+  );
+}
+
+function fillVolumeWithMaterial(
+  blocks: VoxelBlock[],
+  start: { x: number; y: number; z: number },
+  end: { x: number; y: number; z: number },
+  material: BlockMaterialId,
+) {
+  let nextBlocks = blocks;
+  const x0 = Math.min(start.x, end.x);
+  const x1 = Math.max(start.x, end.x);
+  const y0 = Math.min(start.y, end.y);
+  const y1 = Math.max(start.y, end.y);
+  const z0 = Math.min(start.z, end.z);
+  const z1 = Math.max(start.z, end.z);
+
+  for (let x = x0; x <= x1; x += 1) {
+    for (let y = y0; y <= y1; y += 1) {
+      for (let z = z0; z <= z1; z += 1) {
+        nextBlocks = upsertBlock(nextBlocks, x, y, z, material);
+      }
+    }
+  }
+
+  return nextBlocks;
 }
 
 const defaultBuilding = cloneBuildingData(sampleBuildings[0]);
@@ -157,9 +215,95 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     const { activeMaterial, blocks } = get();
     set({ blocks: sortBlocks(upsertBlock(blocks, x, y, z, activeMaterial)) });
   },
+  fillBox: (start, end) => {
+    const { activeMaterial, blocks } = get();
+
+    set({
+      blocks: sortBlocks(fillVolumeWithMaterial(blocks, start, end, activeMaterial)),
+    });
+  },
   updateBlockMaterial: (x, y, z, material) => {
     const { blocks } = get();
     set({ blocks: sortBlocks(upsertBlock(blocks, x, y, z, material)) });
+  },
+  moveBlock: (x, y, z, dx, dy, dz) => {
+    const { blocks } = get();
+    const source = findBlock(blocks, x, y, z);
+
+    if (!source) {
+      return null;
+    }
+
+    const nextX = Math.max(0, Math.min(23, x + dx));
+    const nextY = Math.max(0, Math.min(12, y + dy));
+    const nextZ = Math.max(0, Math.min(23, z + dz));
+
+    if (
+      (nextX !== x || nextY !== y || nextZ !== z) &&
+      findBlock(blocks, nextX, nextY, nextZ)
+    ) {
+      return null;
+    }
+
+    const nextId = `${nextX}:${nextY}:${nextZ}`;
+
+    set({
+      blocks: sortBlocks(
+        blocks.map((block) =>
+          block.id === source.id
+            ? {
+                ...block,
+                id: nextId,
+                x: nextX,
+                y: nextY,
+                z: nextZ,
+              }
+            : block,
+        ),
+      ),
+    });
+
+    return nextId;
+  },
+  cloneBlock: (x, y, z, dx, dy, dz) => {
+    const { blocks } = get();
+    const source = findBlock(blocks, x, y, z);
+
+    if (!source) {
+      return null;
+    }
+
+    const nextX = Math.max(0, Math.min(23, x + dx));
+    const nextY = Math.max(0, Math.min(12, y + dy));
+    const nextZ = Math.max(0, Math.min(23, z + dz));
+
+    if (findBlock(blocks, nextX, nextY, nextZ)) {
+      return null;
+    }
+
+    const nextId = `${nextX}:${nextY}:${nextZ}`;
+
+    set({
+      blocks: sortBlocks([
+        ...blocks,
+        {
+          ...source,
+          id: nextId,
+          x: nextX,
+          y: nextY,
+          z: nextZ,
+          tags: [...source.tags],
+        },
+      ]),
+    });
+
+    return nextId;
+  },
+  clearLayer: (layer) => {
+    const { blocks } = get();
+    set({
+      blocks: sortBlocks(blocks.filter((block) => block.y !== layer)),
+    });
   },
   clear: () =>
     set({

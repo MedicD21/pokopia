@@ -6,7 +6,13 @@ import { getRotatedFootprint, sampleBuildingLookup } from "@/data/buildings";
 import { starterTownMap } from "@/data/map-template";
 import type { BuildingPlacement, GridTile, TownMap } from "@/lib/types";
 
-export type MapTool = "hand" | "road" | "building" | "decoration" | "delete";
+export type MapTool =
+  | "hand"
+  | "road"
+  | "building"
+  | "decoration"
+  | "eyedropper"
+  | "delete";
 
 interface MapPlannerState {
   id: string;
@@ -26,6 +32,9 @@ interface MapPlannerState {
   setDecorationType: (decorationType: string) => void;
   setSelectedBuildingId: (buildingId: string) => void;
   selectPlacement: (placementId: string | null) => void;
+  updateSelectedPlacementLabel: (label: string) => void;
+  duplicateSelectedPlacement: () => void;
+  nudgeSelectedPlacement: (dx: number, dy: number) => void;
   paintRoad: (x: number, y: number) => void;
   paintDecoration: (x: number, y: number) => void;
   placeBuilding: (x: number, y: number) => void;
@@ -106,6 +115,91 @@ export const useMapStore = create<MapPlannerState>((set, get) => ({
   setDecorationType: (decorationType) => set({ decorationType }),
   setSelectedBuildingId: (selectedBuildingId) => set({ selectedBuildingId }),
   selectPlacement: (selectedPlacementId) => set({ selectedPlacementId }),
+  updateSelectedPlacementLabel: (label) => {
+    const { placements, selectedPlacementId } = get();
+
+    if (!selectedPlacementId) {
+      return;
+    }
+
+    set({
+      placements: placements.map((entry) =>
+        entry.id === selectedPlacementId
+          ? {
+              ...entry,
+              label,
+            }
+          : entry,
+      ),
+    });
+  },
+  duplicateSelectedPlacement: () => {
+    const { placements, selectedPlacementId, width, height } = get();
+
+    if (!selectedPlacementId) {
+      return;
+    }
+
+    const placement = placements.find((entry) => entry.id === selectedPlacementId);
+
+    if (!placement) {
+      return;
+    }
+
+    const building = sampleBuildingLookup[placement.buildingId];
+
+    if (!building) {
+      return;
+    }
+
+    const footprint = getRotatedFootprint(building, placement.rotation);
+    const nextPlacement: BuildingPlacement = {
+      ...placement,
+      id: crypto.randomUUID(),
+      x: clamp(placement.x + footprint.width + 1, 0, width - footprint.width),
+      y: clamp(placement.y + 1, 0, height - footprint.depth),
+      label: `${placement.label} Copy`,
+    };
+
+    set({
+      placements: [...placements, nextPlacement],
+      selectedPlacementId: nextPlacement.id,
+      selectedBuildingId: nextPlacement.buildingId,
+    });
+  },
+  nudgeSelectedPlacement: (dx, dy) => {
+    const { placements, selectedPlacementId, width, height } = get();
+
+    if (!selectedPlacementId) {
+      return;
+    }
+
+    const placement = placements.find((entry) => entry.id === selectedPlacementId);
+
+    if (!placement) {
+      return;
+    }
+
+    const building = sampleBuildingLookup[placement.buildingId];
+
+    if (!building) {
+      return;
+    }
+
+    const footprint = getRotatedFootprint(building, placement.rotation);
+
+    set({
+      placements: placements.map((entry) =>
+        entry.id === selectedPlacementId
+          ? {
+              ...entry,
+              x: clamp(entry.x + dx, 0, width - footprint.width),
+              y: clamp(entry.y + dy, 0, height - footprint.depth),
+            }
+          : entry,
+      ),
+    });
+  },
   paintRoad: (x, y) => {
     const { roadType, tiles } = get();
     const key = tileKey(x, y);
