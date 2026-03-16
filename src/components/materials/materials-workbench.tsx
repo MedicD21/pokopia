@@ -11,15 +11,17 @@ import type { BuildingData } from "@/lib/types";
 import { useBuilderStore } from "@/store/use-builder-store";
 
 export function MaterialsWorkbench() {
-  const [selectedId, setSelectedId] = useState(sampleBuildings[0].id);
-  const [source, setSource] = useState<"sample" | "builder">("sample");
+  const [selectedId, setSelectedId] = useState<string>(
+    sampleBuildings[0]?.id ?? "builder-live",
+  );
+  const [source, setSource] = useState<"sample" | "builder">(
+    sampleBuildings.length > 0 ? "sample" : "builder",
+  );
   const builderName = useBuilderStore((state) => state.name);
   const builderDescription = useBuilderStore((state) => state.description);
   const builderTheme = useBuilderStore((state) => state.theme);
   const builderBlocks = useBuilderStore((state) => state.blocks);
 
-  const selectedSample =
-    sampleBuildings.find((building) => building.id === selectedId) ?? sampleBuildings[0];
   const liveBuilderBuilding: BuildingData = {
     id: "builder-live",
     name: builderName,
@@ -30,6 +32,11 @@ export function MaterialsWorkbench() {
     tags: ["builder-live"],
     suggestedSkills: [],
   };
+
+  const selectedSample =
+    sampleBuildings.find((building) => building.id === selectedId) ??
+    (sampleBuildings[0] as BuildingData | undefined) ??
+    liveBuilderBuilding;
   const activeBuilding =
     source === "builder" && builderBlocks.length > 0
       ? liveBuilderBuilding
@@ -102,19 +109,25 @@ export function MaterialsWorkbench() {
                 <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
                   Width
                 </p>
-                <p className="mt-1 font-display text-xl">{summary.footprint.width}</p>
+                <p className="mt-1 font-display text-xl">
+                  {summary.footprint.width}
+                </p>
               </div>
               <div className="rounded-2xl bg-[color:var(--accent-2)]/12 px-3 py-3">
                 <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
                   Depth
                 </p>
-                <p className="mt-1 font-display text-xl">{summary.footprint.depth}</p>
+                <p className="mt-1 font-display text-xl">
+                  {summary.footprint.depth}
+                </p>
               </div>
               <div className="rounded-2xl bg-[#7da6ff]/12 px-3 py-3">
                 <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
                   Height
                 </p>
-                <p className="mt-1 font-display text-xl">{summary.footprint.height}</p>
+                <p className="mt-1 font-display text-xl">
+                  {summary.footprint.height}
+                </p>
               </div>
             </div>
           </div>

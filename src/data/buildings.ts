@@ -95,8 +95,7 @@ function finishBuilding(
   return {
     ...data,
     blocks: [...blocks.values()].sort(
-      (left, right) =>
-        left.y - right.y || left.z - right.z || left.x - right.x,
+      (left, right) => left.y - right.y || left.z - right.z || left.x - right.x,
     ),
   };
 }

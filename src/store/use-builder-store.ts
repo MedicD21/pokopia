@@ -267,7 +267,20 @@ function buildWallWithMaterial(
   return nextBlocks;
 }
 
-const defaultBuilding = cloneBuildingData(sampleBuildings[0]);
+function createDefaultBuilding(): BuildingData {
+  return {
+    id: "default",
+    name: "Untitled Build",
+    description: "Start building your structure.",
+    theme: "custom",
+    footprint: { width: 5, depth: 5, height: 4 },
+    blocks: [],
+    tags: [],
+    suggestedSkills: [],
+  };
+}
+
+const defaultBuilding = createDefaultBuilding();
 
 export const useBuilderStore = create<BuilderState>((set, get) => ({
   name: defaultBuilding.name,

@@ -21,14 +21,22 @@ export default async function LibraryPage() {
             <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
               Library items
             </p>
-            <p className="mt-1 font-display text-3xl">{sampleBuildings.length}</p>
+            <p className="mt-1 font-display text-3xl">
+              {sampleBuildings.length}
+            </p>
           </div>
           <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4">
             <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
               Largest build
             </p>
             <p className="mt-1 font-display text-3xl">
-              {Math.max(...sampleBuildings.map((building) => building.blocks.length))}
+              {sampleBuildings.length > 0
+                ? Math.max(
+                    ...sampleBuildings.map(
+                      (building) => building.blocks.length,
+                    ),
+                  )
+                : 0}
             </p>
           </div>
           <div className="rounded-2xl bg-[color:var(--surface)] px-4 py-4">
@@ -63,7 +71,9 @@ export default async function LibraryPage() {
                     <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
                       Blocks
                     </p>
-                    <p className="mt-1 font-display text-xl">{building.blocks.length}</p>
+                    <p className="mt-1 font-display text-xl">
+                      {building.blocks.length}
+                    </p>
                   </div>
                   <div className="rounded-2xl bg-[color:var(--surface)] px-3 py-3 text-center">
                     <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
@@ -77,7 +87,9 @@ export default async function LibraryPage() {
                     <p className="text-xs uppercase tracking-[0.24em] text-[color:var(--muted)]">
                       Theme
                     </p>
-                    <p className="mt-1 font-display text-xl capitalize">{building.theme}</p>
+                    <p className="mt-1 font-display text-xl capitalize">
+                      {building.theme}
+                    </p>
                   </div>
                 </div>
                 <div className="space-y-2">

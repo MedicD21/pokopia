@@ -1471,8 +1471,9 @@ export function VoxelBuilder() {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
-                Camera:
+              <span className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--muted)]">
+                Camera Views <br />
+                (Rotate with Right Click when using Tools):
               </span>
               {cameraPresets.map((preset) => (
                 <button
@@ -1489,39 +1490,51 @@ export function VoxelBuilder() {
                 </button>
               ))}
             </div>
-            <div className="flex items-center gap-2 rounded-xl bg-[color:var(--surface-strong)] px-2.5 py-1.5">
-              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-[color:var(--muted)]">
-                Layer Shortcuts <br />
-                Down = [ <br />
-                Up = ]
-              </span>
-              <button
-                type="button"
-                onClick={() =>
-                  setActiveLayer((current) =>
-                    clamp(current - 1, floorLevel, maxBuildHeight - 1),
-                  )
-                }
-                className="h-6 w-6 rounded-lg border border-[color:var(--line)] bg-[color:var(--surface)] text-sm font-semibold text-[color:var(--foreground)]"
-                aria-label="Decrease active layer"
-              >
-                −
-              </button>
-              <span className="min-w-[2ch] text-center text-xs font-semibold text-[color:var(--foreground)]">
-                {activeLayer}
-              </span>
-              <button
-                type="button"
-                onClick={() =>
-                  setActiveLayer((current) =>
-                    clamp(current + 1, floorLevel, maxBuildHeight - 1),
-                  )
-                }
-                className="h-6 w-6 rounded-lg border border-[color:var(--line)] bg-[color:var(--surface)] text-sm font-semibold text-[color:var(--foreground)]"
-                aria-label="Increase active layer"
-              >
-                +
-              </button>
+            <div className="flex items-center gap-3 rounded-xl bg-[color:var(--surface-strong)] px-2.5 py-1.5">
+              <div className="min-w-[7.5rem] leading-tight">
+                <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--muted)]">
+                  Layer Control
+                </span>
+                <span className="mt-1 flex items-center gap-1.5 text-[11px] text-[color:var(--muted)]">
+                  <span className="rounded border border-[color:var(--line)] bg-[color:var(--surface)] px-1 py-0.5 font-mono text-[10px] text-[color:var(--foreground)]">
+                    [
+                  </span>
+                  <span>Down</span>
+                  <span className="rounded border border-[color:var(--line)] bg-[color:var(--surface)] px-1 py-0.5 font-mono text-[10px] text-[color:var(--foreground)]">
+                    ]
+                  </span>
+                  <span>Up</span>
+                </span>
+              </div>
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveLayer((current) =>
+                      clamp(current - 1, floorLevel, maxBuildHeight - 1),
+                    )
+                  }
+                  className="h-9 w-9 rounded-lg border-2 border-[color:var(--line)] bg-[color:var(--surface)] text-lg font-bold text-[color:var(--foreground)] transition hover:bg-[color:var(--accent)]/16"
+                  aria-label="Decrease active layer"
+                >
+                  −
+                </button>
+                <span className="min-w-[3ch] text-center text-2xl font-bold text-[color:var(--foreground)]">
+                  {activeLayer}
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveLayer((current) =>
+                      clamp(current + 1, floorLevel, maxBuildHeight - 1),
+                    )
+                  }
+                  className="h-9 w-9 rounded-lg border-2 border-[color:var(--line)] bg-[color:var(--surface)] text-lg font-bold text-[color:var(--foreground)] transition hover:bg-[color:var(--accent)]/16"
+                  aria-label="Increase active layer"
+                >
+                  +
+                </button>
+              </div>
             </div>
           </div>
           <div className="mt-2 flex flex-wrap gap-1.5">
