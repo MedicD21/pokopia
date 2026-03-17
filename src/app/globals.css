@@ -79,7 +79,7 @@ a:focus-visible {
 
 h2 {
   font-family: var(--font-display), sans-serif;
-  color: var(--foreground);
+  color: greenyellow;
   font-size: 1.5rem;
   line-height: 2rem;
   font-weight: 700;
